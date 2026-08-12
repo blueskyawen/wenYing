@@ -190,7 +190,7 @@ function normalizeChooseAndUploadFileRes(res, fileType) {
 	return res;
 }
 
-function uploadCloudFiles(files, max = 5, onUploadProgress) {
+function uploadCloudFiles(files, max = 5, onUploadProgress, dir) {
 	files = JSON.parse(JSON.stringify(files))
 	const len = files.length
 	let count = 0
@@ -214,7 +214,7 @@ function uploadCloudFiles(files, max = 5, onUploadProgress) {
 			uniCloud
 				.uploadFile({
 					filePath: fileItem.path,
-					cloudPath: fileItem.cloudPath,
+					cloudPath: dir ? (dir + fileItem.cloudPath) : fileItem.cloudPath,
 					fileType: fileItem.fileType,
 					onUploadProgress: res => {
 						res.index = index

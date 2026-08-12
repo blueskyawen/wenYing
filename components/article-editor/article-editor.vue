@@ -53,6 +53,10 @@
 		props: {
 			value: {
 			    type: String
+			},
+			dir: {
+			    type: String,
+				default: ''
 			}
 		},
 		data() {
@@ -145,7 +149,7 @@
 				        res.tempFilePaths.map((filePath, index) => {
 							let names = res.tempFiles[index].name.split(".");
 							let fname = (Math.random() + '').substr(2) + "." + names[names.length - 1];
-							let cpath = this.name + '/' + fname;
+							let cpath = this.dir + '/' + fname;
 							let uploadPromise = this.cloudUploadFile(filePath, cpath);
 							promises.push(uploadPromise)
 						});

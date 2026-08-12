@@ -5,7 +5,7 @@
 				<uni-easyinput placeholder="文章标题" v-model="formData.title" trim="both" :maxlength="100"></uni-easyinput>
 			</uni-forms-item>
 			<uni-forms-item name="content" label="文章内容" required>
-				<article-editor v-model="formData.content"></article-editor>
+				<article-editor v-model="formData.content" dir="cms-article"></article-editor>
 			</uni-forms-item>
 			<uni-forms-item name="category_id" label="分类" required>
 				<uni-data-select v-model="formData.category_id" :localdata="categaryList"></uni-data-select>
@@ -14,8 +14,8 @@
 				<uni-easyinput type="textarea" autoHeight v-model="formData.excerpt" placeholder="摘要" :maxlength="300"></uni-easyinput>
 			</uni-forms-item>
 			<uni-forms-item name="avatarObj" label="封面图">
-				<uni-file-picker file-mediatype="image" file-extname="jpg,png" mode="grid" :limit="1" 
-					return-type="object" v-model="formData.avatarObj" :image-styles="imageStyles"> </uni-file-picker>
+				<uni-file-picker ref="fileUp" file-mediatype="image" file-extname="jpg,png" mode="grid" :limit="1" :auto-upload="false"  
+					return-type="object" v-model="formData.avatarObj" :image-styles="imageStyles" dir="cms-article/"> </uni-file-picker>
 			</uni-forms-item>
 			<view class="uni-button-group">
 				<button type="primary" class="uni-button" @click="submit">保存</button>
@@ -137,7 +137,27 @@
 						extname: this.formData.avatarObj.extname,
 						url: this.formData.avatarObj.url
 					}
+					this.doSubmitForm(addData);
+				} else {
+					if (this.$refs.fileUp && this.$refs.fileUp.files && this.$refs.fileUp.files.length) {
+						this.$refs.fileUp.upload().then(res => {
+							let tmp = res[0];
+							if (tmp) {
+								addData.avatar = tmp.url;
+								addData.avatarFile = {
+									name: tmp.name,
+									extname: tmp.extname,
+									url: tmp.url
+								}
+							}
+							this.doSubmitForm(addData);
+						})
+					} else {
+						this.doSubmitForm(addData);
+					}
 				}
+			},
+			doSubmitForm(addData) {
 				delete addData.avatarObj;
 				addData['last_modify_date'] = Date.now();
 				if (!this.id) {
@@ -192,7 +212,7 @@
 				})
 			},
 			goBack() {
-				uni.navigateBack();
+				uni.navigateBack();			
 			}
 		}
 	}

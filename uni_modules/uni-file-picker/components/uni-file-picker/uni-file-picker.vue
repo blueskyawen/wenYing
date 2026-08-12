@@ -448,7 +448,7 @@
 				files = [].concat(files)
 				return uploadCloudFiles.call(this, files, 5, res => {
 						this.setProgress(res, res.index, true)
-					})
+					}, this.dir)
 					.then(result => {
 						this.setSuccessAndError(result)
 						return result;
