@@ -1,0 +1,203 @@
+<template>
+    <view class="pages">
+        <view class="placeholder-bar">
+            <statusBar></statusBar>
+            <view :style="{ height: `${navBarHeight}px` }"></view>
+        </view>
+
+        <view class="nav-box">
+            <!-- #ifndef H5 -->
+            <statusBar></statusBar>
+            <!-- #endif -->
+            <view class="nav" :style="{ height: `${navBarHeight}px` }">
+                <!-- #ifdef MP -->
+                <view class="mp-button-left-placeholder" :style="{ width: `${mpButtonLeftPlaceholderSize}px` }"></view>
+                <!-- #endif -->
+                <!-- 搜索功能 -->
+                <view class="uni-search-box">
+                    <uni-search-bar ref="searchBar" radius="100" cancelButton="none" disabled
+                                    :placeholder="inputPlaceholder"/>
+                    <view class="cover-search-bar" @click="searchClick"></view>
+                </view>
+                <!-- #ifdef MP -->
+                <view class="mp-button-placeholder" :style="{ width: `${mpButtonPlaceholderSize}px` }"></view>
+                <!-- #endif -->
+            </view>
+        </view>
+		<u-sticky bgColor="#fff">
+			<u-tabs :list="categaryList" @click="clickTab" :current="curTab"></u-tabs>
+		</u-sticky>
+		<swiper class="swiper" :style="{height: heighth + 'px'}" :current="curTab" @change="swiperChange">
+			<swiper-item v-for="(tab,indexx) in categaryList" :key="indexx">
+				<mescroll-item :listHeight="listHeight" :categeryId="categeryId"></mescroll-item>
+			</swiper-item>
+		</swiper>
+    </view>
+</template>
+
+<script>
+  import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
+  import translatePublishTime from "@/uni_modules/uni-cms-article/common/publish-time";
+  import MescrollItem from "./mescroll-item/mescroll-item.nvue";
+
+  export default {
+    components: {
+      statusBar,
+	  MescrollItem
+    },
+    computed: {
+      // 根据当前语言返回不同的搜索框占位符
+      inputPlaceholder(e) {
+        if (uni.getStorageSync('CURRENT_LANG') == "en") {
+          return 'Please enter the search content' // 英文
+        } else {
+          return '请输入搜索内容' // 中文
+        }
+      },
+	  categeryId() {
+		  return this.categaryList[this.curTab] ? this.categaryList[this.curTab]._id : '';
+	  }
+    },
+    data() {
+      return {
+        listHeight: 0, // 列表高度
+        mpButtonLeftPlaceholderSize: 0, // 小程序左侧icon占位大小
+        mpButtonPlaceholderSize: 87, // 小程序导航栏按钮占位大小
+        navBarHeight: 44, // 导航栏高度
+		categaryList: [],
+		curTab: 0,
+		heighth: 400,
+      }
+    },
+	onLoad() {
+		this.init();
+	},
+    async onReady() {
+      // #ifdef MP
+      this.initNavBarSize() // 初始化导航栏大小
+      // #endif
+      /* 可用窗口高度 - 搜索框高 - 状态栏高 */
+      this.listHeight = uni.getSystemInfoSync().windowHeight - uni.getSystemInfoSync().statusBarHeight - this.navBarHeight + 'px'; // 计算列表高度
+    },
+    methods: {
+		init() {
+			const uniCaptchaDemo = uniCloud.importObject('cms-categary-co')
+			uniCaptchaDemo.getList().then(res => {
+				this.categaryList = res.data || []
+			});
+			this.heighth = uni.getWindowInfo().windowHeight;
+		},
+		clickTab(index) {
+			this.curTab = index.index;
+		},
+		swiperChange(e){
+			this.curTab = e.detail.current;
+		},
+      // 初始化导航栏大小
+      initNavBarSize() {
+        // 获取小程序导航栏按钮信息
+        // #ifdef MP-TOUTIAO
+        let menuButtonInfo = tt.getCustomButtonBoundingClientRect()
+        menuButtonInfo.width = menuButtonInfo.capsule.width //  小程序按钮区域中使用的按钮宽度
+        this.mpButtonLeftPlaceholderSize = menuButtonInfo.leftIcon.width + 10
+        // #endif
+        // #ifndef MP-TOUTIAO
+        let menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+        // #endif
+        // 计算小程序导航栏按钮占位大小
+        this.mpButtonPlaceholderSize = menuButtonInfo.width + 10
+        // 获取系统信息，判断是否为 iOS 系统，设置导航栏高度
+        this.navBarHeight = uni.getSystemInfoSync().system.toLowerCase().includes('ios') ? 44 : 48
+      },
+      // 格式化时间戳
+      publishTime(timestamp) {
+        return translatePublishTime(timestamp)
+      },
+      // 点击搜索框
+      searchClick(e) {
+        uni.hideKeyboard();
+        uni.navigateTo({
+          url: '/uni_modules/uni-cms-article/pages/search/search'
+        });
+      }
+    }
+  }
+</script>
+
+<style scoped>
+    /* #ifndef APP-NVUE */
+    .pages view {
+        display: flex;
+        box-sizing: border-box;
+        flex-direction: column;
+    }
+    /* #endif */
+
+    .pages {
+        background-color: #FFFFFF;
+    }
+
+    .refresh {
+        text-align: center;
+    }
+
+    .nav-box {
+        background-color: #FFFFFF;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        /* #ifndef APP-PLUS */
+        z-index: 9;
+        /* #endif */
+    }
+
+    .pages .nav {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .uni-search-box {
+        flex: 1;
+        padding: 0 10px;
+    }
+
+    .uni-search-box ::v-deep .uni-searchbar {
+        padding: 0;
+    }
+
+    .uni-search-box ::v-deep .uni-searchbar__box {
+        height: 32px;
+        flex-direction: row;
+    }
+
+    .cover-search-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        /* #ifndef APP-NVUE */
+        z-index: 999;
+        /* #endif */
+    }
+
+    .pages .uni-list ::v-deep .uni-list-item__container {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .pages .uni-list ::v-deep .uni-list-item {
+        align-items: flex-start;
+    }
+
+    .pages .uni-list ::v-deep .uni-load-more {
+        display: flex;
+    }
+
+    .pages .uni-list ::v-deep .uni-list--border:after {
+        background-color: #f5f5f5;
+    }
+</style>

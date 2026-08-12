@@ -1,0 +1,7 @@
+{
+  "name": "cms-works-co",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

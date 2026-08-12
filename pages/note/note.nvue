@@ -1,0 +1,705 @@
+<template>
+	<view class="note-page">
+		<view class="placeholder-bar">
+		    <statusBar></statusBar>
+		    <view :style="{ height: `${navBarHeight}px` }"></view>
+		</view>
+		<view class="nav-box">
+			<!-- #ifndef H5 -->
+			<statusBar></statusBar>
+			<!-- #endif -->
+			<view class="nav" :style="{ height: `${navBarHeight}px` }">
+				<!-- #ifdef MP -->
+				<view class="mp-button-left-placeholder" :style="{ width: `${mpButtonLeftPlaceholderSize}px` }"></view>
+				<!-- #endif -->
+				<view class="header">
+					<view class="head-title">
+						<view class="select-date" @click="showDateSelect">
+							<uni-dateformat :date="dateValue" format="yyyy/MM/dd"></uni-dateformat>
+							<u-icon v-if="!show" class="u-icon" name="arrow-down-fill" :size="12"></u-icon>
+							<u-icon v-else class="u-icon" name="arrow-up-fill" :size="12"></u-icon>
+						</view>
+						<!-- #ifndef MP -->
+						<view class="text">地球 · 58度</view>
+						<!-- #endif -->
+					</view>
+					<u-datetime-picker
+							:show="show"
+							v-model="dateValue"
+							mode="date"
+							@cancel="close"
+							@confirm="confirmSelectDate"
+					></u-datetime-picker>
+				</view>
+				<!-- #ifdef MP -->
+				<view class="mp-button-placeholder" :style="{ width: `${mpButtonPlaceholderSize}px` }"></view>
+				<!-- #endif -->
+			</view>
+		</view>
+			
+		<mescroll-body class="body-content" @init="mescrollInit" @down="downCallback" @up="upCallback">
+			 <view class="note-list">
+				 <view class="note-item-box" v-for="(item, index) in list" :key="index">
+					<view class="note-item">
+						 <view class="note-img">
+							 <image :src="item.cover_src"></image>
+						 </view>
+						 <view class="note-title">{{ item.content }}</view>
+						 <view class="note-date">
+							 <view class="note-autor">
+								 <text class="left"></text>
+								 <text class="right">@{{ item.user_id && item.user_id.length ?  item.user_id[0].nickname : '游客'}}</text>
+							 </view>
+							 <text class="publish-date">
+								 <uni-dateformat :date="item.publish_date" format="yyyy-MM-dd"></uni-dateformat>
+							 </text>
+						 </view>
+					</view>
+					<view class="note-action">
+						<view class="action-left" @tap="goNoteQuare">
+							<uni-icons type="pyq" size="20" color="#606266"></uni-icons>
+							<text>小记广场</text>
+						</view>
+						<view class="action-right">
+							<view class="left-action">
+								<u-icon class="a-icon" name="edit-pen" color="#909399" size="20" @click="addSameOne(item)"></u-icon>
+								<u-icon v-if="!item.isCollect" class="a-icon" name="bookmark" color="#909399" size="20" @click="collect(item)"></u-icon>
+								<u-icon v-else class="a-icon" name="bookmark-fill" color="#ff9900" size="20" @click="collect(item)"></u-icon>
+								<u-icon v-if="!item.isLike" class="a-icon" name="heart" color="#909399" size="20" @click="like(item)"></u-icon>
+								<u-icon v-else class="a-icon" name="heart-fill" color="#fa3534" size="20" @click="like(item)"></u-icon>
+								<!-- #ifdef APP-PLUS -->
+								<u-icon class="a-icon" name="share" color="#909399" size="20" @click="share(item)"></u-icon>
+								<!-- #endif -->
+							</view>
+							<!-- #ifdef MP -->
+							<button style="border: none" type="default" size="mini" hover-class="none" plain open-type="share">
+								<u-icon name="share" color="#909399" size="20"></u-icon>
+							</button>
+							<!-- #endif -->
+						</view>
+					</view>
+				 </view>
+			 </view>
+		</mescroll-body>
+		<u-popup :show="showShare" mode="bottom" @close="closeShare">
+			<view class="share-content">
+				<view class="share-item" v-for="(item, index) in providerList" :key="index" @tap="shareNote(item)">
+					<u-icon :name="item.icon" size="20" :color="item.iconColor"></u-icon>
+					<text>{{ item.name }}</text>
+				</view>
+			</view>
+		</u-popup>
+	</view>
+</template>
+
+<script>
+	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
+	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import parseImageUrl from "@/common/parseImageUrl.js"
+	const cmsNoteDB = uniCloud.importObject('cms-note-co');
+	const cmsNoteLikeDB = uniCloud.importObject('cms-note-like-co');
+	const cmsNoteCollectDB = uniCloud.importObject('cms-note-collect-co');
+	import {
+		store
+	} from '@/uni_modules/uni-id-pages/common/store.js';
+	export default {
+		components: {
+			statusBar
+		},
+		mixins: [MescrollMixin],
+		data() {
+			return {
+				list: [],
+				dateValue: Date.now(),
+				show: false,
+				likeIdList: [],
+				collectIdList: [],
+				isFirst: true,
+				isInOper: false,
+				providerList: [],
+				showShare: false,
+				shareType: 0,
+				shareNoteItem: {},
+				navBarHeight: 44, // 导航栏高度
+				mpButtonLeftPlaceholderSize: 0, // 小程序左侧icon占位大小
+				mpButtonPlaceholderSize: 87 // 小程序导航栏按钮占位大小
+			}
+		},
+		onShow() {
+			this.isFirst = true;
+		},
+		onUnload() {
+			uni.$off('add-note-sucess')
+		},
+		onLoad() {
+			this.getShareProviders();
+			uni.$on('add-note-sucess', this.reloadList);
+		},
+		onReady() {
+			// #ifdef MP
+			this.initNavBarSize() // 初始化导航栏大小
+			// #endif
+		},
+		computed: {
+			userInfo() {
+				return store.userInfo
+			},
+			hasLogin(){
+				return store.hasLogin
+			},
+		},
+		methods: {
+			initNavBarSize() {
+			  // 获取小程序导航栏按钮信息
+			  // #ifdef MP-TOUTIAO
+			  let menuButtonInfo = tt.getCustomButtonBoundingClientRect()
+			  menuButtonInfo.width = menuButtonInfo.capsule.width //  小程序按钮区域中使用的按钮宽度
+			  this.mpButtonLeftPlaceholderSize = menuButtonInfo.leftIcon.width + 10
+			  // #endif
+			  // #ifndef MP-TOUTIAO
+			  let menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+			  // #endif
+			  // 计算小程序导航栏按钮占位大小
+			  this.mpButtonPlaceholderSize = menuButtonInfo.width + 10
+			  // 获取系统信息，判断是否为 iOS 系统，设置导航栏高度
+			  this.navBarHeight = uni.getSystemInfoSync().system.toLowerCase().includes('ios') ? 44 : 48
+			},
+			showDateSelect() {
+				this.show = true;
+			},
+			close() {
+				this.show = false;
+			},
+			confirmSelectDate(v) {
+				this.dateValue = v.value
+				this.show = false;
+				this.mescroll.resetUpScroll();
+				this.$nextTick(() => {
+					//this.mescroll.triggerDownScroll()
+				})
+			},
+			async upCallback(page) {
+				let pageNum = page.num; // 页码, 默认从1开始
+				let pageSize = page.size; // 页长, 默认每页10条
+				let start, end;
+				if (this.dateValue) {
+					let tmpDate = new Date(this.dateValue);
+					let vDate = tmpDate.toLocaleDateString();
+					start = new Date(`${vDate} 00:00:00`).valueOf();
+					end = new Date(`${vDate} 23:59:59`).valueOf()
+				}
+				console.log('this.dateValue')
+				console.log(this.dateValue)
+				console.log('start=' + start)
+				console.log('end=' + end)
+				try {
+					if (this.isFirst && this.hasLogin) {
+						let res2 = await cmsNoteLikeDB.getList({
+							id: this.userInfo._id
+						})
+						let res3 = await cmsNoteCollectDB.getList({
+							id: this.userInfo._id
+						})
+						if (res2.data && res2.data.length) {
+							this.likeIdList = res2.data.map(x => {
+								return {
+									id: x._id,
+									note_id: x.note_id
+								}
+							});
+						}
+						if (res3.data && res3.data.length) {
+							this.collectIdList = res3.data.map(x => {
+								return {
+									id: x._id,
+									note_id: x.note_id
+								}
+							})
+						}
+						this.isFirst = false
+					}
+					let res = await cmsNoteDB.getSearchList(pageNum, pageSize, {
+						start: start,
+						end: end
+					});
+					let curPageData = res.data || [];
+					let images = curPageData.map(x => x.cover);
+					let resImgs = await parseImageUrl(images);
+					curPageData.forEach(x => {
+						let img = resImgs.find(y => y.source == x.cover)
+						if (img) {
+							x.cover_src = img.src;
+						}
+						x.isLike = !!this.likeIdList.find(t => t.note_id == x._id)
+						x.isCollect = !!this.collectIdList.find(t => t.note_id == x._id)
+					});
+					if(pageNum == 1) this.list = [];
+					this.list = this.list.concat(curPageData);
+					this.mescroll.endSuccess(curPageData.length);
+					console.log(this.list)
+				} catch(err) {
+					this.mescroll.endErr()
+				}
+			},
+			reloadList(){
+				/*若希望重新加载列表,只需调用此方法即可(内部会自动page.num=1,再主动触发up.callback)*/
+				this.mescroll.resetUpScroll();
+			},
+			goNoteQuare() {
+				uni.navigateTo({
+					url: '/pages/note/noteSquare/noteSquare'
+				})
+			},
+			addSameOne(item) {
+				if (item.user_id && item.user_id[0] && this.userInfo._id == item.user_id[0]._id) {
+					uni.navigateTo({
+						url: '/pages/myNotes/add/add?id=' + item._id
+					})
+				} else {
+					uni.navigateTo({
+						url: '/pages/myNotes/add/add?relateId=' + item._id
+					})
+				}
+			},
+			collect(item) {
+				if (this.isInOper) return;
+				if (!this.hasLogin) {
+					uni.showToast({
+						title: "请先登录",
+						icon: "none"
+					});
+					return;
+				}
+				let isCollect = !item.isCollect;
+				this.isInOper = true;
+				if (isCollect) {
+					cmsNoteCollectDB.add({
+						"user_id": this.userInfo._id,
+						"note_id": item._id,
+						"note_cover": item.cover,
+						"note_content": item.content,
+						"publish_date": item.publish_date,
+						"create_date": Date.now()
+					}).then(res => {
+						item.isCollect = isCollect;
+						this.collectIdList.push({
+							id: res.id || '',
+							note_id: item._id
+						})
+						uni.showToast({
+							title: "收藏成功",
+							icon: "none"
+						});
+					}).finally(res => {
+						this.isInOper = false
+					})
+				} else {
+					let fdItem = this.collectIdList.find(x => x.note_id == item._id);
+					if (fdItem) {
+						cmsNoteCollectDB.delete({id: fdItem.id}).then(res => {
+							if (res.status == 0) {
+								item.isCollect = isCollect;
+								this.collectIdList = this.collectIdList.filter(x => x.id !== fdItem.id);
+								uni.showToast({
+									title: "取消收藏",
+									icon: "none"
+								});
+							}
+						}).finally(res => {
+							this.isInOper = false;
+						})
+					}
+				}
+			},
+			like(item) {
+				if (this.isInOper) return;
+				if (!this.hasLogin) {
+					uni.showToast({
+						title: "请先登录",
+						icon: "none"
+					});
+					return;
+				}
+				let isLike = !item.isLike;
+				this.isInOper = true;
+				if (isLike) {
+					cmsNoteLikeDB.add({
+						"user_id": this.userInfo._id,
+						"note_id": item._id,
+						"note_cover": item.cover,
+						"note_content": item.content,
+						"publish_date": item.publish_date,
+						"create_date": Date.now()
+					}).then(res => {
+						item.isLike = isLike;
+						this.likeIdList.push({
+							id: res.id || '',
+							note_id: item._id
+						})
+						uni.showToast({
+							title: "收藏至个人喜爱",
+							icon: "none"
+						});
+					}).finally(res => {
+						this.isInOper = false
+					})
+				} else {
+					let fdItem = this.likeIdList.find(x => x.note_id == item._id);
+					if (fdItem) {
+						cmsNoteLikeDB.delete({id: fdItem.id}).then(res => {
+							if (res.status == 0) {
+								item.isLike = isLike;
+								this.likeIdList = this.likeIdList.filter(x => x.id !== fdItem.id);
+								uni.showToast({
+									title: "取消喜爱",
+									icon: "none"
+								});
+							}
+						}).finally(res => {
+							this.isInOper = false;
+						})
+					}
+				}
+			},
+			getShareProviders() {
+				uni.getProvider({
+					service: 'share',
+					success: (e) => {
+						console.log('success', e);
+						let ePrividers = e.provider.length ? e.provider : [];
+						let data = []
+						for (let i = 0; i < ePrividers.length; i++) {
+							switch (ePrividers[i]) {
+								case 'weixin':
+									data.push({
+										name: '分享到微信好友',
+										id: 'weixin',
+										sort:0,
+										icon: 'weixin-fill',
+										iconColor: '#19be6b'
+									})
+									data.push({
+										name: '分享到微信朋友圈',
+										id: 'weixin',
+										type:'WXSenceTimeline',
+										sort:1,
+										icon: 'moments',
+										iconColor: '#19be6b'
+									})
+									break;
+								case 'sinaweibo':
+									data.push({
+										name: '分享到新浪微博',
+										id: 'sinaweibo',
+										sort:2,
+										icon: 'weibo',
+										iconColor: '#ff9900'
+									})
+									break;
+								case 'qq':
+									data.push({
+										name: '分享到QQ',
+										id: 'qq',
+										sort:3,
+										icon: 'qq-fill',
+										iconColor: '#2979ff'
+									})
+									break;
+								default:
+									break;
+							}
+						}
+						console.log('获取分享通 providerList')
+						this.providerList = data.sort((x,y) => {
+							return x.sort - y.sort
+						});
+					},
+					fail: (e) => {
+						console.log('获取分享通道失败', e);
+						uni.showModal({
+							content:'获取分享通道失败',
+							showCancel:false
+						})
+					}
+				});
+			},
+			share(item) {
+				if (!this.hasLogin) {
+					uni.showToast({
+						title: "请先登录",
+						icon: "none"
+					});
+					return;
+				}
+				this.shareNoteItem = item;
+				this.showShare = true;
+			},
+			closeShare() {
+				this.showShare = false;
+			},
+			async shareNote(e) {
+				console.log('分享通道:'+ e.id +'； 分享类型:' + this.shareType);
+				let that = this;
+				let shareOPtions = {
+					provider: e.id,
+					scene: e.type && e.type === 'WXSceneTimeline' ? 'WXSceneTimeline' : 'WXSceneSession', //WXSceneSession”分享到聊天界面，“WXSceneTimeline”分享到朋友圈，“WXSceneFavorite”分享到微信收藏
+					type: this.shareType,
+					success: (e) => {
+						console.log('success', e);
+						uni.showModal({
+							content: '已分享',
+							showCancel:false
+						})
+					},
+					fail: (e) => {
+						console.log('fail', e)
+						uni.showModal({
+							content: e.errMsg,
+							showCancel:false
+						})
+					},
+					complete:function(){
+						console.log('分享操作结束!');
+						that.closeShare();
+					}
+				}
+			
+				switch (this.shareType){
+					case 0:
+						shareOPtions.summary = this.shareNoteItem.content;
+						shareOPtions.imageUrl = this.shareNoteItem.cover_src;
+						shareOPtions.title = '文影-小记';
+						shareOPtions.href = 'https://uniapp.dcloud.io';
+						break;
+					case 1:
+						shareOPtions.summary = this.shareNoteItem.content;
+						break;
+					case 2:
+						shareOPtions.imageUrl = this.shareNoteItem.cover_src;
+						break;
+					case 5:
+						shareOPtions.imageUrl = this.shareNoteItem.cover_src
+						shareOPtions.title = '欢迎来到文影-小记';
+						shareOPtions.miniProgram = {
+							id:'gh_33446d7f7a26',
+							path:`/pages/note/noteView/noteView?id=${this.shareNoteItem._id}`,
+							webUrl:'https://uniapp.dcloud.io',
+							type:0
+						};
+						break;
+					default:
+						break;
+				}
+			
+				if(shareOPtions.type === 0 && plus.os.name === 'iOS'){//如果是图文分享，且是ios平台，则压缩图片
+					shareOPtions.imageUrl = await this.compress();
+				}
+				if(shareOPtions.type === 1 && shareOPtions.provider === 'qq'){//如果是分享文字到qq，则必须加上href和title
+					shareOPtions.href = 'https://uniapp.dcloud.io';
+					shareOPtions.title = '欢迎来到文影-小记';
+				}
+				uni.share(shareOPtions);
+			},
+			compress(image){ 
+				//压缩图片 图文分享要求分享图片大小不能超过20Kb
+				let img = image;
+				return new Promise((res) => {
+					var localPath = plus.io.convertAbsoluteFileSystem(img.replace('file://', ''));
+					// 压缩size
+					plus.io.resolveLocalFileSystemURL(localPath, (entry) => {
+						entry.file((file) => {// 可通过entry对象操作图片
+							console.log('getFile:' + JSON.stringify(file));
+							if(file.size > 20480) {// 压缩后size 大于20Kb
+								plus.zip.compressImage({
+									src: img,
+									dst: img.replace('.jpg', '2222.jpg').replace('.JPG', '2222.JPG'),
+									width: '10%',
+									height: '10%',
+									quality: 1,
+									overwrite: true
+								}, (event) => {
+									console.log('success zip****' + event.size);
+									let newImg = img.replace('.jpg', '2222.jpg').replace('.JPG', '2222.JPG');
+									res(newImg);
+								}, function(error) {
+									uni.showModal({
+										content:'分享图片太大,需要请重新选择图片!',
+										showCancel:false
+									})
+								});
+							}
+						});
+					}, (e) => {
+						console.log('Resolve file URL failed: ' + e.message);
+						uni.showModal({
+							content:'分享图片太大,需要请重新选择图片!',
+							showCancel:false
+						})
+					});
+				})
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+page {
+	background-color: #dcdcdc;
+}
+.body-content ::v-deep {
+	.mescroll-empty {
+		align-items: center;
+	}
+	.downwarp-content {
+		align-items: center;
+	}
+	.mescroll-upwarp > view {
+		align-items: center;
+	}
+}
+.note-page {
+	background-color: #dcdcdc;
+	.note-list {
+		.note-item-box {
+			margin-bottom: 6px;
+			background: #fff;
+			padding: 14px;
+			box-sizing: border-box;
+			.note-item {
+			 	border-radius: 8px;
+				box-shadow: 0 0 5px rgba($color: #8f939c, $alpha: 0.5);
+				.note-img {
+					image {
+						width: 100%;
+						height: 280px;
+						border-radius: 8px 8px 0 0;
+					}
+				}
+				.note-title {
+					padding: 25px;
+					box-sizing: border-box;
+					line-height: 1.6em;
+				}
+				.note-date {
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					align-items: center;
+					padding: 12px 10px;
+					box-sizing: border-box;
+					font-size: 14px;
+					.note-autor {
+						display: inline-flex;
+						flex-direction: row;
+						align-items: center;
+						.right {
+							margin-left: 5px;
+							color: #8f939c;
+						}
+					}
+					.publish-date {
+						color: #8f939c;
+					}
+				}
+			}
+			.note-action {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+				box-sizing: border-box;
+				width: 100%;
+				padding: 16px 0 5px 0;
+				.action-left {
+					display: inline-flex;
+					align-items: center;
+					flex-direction: row;
+					text {
+						font-size: 12px;
+						color: #909399;
+					}
+				}
+				.action-right {
+					display: inline-flex;
+					align-items: center;
+					flex-direction: row;
+					.left-action {
+						display: inline-flex;
+						align-items: center;
+						flex-direction: row;
+						::v-deep .u-icon {
+							margin-left: 16px;
+						}
+					}
+				}
+			}
+		}
+	}
+	.nav-box {
+	    background-color: #FFFFFF;
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	
+	    /* #ifndef APP-PLUS */
+	    z-index: 9;
+	    /* #endif */
+		.nav {
+		    display: flex;
+		    align-items: center;
+		    flex-direction: row;
+		}
+	}
+	.header {
+		padding: 10px 15px;
+		box-sizing: border-box;
+		// position: sticky;
+		z-index: 970;
+		top: 0;
+		background-color: #fff;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		/* #ifndef MP */
+		width: 100%;
+		/* #endif */
+		.head-title {
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			box-sizing: border-box;
+			align-items: center;
+			.select-date {
+				font-size: 14px;
+				display: inline-flex;
+				flex-direction: row;
+				align-items: center;
+				.u-icon {
+					margin-left: 3px;
+				}
+			}
+			.text {
+				font-size: 14px;
+			}
+		}
+	}
+	.share-content {
+		display: flex;
+		flex-direction: column;
+		.share-item {
+			display: flex;
+			flex-direction: row;
+			height: 48px;
+			align-items: center;
+			box-sizing: border-box;
+			padding-left: 20%;
+			text {
+				margin-left: 6px;
+			}
+		}
+	}
+}
+</style>

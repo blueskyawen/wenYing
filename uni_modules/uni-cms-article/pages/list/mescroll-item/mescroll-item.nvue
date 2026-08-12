@@ -1,0 +1,157 @@
+<template>
+	<unicloud-db ref='udb' v-slot:default="{ pagination, hasMore, loading, error, options }" @error="onqueryerror"
+                     :collection="colList" :page-size="10" orderby="publish_date desc" @load="listLoad">
+            <!-- 基于 uni-list 的页面布局 field="user_id.nickname"-->
+            <!-- #ifdef APP-NVUE -->
+            <list class="uni-list" :border="false" :style="{ height: listHeight }">
+                <!-- #endif -->
+                <!-- #ifndef APP-NVUE -->
+                <scroll-view
+                        scroll-y
+                        class="uni-list"
+                        refresher-enabled
+                        :refresher-triggered="loadType=== 'refresh'"
+                        :style="{ height: listHeight }"
+                        @refresherrefresh="refresh"
+                        @scrolltolower="loadMore"
+                >
+                    <!-- #endif -->
+                    <!-- #ifdef APP-NVUE -->
+                    <refresh-box :loading="loading" @refresh="refresh"></refresh-box>
+                    <!-- #endif -->
+
+                    <!-- 列表渲染 -->
+                    <template v-for="(item, index) in listData">
+                        <not-cover v-if="item.thumbnail && item.thumbnail.length === 0" :data="item"></not-cover>
+                        <right-small-cover v-else-if="item.thumbnail && item.thumbnail.length === 1"
+                                           :data="item"></right-small-cover>
+                        <three-cover v-else-if="item.thumbnail && item.thumbnail.length === 3"
+                                     :data="item"></three-cover>
+                    </template>
+
+                    <!-- 加载状态：上拉加载更多，加载中，没有更多数据了，加载错误 -->
+                    <!-- #ifdef APP-PLUS -->
+                    <uni-list-item>
+                        <template v-slot:body>
+                            <!-- #endif -->
+                            <uni-load-state @networkResume="refresh"
+                                            :state="{ data: listData, pagination, hasMore, loading, error }"
+                                            @loadMore="loadMore">
+                            </uni-load-state>
+                            <!-- #ifdef APP-PLUS -->
+                        </template>
+                    </uni-list-item>
+                    <!-- #endif -->
+                    <!-- #ifndef APP-NVUE -->
+                </scroll-view>
+                <!-- #endif -->
+                <!-- #ifdef APP-NVUE -->
+            </list>
+            <!-- #endif -->
+        </unicloud-db>
+</template>
+
+<script>
+	import refreshBox from "@/uni_modules/uni-cms-article/components/refresh-box/refreshBox.nvue";
+	import notCover from "@/uni_modules/uni-cms-article/components/list-template/not-cover.vue";
+	import rightSmallCover from "@/uni_modules/uni-cms-article/components/list-template/right-small-cover.vue";
+	import threeCover from "@/uni_modules/uni-cms-article/components/list-template/three-cover.vue";
+	  import {parseImageUrl} from "@/uni_modules/uni-cms-article/common/parse-image-url";
+	const db = uniCloud.database();
+	const articleDBName = 'uni-cms-articles'
+	const userDBName = 'uni-id-users'
+	export default {
+		components: {
+		  refreshBox,
+		  notCover,
+		  rightSmallCover,
+		  threeCover,
+		},
+		props: {
+			categeryId: {
+				type: String
+			},
+			listHeight: {
+				type: String,
+				default: ''
+			}
+		},
+		data() {
+			return {
+				listData: [],
+				loadType: null,
+				//listHeight: 0, // 列表高度
+				showRefresh: false, // 是否显示刷新按钮
+			}
+		},
+		onReady() {
+			/* 可用窗口高度 - 搜索框高 - 状态栏高 */
+			// this.listHeight = uni.getSystemInfoSync().windowHeight - uni.getSystemInfoSync().statusBarHeight - this.navBarHeight + 'px'; // 计算列表高度
+		},
+		computed: {
+			colList() {
+				let twhere = '"article_status" == 1 && "category_id" == "' + this.categeryId + '"';
+			  return [
+			    db.collection(articleDBName).where(twhere).field('thumbnail,title,publish_date,user_id').getTemp(), // 文章集合
+			    db.collection(userDBName).field('_id,nickname').getTemp() // 用户集合
+			  ]
+			}
+		},
+		methods: {
+			// 查询出错
+			onqueryerror(e) {
+			  console.error(e);
+			},
+			async listLoad(data) {
+			  const listData = data.map(item => {
+			    if (typeof item.thumbnail === 'string') {
+			      item.thumbnail = [item.thumbnail]
+			    }
+			
+			    return item
+			  })
+			
+			  // 处理腾讯云文件链接
+			  for (const article of listData) {
+			    const parseImages = await parseImageUrl(article.thumbnail)
+			
+			    article.thumbnail = parseImages ? parseImages.map(image => image.src): []
+			  }
+			 console.log(this.loadType)
+			 console.log(this.categeryId)
+			  this.listData = this.loadType === 'loadMore' ? this.listData.concat(listData) : listData
+			  this.loadType = null
+
+			},
+			// 刷新
+			refresh() {
+			  this.loadType = 'refresh'
+			  this.$refs.udb.loadData({
+			    clear: true
+			  }, () => {
+			    uni.stopPullDownRefresh()
+			    // #ifdef APP-NVUE
+			    this.showRefresh = false
+			    // #endif
+			  })
+			},
+			// 加载更多
+			loadMore() {
+			  this.loadType = 'loadMore'
+			  this.$refs.udb.loadMore()
+			},
+			retry() {
+			  this.refresh()
+			},
+		},
+		// #ifdef H5
+		onPullDownRefresh() {
+		  this.refresh()
+		}
+		// #endif
+	}
+</script>
+
+<style>
+
+</style>

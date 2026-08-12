@@ -1,0 +1,50 @@
+<template>
+	<view class="doc-list">
+		<template v-for="(item, index) in list">
+			<not-cover v-if="item.thumbnail && item.thumbnail.length === 0" :data="item"></not-cover>
+			<right-small-cover v-else-if="item.thumbnail && item.thumbnail.length === 1"
+							   :data="item"></right-small-cover>
+			<three-cover v-else-if="item.thumbnail && item.thumbnail.length === 3"
+						 :data="item"></three-cover>
+		</template>
+		<view class="data-empty" v-if="!isLoading && !list.length">
+			<u-empty></u-empty>
+		</view>
+	</view>
+</template>
+
+<script>
+	import notCover from "@/uni_modules/uni-cms-article/components/list-template/not-cover.vue";
+	import rightSmallCover from "@/uni_modules/uni-cms-article/components/list-template/right-small-cover.vue";
+	import threeCover from "@/uni_modules/uni-cms-article/components/list-template/three-cover.vue";
+	export default {
+		components: {
+		  notCover,
+		  rightSmallCover,
+		  threeCover,
+		},
+		props: {
+			list: {
+				type: Array,
+				default: () => []
+			},
+			isLoading: {
+				type: Boolean
+			}
+		},
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style scoped>
+.data-empty {
+	margin-top: 30px;
+}
+</style>

@@ -1,0 +1,263 @@
+<template>
+	<view class="pages">
+		<view class="placeholder-bar">
+		    <statusBar></statusBar>
+		    <view :style="{ height: `${navBarHeight}px` }"></view>
+		</view>
+		<view class="nav-box">
+			<!-- #ifndef H5 -->
+			<statusBar></statusBar>
+			<!-- #endif -->
+			<view class="nav" :style="{ height: `${navBarHeight}px` }">
+				<!-- #ifdef MP -->
+				<view class="mp-button-left-placeholder" :style="{ width: `${mpButtonLeftPlaceholderSize}px` }"></view>
+				<!-- #endif -->
+				<view class="uni-search-box">
+					<uni-search-bar ref="searchBar" radius="100" cancelButton="none" disabled
+									placeholder="请输入搜索内容"/>
+					<view class="cover-search-bar" @click="searchClick"></view>
+				</view>
+				<!-- #ifdef MP -->
+				<view class="mp-button-placeholder" :style="{ width: `${mpButtonPlaceholderSize}px` }"></view>
+				<!-- #endif -->
+			</view>
+		</view>
+		<mescroll-body class="body-content" :sticky="true" @init="mescrollInit" @down="downCallback" @up="upCallback">
+			<u-sticky bgColor="#fff">
+				<u-tabs :list="tabs" @click="clickTab" :current="tabIndex"></u-tabs>
+			</u-sticky>
+			<swiper class="swiper" :style="{height: heighth + 'px'}" :current="tabIndex" @change="swiperChange">
+				<swiper-item v-for="(tab,indexx) in tabs" :key="indexx">
+					<doc-list :list="tab.list" :isLoading="isLoading"></doc-list>
+				</swiper-item>
+			</swiper>
+		</mescroll-body>
+	</view>
+</template>
+
+<script>
+	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import translatePublishTime from "@/uni_modules/uni-cms-article/common/publish-time";
+	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
+	import {parseImageUrl} from "@/uni_modules/uni-cms-article/common/parse-image-url";
+	import docList from "./doc-list.nvue";
+	const uniCaptchaDemo = uniCloud.importObject('cms-categary-co')
+	const uniDocsDemo = uniCloud.importObject('cms-article-co')
+	export default {
+		components: {
+			docList,
+			statusBar
+		},
+		mixins: [MescrollMixin],
+		data() {
+			return {
+				tabs: [],
+				tabIndex: 0,
+				navBarHeight: 44, // 导航栏高度
+				mpButtonLeftPlaceholderSize: 0, // 小程序左侧icon占位大小
+				mpButtonPlaceholderSize: 87, // 小程序导航栏按钮占位大小
+				heighth: 400,
+				isLoading: false
+			}
+		},
+		onLoad() {
+			this.init();
+		},
+		onReady() {
+			// #ifdef MP
+			this.initNavBarSize() // 初始化导航栏大小
+			// #endif
+		},
+		computed: {
+			articleList() {
+				return this.tabs.length ? this.tabs[this.tabIndex].list : [];
+			}
+		},
+		methods: {
+			initNavBarSize() {
+			  // 获取小程序导航栏按钮信息
+			  // #ifdef MP-TOUTIAO
+			  let menuButtonInfo = tt.getCustomButtonBoundingClientRect()
+			  menuButtonInfo.width = menuButtonInfo.capsule.width //  小程序按钮区域中使用的按钮宽度
+			  this.mpButtonLeftPlaceholderSize = menuButtonInfo.leftIcon.width + 10
+			  // #endif
+			  // #ifndef MP-TOUTIAO
+			  let menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+			  // #endif
+			  // 计算小程序导航栏按钮占位大小
+			  this.mpButtonPlaceholderSize = menuButtonInfo.width + 10
+			  // 获取系统信息，判断是否为 iOS 系统，设置导航栏高度
+			  this.navBarHeight = uni.getSystemInfoSync().system.toLowerCase().includes('ios') ? 44 : 48
+			},
+			// 格
+			init() {
+				uniCaptchaDemo.getList().then(res => {
+					let temps = res.data || [];
+					this.tabs = temps.map(x => {
+						return {
+							...x,
+							list: [],
+							num: 1,
+							y: 0,
+							curPageLen: 0,
+							hasNext: true
+						}
+					});
+					this.clickTab({index: this.tabIndex})
+				});
+				this.heighth = uni.getWindowInfo().windowHeight;
+			},
+			publishTime(timestamp) {
+			  return translatePublishTime(timestamp)
+			},
+			async listLoad(data) {
+			  const listData = data.map(item => {
+			    if (typeof item.thumbnail === 'string') {
+			      item.thumbnail = [item.thumbnail]
+			    }
+			
+			    return item
+			  })
+			
+			  // 处理腾讯云文件链接
+			  for (const article of listData) {
+			    const parseImages = await parseImageUrl(article.thumbnail)
+			
+			    article.thumbnail = parseImages ? parseImages.map(image => image.src): []
+			  }
+			 return listData;
+			},
+			swiperChange(e){
+				this.clickTab({
+					index: e.detail.current
+				});
+			},
+			async clickTab(e) {
+				this.tabIndex = e.index;
+				// 记录切换前滚动条的位置
+				if(!this.preIndex) this.preIndex = 0
+				let preTab = this.tabs[this.preIndex]
+				preTab.y = this.mescroll.getScrollTop()
+				this.preIndex = this.tabIndex;
+				// 当前菜单的数据
+				let curTab = this.tabs[this.tabIndex]
+				if (!curTab.list || !curTab.list.length) {
+					// 没有初始化,则初始化
+					this.mescroll.resetUpScroll()
+				} else{
+					// 初始化过,则恢复之前的列表数据
+					this.mescroll.setPageNum(curTab.num + 1); // 恢复当前页码
+					this.mescroll.endSuccess(curTab.curPageLen, curTab.hasNext); // 恢复是否有下一页或显示空布局
+					this.$nextTick(()=>{
+						this.mescroll.scrollTo(curTab.y, 0) // 恢复滚动条的位置
+					})
+				}
+			},
+			upCallback(page) {
+				uni.showLoading()
+				let curTab = this.tabs[this.tabIndex]
+				if (!curTab) return;
+				let pageNum = page.num; // 页码, 默认从1开始
+				let pageSize = page.size; // 页长, 默认每页10条
+				let category_id = curTab._id;
+				this.isLoading = true;
+				uniDocsDemo.getSearch(pageNum, pageSize, category_id).then(res => {
+					if (res) {
+						console.log('uniDocsDemo.getSearch')
+						console.log(res)
+						this.listLoad(res.data || []).then(res => {
+							console.log('listLoad')
+							console.log(res)
+							if(pageNum == 1) curTab.list = []; //如果是第一页需手动制空列表
+							curTab.list = curTab.list.concat(res); //追加新数据
+							curTab.num = pageNum; // 页码
+							curTab.curPageLen = res.length; // 当前页长
+							this.mescroll.endSuccess(curTab.curPageLen);
+						})
+					}
+				}).catch(err => {
+					this.mescroll.endErr()
+				}).finally(() => {
+					this.isLoading = false;
+					uni.hideLoading();
+				})
+			},
+			reloadList(){
+				/*若希望重新加载列表,只需调用此方法即可(内部会自动page.num=1,再主动触发up.callback)*/
+				this.mescroll.resetUpScroll();
+			},
+			// 点击搜索框
+			searchClick(e) {
+			  uni.hideKeyboard();
+			  uni.navigateTo({
+			    url: '/uni_modules/uni-cms-article/pages/search/search'
+			  });
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	/* #ifndef APP-NVUE */
+	.pages view {
+	    display: flex;
+	    box-sizing: border-box;
+	    flex-direction: column;
+	}
+	/* #endif */
+	.body-content ::v-deep {
+		.mescroll-empty {
+			align-items: center;
+		}
+		.downwarp-content {
+			align-items: center;
+		}
+		.mescroll-upwarp > view {
+			align-items: center;
+		}
+	}
+    .pages {
+        background-color: #FFFFFF;
+		width: 100%;
+		.nav-box {
+		    background-color: #FFFFFF;
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+		
+		    /* #ifndef APP-PLUS */
+		    z-index: 9;
+		    /* #endif */
+		}
+		.nav {
+		    display: flex;
+		    align-items: center;
+		    flex-direction: row;
+		}
+		.uni-search-box {
+		    flex: 1;
+		    padding: 0 10px;
+		}
+		
+		.uni-search-box ::v-deep .uni-searchbar {
+		    padding: 0;
+		}
+		
+		.uni-search-box ::v-deep .uni-searchbar__box {
+		    height: 32px;
+		    flex-direction: row;
+		}
+		
+		.cover-search-bar {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    bottom: 0;
+		    top: 0;
+		    /* #ifndef APP-NVUE */
+		    z-index: 999;
+		    /* #endif */
+		}
+    }
+</style>

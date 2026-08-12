@@ -1,0 +1,7 @@
+{
+  "name": "cms-article-co",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

@@ -1,0 +1,396 @@
+{
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue",
+			"^uni-icons$": "@/uni_modules/uni-icons/components/uni-icons/uni-icons.vue",
+			"^uni-list$": "@/uni_modules/uni-list/components/uni-list/uni-list.vue",
+			"^uni-list-item$": "@/uni_modules/uni-list/components/uni-list-item/uni-list-item.vue",
+			"^uni-forms$": "@/uni_modules/uni-forms/components/uni-forms/uni-forms.vue",
+			"^uni-forms-item$": "@/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue",
+			"^uni-grid$": "@/uni_modules/uni-grid/components/uni-grid/uni-grid.vue",
+			"^uni-grid-item$": "@/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue",
+			"^uni-load-state$": "@/uni_modules/uni-cms-article/components/uni-load-state/uni-load-state.vue",
+			"^uni-sign-in$": "@/uni_modules/uni-sign-in/components/uni-sign-in/uni-sign-in.vue",
+			"^uni-popup-captcha$": "@/uni_modules/uni-captcha/components/uni-popup-captcha/uni-popup-captcha.vue",
+			"^uni-popup-dialog$": "@/uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.vue",
+			"^uni-id-pages-(.*)": "@/uni_modules/uni-id-pages/components/uni-id-pages-$1/uni-id-pages-$1.vue"
+		}
+	},
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	{
+	// #ifndef MP-WEIXIN
+		"path": "uni_modules/uni-cms-article/pages/list/list",
+	// #endif
+	// #ifdef MP-WEIXIN
+		"path": "pages/cms-article/list/list",
+	// #endif
+    "style": {
+        "backgroundColor": "#FFFFFF",
+		// #ifndef MP-WEIXIN
+         "disableScroll": true,
+		// #endif
+		// #ifndef APP || MP-WEIXIN
+			"enablePullDownRefresh": true,
+		// #endif
+        "navigationStyle": "custom"
+    }
+},
+{
+    "path": "uni_modules/uni-cms-article/pages/search/search",
+    "style": {
+		// #ifdef H5
+        "navigationStyle": "custom",
+		// #endif
+		"navigationBarTitleText": "搜索"
+    }
+}
+,{
+    "path": "uni_modules/uni-cms-article/pages/detail/detail",
+    "style": {
+        "backgroundColor": "#FFFFFF",
+        "navigationBarTitleText": ""
+    }
+}
+,{
+    "path": "uni_modules/uni-cms-article/pages/detail/preview",
+    "style": {
+        "backgroundColor": "#FFFFFF",
+        "navigationBarTitleText": ""
+    }
+}
+,{
+    "path": "uni_modules/uni-cms-article/pages/webview/webview",
+    "style": {
+        "navigationBarTitleText": ""
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/register/register",
+    "style": {
+        "navigationBarTitleText": "注册"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/login/login-withoutpwd",
+    "style": {
+        "navigationBarTitleText": "登录"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/login/login-withpwd",
+    "style": {
+        "navigationBarTitleText": "账号密码登录"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/login/login-smscode",
+    "style": {
+        "navigationBarTitleText": "手机验证码登录"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/userinfo",
+    "style": {
+        "navigationBarTitleText": "个人资料"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/bind-mobile/bind-mobile",
+    "style": {
+        "navigationBarTitleText": "绑定手机号码"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/cropImage/cropImage",
+    "style": {
+        "navigationBarTitleText": ""
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/register/register-by-email",
+    "style": {
+        "navigationBarTitleText": "邮箱验证码注册"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/retrieve/retrieve",
+    "style": {
+        "navigationBarTitleText": "重置密码"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/retrieve/retrieve-by-email",
+    "style": {
+        "navigationBarTitleText": "通过邮箱重置密码"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/common/webview/webview",
+    "style": {
+        "enablePullDownRefresh": false,
+        "navigationBarTitleText": ""
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/change_pwd/change_pwd",
+    "style": {
+        "enablePullDownRefresh": false,
+        "navigationBarTitleText": "修改密码"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/register/register-admin",
+    "style": {
+        "enablePullDownRefresh": false,
+        "navigationBarTitleText": "注册管理员账号"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/set-pwd/set-pwd",
+    "style": {
+        "enablePullDownRefresh": false,
+        "navigationBarTitleText": "设置密码"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/deactivate/deactivate",
+    "style": {
+        "navigationBarTitleText": "注销账号"
+    }
+}
+,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify",
+    "style": {
+        "enablePullDownRefresh": false,
+        "navigationBarTitleText": "实名认证"
+    }
+},
+{
+	"path": "pages/ucenter/ucenter",
+	"style": {
+		"navigationBarTitleText": "",
+		"navigationStyle": "custom"
+	}
+},
+{
+	"path": "pages/video/video",
+	"style": {
+		"navigationBarTitleText": "",
+		"navigationStyle": "custom"
+	}
+},
+{
+	"path": "uni_modules/uni-upgrade-center-app/pages/upgrade-popup",
+	"style": {
+		"disableScroll": true,
+		"app-plus": {
+			"backgroundColorTop": "transparent",
+			"background": "transparent",
+			"titleNView": false,
+			"scrollIndicator": false,
+			"popGesture": "none",
+			"animationType": "fade-in",
+			"animationDuration": 200
+
+		}
+	}
+},
+{
+	"path": "pages/cms-article/search/search",
+	"style": {
+		"navigationBarTitleText": ""
+	}
+},
+{
+	"path": "pages/note/note",
+	"style": {
+		"navigationBarTitleText": "",
+		"navigationStyle": "custom"
+	}
+},
+{
+	"path": "pages/myNotes/myNotes",
+	"style": {
+		"navigationBarTitleText": "我的小记"
+	}
+},
+{
+	"path": "pages/myNotes/add/add",
+	"style": {
+		"navigationBarTitleText": "新增小记"
+	}
+},
+{
+	"path": "pages/note/noteSquare/noteSquare",
+	"style": {
+		"navigationBarTitleText": "小记广场"
+	}
+},
+{
+	"path": "pages/note/noteView/noteView",
+	"style": {
+		"navigationBarTitleText": ""
+	}
+}
+],
+"subPackages": [
+	{
+		"root": "uni_modules/uni-feedback/pages",
+		"pages": [{
+			"path": "opendb-feedback/opendb-feedback",
+			"style": {
+				"navigationBarTitleText": "意见反馈",
+				"enablePullDownRefresh": false
+			}
+		}]
+	},
+	{
+		"root": "pages/mine",
+		"pages": [
+			{
+				"path": "myLikes/myLikes",
+				"style": {
+					"navigationBarTitleText": "我喜欢的",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"path": "myCollect/myCollect",
+				"style": {
+					"navigationBarTitleText": "我的收藏",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"path": "readLog/readLog",
+				"style": {
+					"navigationBarTitleText": "阅读记录",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"path": "settings/settings",
+				"style": {
+					"navigationBarTitleText": "个人设置"
+				}
+			},
+			{
+				"path": "about/about",
+				"style": {
+					"navigationBarTitleText": "关于"
+				}
+			}
+		]
+	},
+	{
+		"root": "pages/myWorks",
+		"pages": [
+			{
+				"path": "myWorks",
+				"style": {
+					"navigationBarTitleText": "我的文章"
+				}
+			},
+			{
+				"path": "detail/detail",
+				"style": {
+					"navigationBarTitleText": "文章详情"
+				}
+			},
+			{
+				"path": "add/add",
+				"style": {
+					"navigationBarTitleText": "新建文章"
+				}
+			}
+		]
+	},
+	{
+		"root": "pages/myVideo",
+		"pages": [
+			{
+				"path": "myVideo",
+				"style": {
+					"navigationBarTitleText": "我的视频"
+				}
+			},
+			{
+				"path": "add/add",
+				"style": {
+					"navigationBarTitleText": "新建视频"
+				}
+			},
+			{
+				"path": "preView/preView",
+				"style": {
+					"navigationBarTitleText": ""
+				}
+			}
+		]
+	}
+],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "文影",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"enablePullDownRefresh": false
+	},
+	"condition": {
+		"list": [{
+				"path": "uni_modules/uni-cms-article/pages/list/list"
+			}, {
+				"path": "uni_modules/uni-cms-article/pages/detail/detail"
+			}
+		],
+		"current": 0
+	},
+	"tabBar": {
+		"color": "#707070",
+		"selectedColor": "#1296db",
+		"borderStyle": "black",
+		"backgroundColor": "#FFFFFF",
+		"list": [{
+			// #ifndef MP-WEIXIN
+			"pagePath": "uni_modules/uni-cms-article/pages/list/list",
+			// #endif
+			// #ifdef MP-WEIXIN
+			"pagePath": "pages/cms-article/list/list",
+			// #endif
+			"iconPath": "static/tabbar/home.png",
+			"selectedIconPath": "static/tabbar/home-active.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/note/note",
+			"iconPath": "static/tabbar/xiaoji.png",
+			"selectedIconPath": "/static/tabbar/xiaoji-active.png",
+			"text": "小记"
+		}, {
+			"pagePath": "pages/video/video",
+			"iconPath": "static/tabbar/media.png",
+			"selectedIconPath": "static/tabbar/media-active.png",
+			"text": "短视频"
+		}, {
+			"pagePath": "pages/ucenter/ucenter",
+			"iconPath": "static/tabbar/me.png",
+			"selectedIconPath": "static/tabbar/me-active.png",
+			"text": "我的"
+		}]
+	},
+	"uniIdRouter": {
+		"loginPage": "uni_modules/uni-id-pages/pages/login/login-withpwd",
+		"needLogin": [
+			"/uni_modules/uni-id-pages/pages/userinfo/userinfo",
+			"/pages/mine/myLikes/myLikes",
+			"/pages/mine/myCollect/myCollect",
+			"/pages/mine/readLog/readLog",
+			"/pages/mine/settings/settings",
+			"/pages/myWorks/myWorks",
+			"/pages/myNotes/myNotes",
+			"/pages/myVideo/myVideo",
+			"/pages/myNotes/add/add"
+		],
+		"resToLogin": true
+	}
+}

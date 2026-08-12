@@ -1,0 +1,22 @@
+<template>
+	<view class="search-page">
+		
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+.search-page {}
+</style>

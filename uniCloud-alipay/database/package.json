@@ -1,0 +1,9 @@
+{
+  "name": "database",
+  "dependencies": {
+    "uni-captcha": "file:../../uni_modules/uni-captcha/uniCloud/cloudfunctions/common/uni-captcha",
+    "quill-delta-converter": "file:../../uni_modules/uni-cms-article/uniCloud/cloudfunctions/common/quill-delta-converter",
+    "uni-id-common": "file:../../uni_modules/uni-id-common/uniCloud/cloudfunctions/common/uni-id-common"
+  },
+  "extensions": {}
+}

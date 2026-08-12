@@ -1,0 +1,7 @@
+{
+  "name": "cms-note-like-co",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

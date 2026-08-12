@@ -1,0 +1,7 @@
+{
+  "name": "cms-categary-co",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
