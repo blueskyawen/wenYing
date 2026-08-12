@@ -58,6 +58,7 @@ async function sendSmsCode ({
     scene
   })
   await uniCloud.sendSms({
+	appid: smsConfig.appid,
     smsKey: smsConfig.smsKey,
     smsSecret: smsConfig.smsSecret,
     phone: mobile,
