@@ -92,7 +92,7 @@
 				curTab: 0,
 				isLoading: true,
 				categaryObj: {},
-				isSetting: false,
+				isSetting: false
 			}
 		},
 		computed: {

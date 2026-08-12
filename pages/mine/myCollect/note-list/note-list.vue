@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view class="page-list">
 		<unicloud-db ref="udb" v-slot:default="{data, pagination, loading, hasMore, error}" :where="udbWhere"
 			collection="cms-notes-collect" @load="loadData" @error="isLoading == false"
 			:page-size="10">
@@ -73,6 +73,10 @@
 </script>
 
 <style lang="scss" scoped>
+	.page-list {
+		height: 100%;
+		overflow-y: auto;
+	}
 .note-item {
 	border: solid 1px #dcdcdc;
 	border-radius: 6px;

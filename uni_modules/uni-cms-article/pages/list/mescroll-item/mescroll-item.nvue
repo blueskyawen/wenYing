@@ -121,7 +121,6 @@
 			 console.log(this.categeryId)
 			  this.listData = this.loadType === 'loadMore' ? this.listData.concat(listData) : listData
 			  this.loadType = null
-
 			},
 			// 刷新
 			refresh() {

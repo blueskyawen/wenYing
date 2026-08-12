@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view class="page-list">
 		<unicloud-db ref="udb" v-slot:default="{data, pagination, loading, hasMore, error}" :where="udbWhere"
 			collection="opendb-news-favorite" @load="isLoading == false" @error="isLoading == false"
 			:page-size="10">
@@ -71,6 +71,9 @@
 	}
 </script>
 
-<style>
-
+<style scoped>
+	.page-list {
+		height: 100%;
+		overflow-y: auto;
+	}
 </style>
