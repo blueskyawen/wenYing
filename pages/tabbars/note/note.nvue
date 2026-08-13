@@ -247,7 +247,7 @@
 			},
 			goNoteQuare() {
 				uni.navigateTo({
-					url: '/pages/note/noteSquare/noteSquare'
+					url: '/pages/notes/noteSquare/noteSquare'
 				})
 			},
 			addSameOne(item) {
@@ -482,7 +482,7 @@
 						shareOPtions.title = '欢迎来到文影-小记';
 						shareOPtions.miniProgram = {
 							id:'gh_33446d7f7a26',
-							path:`/pages/note/noteView/noteView?id=${this.shareNoteItem._id}`,
+							path:`/pages/notes/noteView/noteView?id=${this.shareNoteItem._id}`,
 							webUrl:'https://uniapp.dcloud.io',
 							type:0
 						};

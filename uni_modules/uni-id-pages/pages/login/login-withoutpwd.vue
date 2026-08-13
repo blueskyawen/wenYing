@@ -62,7 +62,7 @@
 				type: "", //快捷登录方式
 				phone: "", //手机号码
 				focusPhone: false,
-				logo: "/static/logo.png"
+				logo: "/static/logo.jpg"
 			}
 		},
 		computed: {
@@ -74,10 +74,10 @@
 			},
 			imgSrc() { //大快捷登录按钮图
 				const images = {
-					weixin: '/uni_modules/uni-id-pages/static/login/weixin.png',
-					apple: '/uni_modules/uni-id-pages/static/app/apple.png',
-					huawei: '/uni_modules/uni-id-pages/static/login/huawei.png',
-					huaweiMobile: '/uni_modules/uni-id-pages/static/login/huawei-mobile.png',
+					weixin: 'https://env-00jy6jrefihl.normal.cloudstatic.cn/CDNS/weixin.png',
+					apple: 'https://env-00jy6jrefihl.normal.cloudstatic.cn/CDNS/apple.png',
+					huawei: 'https://env-00jy6jrefihl.normal.cloudstatic.cn/CDNS/huawei.png',
+					huaweiMobile: 'https://env-00jy6jrefihl.normal.cloudstatic.cn/CDNS/huawei-mobile.png',
 				}
 				return images[this.type]
 			}

@@ -9,7 +9,7 @@ export default {
 			// //左侧显示的应用名称	
 			// "appname": 'uni-starter',
 			// //应用的图标	
-			// "logo": './static/logo.png',
+			// "logo": './static/logo.jpg',
 		}
 	},
 	"mp": {
@@ -23,7 +23,7 @@ export default {
 		//应用名称
 		"appName": "文影",
 		//应用logo
-		"logo": "/static/logo.png",
+		"logo": "/static/logo.jpg",
 		//公司名称
 		"company": "上饶文岚网络技术有限公司",
 		//口号

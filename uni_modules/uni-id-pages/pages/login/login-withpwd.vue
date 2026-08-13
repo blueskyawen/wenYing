@@ -51,7 +51,7 @@
 				"needCaptcha": false,
 				"focusUsername": false,
 				"focusPassword": false,
-				"logo": "/static/logo.png"
+				"logo": "/static/logo.jpg"
 			}
 		},
 		onShow() {

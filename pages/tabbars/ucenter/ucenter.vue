@@ -47,8 +47,10 @@
 		store,
 		mutations
 	} from '@/uni_modules/uni-id-pages/common/store.js';
+	// #ifdef APP
 	import checkUpdate from '@/uni_modules/uni-upgrade-center-app/utils/check-update';
 	import callCheckVersion from '@/uni_modules/uni-upgrade-center-app/utils/call-check-version';
+	// #endif
 	const db = uniCloud.database();
 	import parseImageUrl from "@/common/parseImageUrl.js"
 	

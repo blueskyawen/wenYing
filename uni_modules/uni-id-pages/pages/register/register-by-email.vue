@@ -113,7 +113,7 @@
 				focusNickname:false,
 				focusPassword:false,
 				focusPassword2:false,
-				logo: "/static/logo.png"
+				logo: "/static/logo.jpg"
 			}
 		},
 		onReady() {

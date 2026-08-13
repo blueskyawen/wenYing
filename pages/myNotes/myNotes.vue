@@ -101,7 +101,7 @@
 			goDetail(item) {
 				if (!this.isSetting) {
 					uni.navigateTo({
-						url: '/pages/note/noteView/noteView?id=' + item._id
+						url: '/pages/notes/noteView/noteView?id=' + item._id
 					})
 				}
 			},

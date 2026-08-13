@@ -78,7 +78,7 @@
 					{
 						"id": "apple",
 						"text": "苹果登录",
-						"logo": "/uni_modules/uni-id-pages/static/uni-fab-login/apple.png",
+						"logo": "https://env-00jy6jrefihl.normal.cloudstatic.cn/CDNS/apple.png",
 					},
 					{
 						"id": "univerify",

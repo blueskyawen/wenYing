@@ -152,7 +152,7 @@
 							}
 							let tmpAvator = resUserUrls.find(y => y.source == x.user_id[0].avatar_file.url)
 							if (tmpAvator) {
-								x.avatar_url = tmpAvator.src || '/static/yhdsl/car.png';
+								x.avatar_url = tmpAvator.src || '/static/logo.jpg';
 							}
 
 							if (x.user_id && x.user_id[0]) {

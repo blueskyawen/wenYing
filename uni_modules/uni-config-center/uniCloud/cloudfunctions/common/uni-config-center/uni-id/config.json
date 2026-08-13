@@ -58,19 +58,14 @@
   },
   "service": {
     "sms": {
-	  "appid": "__UNI__E93A4F9",
-      "name": "文影",
+      "name": "应用名称，对应短信模版的name",
       "codeExpiresIn": 300,
       "smsKey": "短信密钥key，开通短信服务处可以看到",
       "smsSecret": "短信密钥secret，开通短信服务处可以看到",
 			"scene": {
 				"bind-mobile-by-sms": { 
-					"templateId": "uni_sms_test", 
+					"templateId": "绑定手机号使用的短信验证码模板", 
 					"codeExpiresIn": 240 
-				},
-				"login-by-sms": {
-					"templateId": "uni_sms_test", 
-					"codeExpiresIn": 300 
 				}
 			}
     },

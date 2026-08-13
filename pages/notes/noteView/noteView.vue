@@ -77,7 +77,7 @@
 			}
 			return {
 				title: this.item.content,
-				path: `/pages/note/noteView/noteView?id=${this.id}`,
+				path: `/pages/notes/noteView/noteView?id=${this.id}`,
 				desc: "文影-小记",
 				imageUrl: this.item.cover_src || 'https://web-assets.dcloud.net.cn/unidoc/zh/share-logo@3.png'
 			}

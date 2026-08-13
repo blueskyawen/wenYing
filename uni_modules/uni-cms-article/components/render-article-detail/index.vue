@@ -42,7 +42,7 @@ import text from './text.vue'
 import image from './image.vue'
 import video from './video.vue'
 import list from './list.vue'
-import unlockContent from './unlock-content.vue'
+// import unlockContent from './unlock-content.vue'
 
 export default {
 	name: "render-article-detail",
@@ -70,7 +70,7 @@ export default {
 		}
 	},
 	components: {
-		renderUnlockContent: unlockContent,
+		// renderUnlockContent: unlockContent,
 		renderText: text,
 		renderImage: image,
 		renderList: list,

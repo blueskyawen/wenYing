@@ -65,7 +65,7 @@
 			},
 			goDetail(item) {
 				uni.navigateTo({
-					url: '/pages/note/noteView/noteView?id=' + item.note_id
+					url: '/pages/notes/noteView/noteView?id=' + item.note_id
 				})
 			},
 		}

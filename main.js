@@ -6,12 +6,12 @@ import './uni.promisify.adaptor'
 Vue.config.productionTip = false
 App.mpType = 'app'
 
-import store from '@/store';
+// import store from '@/store';
 import uView from '@/uni_modules/uview-ui'
 Vue.use(uView)
 
 const app = new Vue({
-	store,
+	// store,
   ...App
 })
 app.$mount()

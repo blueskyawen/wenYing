@@ -87,7 +87,7 @@
 					},
 					...passwordMod.getPwdRules()
 				},
-				logo: "/static/logo.png"
+				logo: "/static/logo.jpg"
 			}
 		},
 		computed: {

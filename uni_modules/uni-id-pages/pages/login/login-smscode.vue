@@ -24,7 +24,7 @@
 				"code": "",
 				"phone": "",
 				"captcha": "",
-				"logo": "/static/logo.png"
+				"logo": "/static/logo.jpg"
 			}
 		},
 		computed: {

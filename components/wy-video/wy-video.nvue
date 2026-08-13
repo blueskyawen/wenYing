@@ -30,27 +30,32 @@
 			</view>
 			<!-- @click.stop="tapLove(item)" -->
 			<view class="item-img" v-if="!showOpers">
-				<cover-image
+<!-- 				<cover-image
 					:src="curItem.isLike ? '/static/yhdsl/dz2.png' : '/static/yhdsl/dz1.png'"
 					class="img-left" @click="tapLike"
-				></cover-image>
+				></cover-image> -->
+				<u-icon name="heart-fill" size="38" :color="curItem.isLike ? '#fa3534' : '#fff'"
+					@click="tapLike"></u-icon>
 				<text class="right-text">{{ curItem.like_count || 0 }}</text>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-				<cover-image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
-					class="img-left" @click="tapCollect"></cover-image>
+<!-- 				<cover-image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
+					class="img-left" @click="tapCollect"></cover-image> -->
+				<u-icon name="star-fill" size="38" :color="curItem.isCollect ? '#ff9900' : '#fff'" @click="tapCollect"></u-icon>
 				<text class="right-text">{{ curItem.collect_count || 0 }}</text>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-				<cover-image src="/static/yhdsl/zf.png" class="img-left"></cover-image>
+<!-- 				<cover-image src="/static/yhdsl/zf.png" class="img-left"></cover-image> -->
+				<uni-icons type="redo-filled" size="38" color="#fff"></uni-icons>
 				<text class="right-text" @click="tapShare">{{ curItem.zhuanfa_count || 0 }}</text>
 			</view>
 			<view class="item-img" v-if="showOpers" @click="openActionsPlane">
-				<cover-image src="/static/yhdsl/more-opers.png" 
-					class="img-left"></cover-image>
+<!-- 				<cover-image src="/static/yhdsl/more-opers.png" 
+					class="img-left"></cover-image> -->
+				<uni-icons type="more-filled" size="38" color="#fff"></uni-icons>
 				<text class="right-text">更多</text>
 			</view>
-			<cover-image src="/static/yhdsl/zhoujielun.jpg" class="carIcon img"></cover-image>
+			<cover-image src="/static/yhdsl/changp.png" class="carIcon img"></cover-image>
 		</cover-view>
 		<view ref="curDes" class="cur-des">
 			<text>{{ curItem.description }}</text>

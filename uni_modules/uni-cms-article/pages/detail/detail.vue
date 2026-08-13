@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import uniNavBar from '@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-nav-bar.vue';
+// import uniNavBar from '@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-nav-bar.vue';
 import renderArticleDetail from "@/uni_modules/uni-cms-article/components/render-article-detail/index.vue";
 import translatePublishTime from "@/uni_modules/uni-cms-article/common/publish-time";
 import { store} from '@/uni_modules/uni-id-pages/common/store.js';
@@ -103,7 +103,7 @@ const userDBName = 'uni-id-users'
 
 export default {
   components: {
-    uniNavBar,
+    // uniNavBar,
     renderArticleDetail
   },
   data() {
