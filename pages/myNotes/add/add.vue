@@ -31,7 +31,9 @@
 </template>
 
 <script>
+	// #ifdef APP-PLUS
 	import permision from "@/common/permission.js";
+	// #endif
 	import parseImageUrl from "@/common/parseImageUrl.js";
 	const sourceType = [
 		['camera'],
@@ -216,6 +218,7 @@
 					urls: this.imageList
 				})
 			},
+			// #ifdef APP-PLUS
 			async checkPermission(code) {
 				let type = code ? code - 1 : this.sourceTypeIndex;
 				let status = permision.isIOS ? await permision.requestIOS(sourceType[type][0]) :
@@ -238,6 +241,7 @@
 			
 				return status;
 			},
+			// #endif
 			chooseImage: async function() {
 				// #ifdef APP-PLUS
 				// TODO 选择相机或相册时 需要弹出actionsheet，目前无法获得是相机还是相册，在失败回调中处理

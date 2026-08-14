@@ -45,6 +45,9 @@
 </template>
 
 <script>
+	// #ifdef APP-PLUS
+	import permision from "@/common/permission.js";
+	// #endif
 	const extNameList= ['mp4', 'avi', 'mov', 'rmvb', 'rm', 'flv', '3gp', 'wmv', 'mkv'];
 	const sourceType = [
 		['camera'],
@@ -186,6 +189,15 @@
 				this.formData.originalName = this.videoFile.name;
 			},
 			async confirm() {
+				// #ifdef APP-PLUS
+				// TODO 选择相机或相册时 需要弹出actionsheet，目前无法获得是相机还是相册，在失败回调中处理
+				if (this.sourceTypeIndex !== 2) {
+					let status = await this.checkPermission();
+					if (status !== 1) {
+						return;
+					}
+				}
+				// #endif
 				console.log(this.videoFile);
 				console.log(this.formData);
 				if (this.formData.tags.length > 3) {
@@ -453,6 +465,31 @@
 					this.uploading = false;
 				})
 			}
+			// #ifdef APP-PLUS
+			,
+			async checkPermission(code) {
+				let type = code ? code - 1 : this.sourceTypeIndex;
+				let status = permision.isIOS ? await permision.requestIOS(sourceType[type][0]) :
+					await permision.requestAndroid(type === 0 ? 'android.permission.CAMERA' :
+						'android.permission.READ_EXTERNAL_STORAGE');
+			
+				if (status === null || status === 1) {
+					status = 1;
+				} else {
+					uni.showModal({
+						content: "没有开启权限",
+						confirmText: "设置",
+						success: function(res) {
+							if (res.confirm) {
+								permision.gotoAppSetting();
+							}
+						}
+					})
+				}
+			
+				return status;
+			}
+			// #endif
 		}
 	}
 </script>

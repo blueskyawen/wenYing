@@ -130,7 +130,9 @@
  * 云端一体搜索模板
  * @description uniCloud云端一体搜索模板，自带下拉候选、历史搜索、热搜。无需再开发服务器代码
  */
-
+// #ifdef APP-PLUS
+import permision from "@/common/permission.js"
+// #endif
 import translatePublishTime from "@/uni_modules/uni-cms-article/common/publish-time";
 import parseScanResult from "@/uni_modules/uni-cms-article/common/parse-scan-result";
 import {parseImageUrl} from "@/uni_modules/uni-cms-article/common/parse-image-url";
@@ -501,16 +503,44 @@ export default {
 		publishTime(timestamp) {
 			return translatePublishTime(timestamp)
 		},
-    scanEvent () {
-      uni.scanCode({
-        onlyFromCamera: true,
-        scanType: ["qrCode"],
-        success: (e) => parseScanResult(e.result),
-        fail: (e) => {
-          console.error(e)
-        }
-      })
-    }
+		async scanEvent () {
+			// #ifdef APP-PLUS
+			let status = await this.checkPermission();
+			if (status !== 1) {
+			    return;
+			}
+			// #endif
+		  uni.scanCode({
+			onlyFromCamera: true,
+			scanType: ["qrCode"],
+			success: (e) => parseScanResult(e.result),
+			fail: (e) => {
+			  console.error(e)
+			}
+		  })
+		}
+		// #ifdef APP-PLUS
+		,
+		async checkPermission(code) {
+			let status = permision.isIOS ? await permision.requestIOS('camera') :
+				await permision.requestAndroid('android.permission.CAMERA');
+		
+			if (status === null || status === 1) {
+				status = 1;
+			} else {
+				uni.showModal({
+					content: "需要相机权限",
+					confirmText: "设置",
+					success: function(res) {
+						if (res.confirm) {
+							permision.gotoAppSetting();
+						}
+					}
+				})
+			}
+			return status;
+		}
+		// #endif
 	},
 	onReachBottom() {
 		// 当滚动到底部时，加载更多数据
