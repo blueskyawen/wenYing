@@ -22,7 +22,7 @@
 			<u-parse class="article-content" :content="articleContent"></u-parse>
 		</view>
 		<u-loading-page v-if="loading"></u-loading-page>
-		<u-empty class="ui-empty" v-show="!loading && !title" mode="data"></u-empty>
+		<u-empty class="ui-empty" v-if="!loading && !title" mode="data"></u-empty>
 		<u-back-top :scroll-top="scrollTop" :iconStyle="iconStyle" :top="200"></u-back-top>
 	</view>
 </template>

@@ -1,16 +1,18 @@
 <template>
 	<view class="ucenter">
 		<uni-sign-in ref="signIn"></uni-sign-in>
-		<view class="userInfo" @click.capture="toUserInfo">
-			<u-avatar v-if="hasLogin && (userInfo.nickname || (userInfo.avatar_file && userInfo.avatar_file.url))" 
-				:src="avatorImg" :text="nameText" :size="60" :font-size="24" bg-color="#ffb34b"></u-avatar>
-			<view v-else class="defaultAvatarUrl">
-				<uni-icons color="#ffffff" size="50" type="person-filled" />
-			</view>
+		<view class="userInfo" @click.capture="toUserInfo"  :style="{ height: heighth + 'px' }">
+			<view class="user">
+				<u-avatar v-if="hasLogin && (userInfo.nickname || (userInfo.avatar_file && userInfo.avatar_file.url))" 
+					:src="avatorImg" :text="nameText" :size="60" :font-size="24" bg-color="#ffb34b"></u-avatar>
+				<view v-else class="defaultAvatarUrl">
+					<uni-icons color="#ffffff" size="50" type="person-filled" />
+				</view>
 
-			<view class="logo-title">
-				<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile|| '未设置'}}</text>
-				<text class="uer-name" v-else>请登录</text>
+				<view class="logo-title">
+					<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile|| '未设置'}}</text>
+					<text class="uer-name" v-else>请登录</text>
+				</view>
 			</view>
 		</view>
 <!-- 		<u-grid class="grid" :border="false" col="3">
@@ -75,6 +77,11 @@
 					}
 				],
 				ucenterList: [
+					{
+						"title": '我关注的',
+						"to": '/pages/followers/followers',
+						"icon": "auth-filled"
+					},
 					{
 						"title": '我的文章',
 						"to": '/pages/myWorks/myWorks',
@@ -142,7 +149,8 @@
 					},
 					// #endif
 				],
-				avatorImg: ''
+				avatorImg: '',
+				heighth: 160
 			}
 		},
 		computed: {
@@ -181,6 +189,7 @@
 				showBadge: this.appVersion.hasNew
 			})
 			//#endif
+			this.heighth = Math.floor((uni.getWindowInfo().windowHeight * 33) / 100);
 		},
 		onReady() {
 			this.getAvatorImg()
@@ -297,6 +306,7 @@
 <style lang="scss" scoped>
 page {
 	background: #f2f2f2;
+	// height: 100%;
 }
 /* #ifndef APP-NVUE */
 view {
@@ -307,19 +317,27 @@ view {
 
 page {
 	background-color: #f8f8f8;
+	//height: 100%;
 }
 /* #endif*/
 .ucenter {
+	height: 100%;
 	// display: flex;
 	// flex: 1;
 	// flex-direction: column;
 	background-color: #f2f2f2;
 	.userInfo {
-		padding-top: 60px;
+		height: 40%;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
 		display: flex;
 		background-color: #c4c6c9;
+		.user {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 		.defaultAvatarUrl{
 			width: 150rpx;
 			height: 150rpx;
@@ -334,8 +352,8 @@ page {
 			justify-content: space-between;
 			flex-direction: row;
 			.uer-name {
-				height: 100rpx;
-				line-height: 100rpx;
+				height: 70rpx;
+				line-height: 70rpx;
 				font-size: 38rpx;
 				color: #FFFFFF;
 			}

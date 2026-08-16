@@ -11,53 +11,64 @@
 				</view>
 			</swiper-item>
 		</swiper>
-		<cover-view class="cover-view-left">
+<!-- 		<cover-view class="cover-view-left">
+			<cover-view class="view-left-text">@{{ curItem.autorName }}</cover-view>
+			<cover-view class="view-title">{{ curItem.title }}</cover-view>
+			<cover-view class="view-left-text-content" ref="desRef">
+				<cover-view class="text-content-text" :class="{'visive': isExpand}">{{ curItem.description }}</cover-view>
+				<cover-image v-if="isShowDesMore" class="more" :src="isExpand ? '/static/yhdsl/shouqi.png' : '/static/yhdsl/zhankai.png'" 
+					@click="isExpand = !isExpand"></cover-image>
+			</cover-view>
+			<view class="view-tags" v-if="curItem.tagList">
+				<text v-for="tag in curItem.tagList" :key="tag.id" @tap="cilckTag(tag)">#{{tag.name}}</text>
+			</view>
+		</cover-view> -->
+		<view class="cover-view-left">
 			<view class="view-left-text">@{{ curItem.autorName }}</view>
 			<view class="view-title">{{ curItem.title }}</view>
-			<view class="view-left-text-content" ref="desRef">
-				<text class="text-content-text" :class="{'visive': isExpand}">{{ curItem.description }}</text>
-				<u-icon v-if="isShowDesMore" class="more" :name="isExpand ? 'arrow-up-fill' : 'arrow-down-fill'" 
-					color="#fcfcfc" size="13" @click="isExpand = !isExpand"></u-icon>
+			<view class="view-left-text-content" id="desRef">
+				<view class="text-content-text" :class="{'visive': isExpand}">{{ curItem.description }}</view>
+<!-- 				<u-icon v-if="isShowDesMore" class="more" :name="isExpand ? 'arrow-up-fill' : 'arrow-down-fill'"
+					color="#fcfcfc" size="13" @click="isExpand = !isExpand"></u-icon> -->
+				<image class="more" src="/static/yhdsl/shouqi.png" :class="{'zhankai': !isExpand}" @click="isExpand = !isExpand"></image>
 			</view>
 			<view class="view-tags" v-if="curItem.tagList">
 				<text v-for="tag in curItem.tagList" :key="tag.id" @tap="cilckTag(tag)">#{{tag.name}}</text>
 			</view>
-		</cover-view>
+		</view>
 		<cover-view class="cover-view-right">
 			<view class="item-img">
 				<cover-image class="avator img r-item" :src="curItem.avatar_url"></cover-image>
-				<text class="right-follow">+</text>
+				<!-- <cover-image class="right-follow" src="/static/yhdsl/tj.png"></cover-image> -->
+				<cover-view class="right-follow">+</cover-view>
 			</view>
-			<!-- @click.stop="tapLove(item)" -->
 			<view class="item-img" v-if="!showOpers">
-<!-- 				<cover-image
-					:src="curItem.isLike ? '/static/yhdsl/dz2.png' : '/static/yhdsl/dz1.png'"
+				<cover-image
+					:src="curItem.isLike ? '/static/yhdsl/like2.png' : '/static/yhdsl/like1.png'"
 					class="img-left" @click="tapLike"
-				></cover-image> -->
-				<u-icon name="heart-fill" size="38" :color="curItem.isLike ? '#fa3534' : '#fff'"
-					@click="tapLike"></u-icon>
-				<text class="right-text">{{ curItem.like_count || 0 }}</text>
+				></cover-image>
+				<!-- <u-icon name="heart-fill" size="38" :color="curItem.isLike ? '#fa3534' : '#fff'" -->
+					<!-- @click="tapLike"></u-icon> -->
+				<cover-view class="right-text">{{ curItem.like_count || 0 }}</cover-view>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-<!-- 				<cover-image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
-					class="img-left" @click="tapCollect"></cover-image> -->
-				<u-icon name="star-fill" size="38" :color="curItem.isCollect ? '#ff9900' : '#fff'" @click="tapCollect"></u-icon>
-				<text class="right-text">{{ curItem.collect_count || 0 }}</text>
+				<cover-image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
+					class="img-left" @click="tapCollect"></cover-image>
+				<!-- <u-icon name="star-fill" size="38" :color="curItem.isCollect ? '#ff9900' : '#fff'" @click="tapCollect"></u-icon> -->
+				<cover-view class="right-text">{{ curItem.collect_count || 0 }}</cover-view>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-<!-- 				<cover-image src="/static/yhdsl/zf.png" class="img-left"></cover-image> -->
-				<uni-icons type="redo-filled" size="38" color="#fff"></uni-icons>
-				<text class="right-text" @click="tapShare">{{ curItem.zhuanfa_count || 0 }}</text>
+				<cover-image src="/static/yhdsl/zhuanfa.png" class="img-left"></cover-image>
+				<cover-view class="right-text" @click="tapShare">{{ curItem.zhuanfa_count || 0 }}</cover-view>
 			</view>
-			<view class="item-img" v-if="showOpers" @click="openActionsPlane">
-<!-- 				<cover-image src="/static/yhdsl/more-opers.png" 
-					class="img-left"></cover-image> -->
-				<uni-icons type="more-filled" size="38" color="#fff"></uni-icons>
-				<text class="right-text">更多</text>
+			<view class="item-img" v-if="showOpers">
+				<cover-image src="/static/yhdsl/more-opers.png" 
+					class="img-left"  @click="openActionsPlane"></cover-image>
+				<cover-view class="right-text" @click="openActionsPlane">更多</cover-view>
 			</view>
 			<cover-image src="/static/yhdsl/changp.png" class="carIcon img"></cover-image>
 		</cover-view>
-		<view ref="curDes" class="cur-des">
+		<view id="curDes" class="cur-des">
 			<text>{{ curItem.description }}</text>
 		</view>
 	</view>
@@ -100,9 +111,11 @@
 				pauseFlag: true,
 				heighth: 500,
 				pauseUrl: '',
-				isShowDesMore: false,
+				// isShowDesMore: false,
 				isExpand: false,
-				isInOper: false
+				isInOper: false,
+				curRefWidth: 0,
+				allRefWidth: 0
 			}
 		},
 		created() {
@@ -129,11 +142,9 @@
 			curItem() {
 				return this.list.length ? this.list[this.current] : {}
 			},
-			isDesMore() {
-				let innerwidth = this.$refs.desRef && this.$refs.desRef.$el ? (this.$refs.desRef.$el.offsetWidth || 0) : 0
-				let scrollwidth = this.$refs.curDes && this.$refs.curDes.$el ? (this.$refs.curDes.$el.offsetWidth || 0) : 0
-				// console.log('innerwidth='+innerwidth+';scrollwidth='+scrollwidth)
-				return innerwidth < scrollwidth;
+			isShowDesMore() {
+				console.log('curRefWidth='+this.curRefWidth+';allRefWidth='+this.allRefWidth)
+				return (this.curRefWidth * 2) < this.allRefWidth;
 			},
 			userInfo() {
 				return store.userInfo
@@ -248,8 +259,13 @@
 			checkShowDespMore() {
 				let innerwidth = this.$refs.desRef && this.$refs.desRef.$el ? (this.$refs.desRef.$el.offsetWidth || 0) : 0
 				let scrollwidth = this.$refs.curDes && this.$refs.curDes.$el ? (this.$refs.curDes.$el.offsetWidth || 0) : 0
-				console.log('innerwidth='+innerwidth+';scrollwidth='+scrollwidth)
-				this.isShowDesMore = (innerwidth * 2) < scrollwidth;
+				uni.createSelectorQuery().in(this).select("#desRef").boundingClientRect().exec(e => {
+					this.curRefWidth = e[0] ? e[0].width : 0
+				})
+				uni.createSelectorQuery().in(this).select("#curDes").boundingClientRect().exec(e => {
+					this.allRefWidth = e[0] ? e[0].width : 0
+				})
+				// this.isShowDesMore = (innerwidth * 2) < scrollwidth;
 			},
 			tapLike() {
 				if (this.isInOper) return;
@@ -404,7 +420,8 @@
 		top: 0;
 		color: transparent;
 		width: max-content;
-		
+		//z-index: 999;
+		//color: red;
 	}
 	.cover-view-left {
 		position: absolute;
@@ -436,8 +453,18 @@
 				-webkit-line-clamp: 2;    /* 限制显示行数 */
 				-webkit-box-orient: vertical;
 				overflow: hidden;
+				white-space: normal;
+				text-overflow: ellipsis;
 				&.visive {
 					display: block;
+				}
+				::v-deep .uni-cover-view {
+					display: inherit;
+					-webkit-line-clamp: 2;    /* 限制显示行数 */
+					-webkit-box-orient: vertical;
+					overflow: hidden;
+					white-space: normal;
+					text-overflow: ellipsis;
 				}
 			}
 			.more {
@@ -445,6 +472,11 @@
 				right: 0;
 				bottom: 2px;
 				color: #fcfcfc;
+				width: 13px;
+				height: 13px;
+				&.zhankai {
+					transform: rotate(180deg);
+				}
 			}
 		}
 		.view-tags text {
@@ -481,7 +513,7 @@
 				left: 36upx;
 				top: 78upx;
 				color: #ffffff;
-				font-size: 18px;
+				font-size: 34rpx;
 				width: 34upx;
 				height: 34upx;
 				background-color: #f12f5b;
@@ -528,6 +560,7 @@
 			font-size: 11px;
 			text-align: center;
 			margin-bottom: 40upx;
+			margin-top: 8upx;
 		}
 	}
 }

@@ -73,7 +73,7 @@
 			  <uni-icons type="spinner-cycle" size="35px"/>
 			</view>
 		</view>
-		<view class="infrite-action" v-show="!isLoading">
+		<view class="infrite-action" v-if="!isLoading">
 			<view class="action">
 				<view class="action-i" @tap.stop="clickLike">
 					<u-icon v-if="!isInLikes" name="heart" color="#b9b9b9" size="26"></u-icon>
@@ -87,7 +87,7 @@
 				</view>
 			</view>
 		</view>
-		<u-line v-show="!isLoading" margin="50rpx 0" color="#c8c9cc" length="90%"></u-line>
+		<u-line v-if="!isLoading" margin="50rpx 0" color="#c8c9cc" length="90%"></u-line>
 		<u-back-top :scroll-top="scrollTop" :iconStyle="iconStyle" :top="200"></u-back-top>
 	</view>
 </template>

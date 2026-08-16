@@ -347,6 +347,17 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pages/followers",
+			"pages": [
+				{
+					"path": "followers",
+					"style": {
+						"navigationBarTitleText": "我关注的"
+					}
+				}
+			]
 		}
 	],
 	"preloadRule": {
@@ -369,6 +380,7 @@
 				"pages/myWorks",
 				"pages/myVideo",
 				"pages/myNotes",
+				"pages/followers",
 				"uni_modules/uni-feedback/pages"
 			]
 		},
@@ -440,7 +452,8 @@
 			"/pages/myWorks/myWorks",
 			"/pages/myNotes/myNotes",
 			"/pages/myVideo/myVideo",
-			"/pages/myNotes/add/add"
+			"/pages/myNotes/add/add",
+			"/pages/followers/followers"
 		],
 		"resToLogin": true
 	}

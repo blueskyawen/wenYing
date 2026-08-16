@@ -15,7 +15,7 @@ export default {
 	"mp": {
 		"weixin": {
 			//微信小程序原始id，微信小程序分享时
-			"id": ""
+			"id": "wx2ec2db679de7e421"
 		}
 	},
 	//关于应用
