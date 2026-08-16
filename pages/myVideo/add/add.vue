@@ -55,14 +55,8 @@
 		['camera', 'album']
 	];
 	const mediaTypes = ['image', 'video'];
-	const tagList = [
-		{ id: '111111', name: '生活日常'},
-		{ id: '222222', name: '坚持健身'},
-		{ id: '333333', name: '旅行经历分享'},
-		{ id: '444444', name: '宠物用品推荐'},
-		{ id: '555555', name: '在你的全世界经过'}
-	];
-	const cmsVideoCo = uniCloud.importObject('cms-video-co')
+	const cmsVideoCo = uniCloud.importObject('cms-video-co');
+	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
 	export default {
 		data() {
 			return {
@@ -130,12 +124,14 @@
 						}]
 					}
 				},
-				tagOptions: []
+				tagOptions: [],
+				tagList: []
 			}
 		},
 		onLoad(options) {
 			console.log('add video == onload');
 			this.heighth = uni.getWindowInfo().windowHeight;
+			this.getTagList();
 		},
 		computed: {
 			filesStyle() {
@@ -145,9 +141,14 @@
 			},
 			loginUserId() {
 				return uniCloud.getCurrentUserInfo() ? uniCloud.getCurrentUserInfo().uid : '';
-			},
+			}
 		},
 		methods: {
+			getTagList() {
+				cmsTopicCollectDB.getList().then(res => {
+					this.tagList = res.data || [];
+				})
+			},
 			goBack() {
 				if (this.uploading) return;
 				console.log(this.videoFile);
@@ -167,9 +168,9 @@
 					})
 					return;
 				}
-				this.tagOptions = tagList.map(x => {
+				this.tagOptions = this.tagList.map(x => {
 					return {
-						value: x.id,
+						value: x._id,
 						text: x.name
 					}
 				});

@@ -6,17 +6,11 @@
 </template>
 
 <script>
-	const tagList = [
-		{ id: '111111', name: '生活日常'},
-		{ id: '222222', name: '坚持健身'},
-		{ id: '333333', name: '旅行经历分享'},
-		{ id: '444444', name: '宠物用品推荐'},
-		{ id: '555555', name: '在你的全世界经过'}
-	];
 	import parseImageUrl from "@/common/parseImageUrl.js"
 	const cmsVideoCo = uniCloud.importObject('cms-video-co')
 	const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co');
 	const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co');
+	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
 	import {
 		store
 	} from '@/uni_modules/uni-id-pages/common/store.js';
@@ -35,6 +29,7 @@
 				likeList: [],
 				collectList: [],
 				isFirst: true,
+				tagList: []
 			}
 		},
 		onLoad() {
@@ -103,6 +98,10 @@
 				let pageNum = this.page.pageNum;
 				let pageSize = this.page.pageSize;
 				try {
+					if (!this.tagList.length) {
+						let res4 = await cmsTopicCollectDB.getList()
+						this.tagList = res4.data || [];
+					}
 					if (this.isFirst && this.hasLogin) {
 						let res2 = await cmsVideoLikeDB.getList({
 							id: this.userInfo._id
@@ -161,7 +160,7 @@
 							x.isLike = !!this.likeList.find(t => t.video_id == x._id)
 							x.isCollect = !!this.collectList.find(t => t.video_id == x._id)
 							
-							x.tagList = tagList.filter(y => x.tags.includes(y.id));
+							x.tagList = this.tagList.filter(y => x.tags.includes(y._id));
 						});
 					}
 					if(pageNum == 0) {

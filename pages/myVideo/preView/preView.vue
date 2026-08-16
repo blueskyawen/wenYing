@@ -48,18 +48,12 @@
 </template>
 
 <script>
-	const tagList = [
-		{ id: '111111', name: '生活日常'},
-		{ id: '222222', name: '坚持健身'},
-		{ id: '333333', name: '旅行经历分享'},
-		{ id: '444444', name: '宠物用品推荐'},
-		{ id: '555555', name: '在你的全世界经过'}
-	];
 	import {
 		store
 	} from '@/uni_modules/uni-id-pages/common/store.js';
 	import parseImageUrl from "@/common/parseImageUrl.js"
 	const cmsVideoCo = uniCloud.importObject('cms-video-co')
+	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
 	export default {
 		data() {
 			return {
@@ -105,12 +99,7 @@
 					description: [],
 					tags: [],
 				},
-				tagOptions: tagList.map(x => {
-					return {
-						value: x.id,
-						text: x.name
-					}
-				}),
+				tagOptions: [],
 				rules: {
 					title: {
 						rules: [{
@@ -125,7 +114,8 @@
 						}]
 					}
 				},
-				isloading: false
+				isloading: false,
+				tagList: []
 			}
 		},
 		computed: {
@@ -146,11 +136,19 @@
 			this.id = options.id;
 			if (this.id) {
 				this.getList();
-			}		
+			}			
 		},
 		methods: {
 			async getList() {
 				try {
+					let res2 = await cmsTopicCollectDB.getList();
+					this.tagList = res2.data || [];
+					this.tagOptions = this.tagList.map(x => {
+						return {
+							value: x._id,
+							text: x.name
+						}
+					})
 					let res = await cmsVideoCo.getVideoList(this.id);
 					let tmpList = res.data || [];
 					if (tmpList.length) {
@@ -180,7 +178,7 @@
 								x.autorName = x.user_id[0].nickname || '无名氏'
 							}
 							
-							x.tagList = tagList.filter(y => x.tags.includes(y.id));
+							x.tagList = this.tagList.filter(y => x.tags.includes(y._id));
 						});
 						this.list = tmpList;
 						this.autoPlay();
@@ -285,11 +283,11 @@
 				this.operItem.title = this.formData.title;
 				this.operItem.description = this.formData.description;
 				this.operItem.tags = this.formData.tags;
-				this.operItem.tagList = tagList.filter(y => this.formData.tags.includes(y.id));
+				this.operItem.tagList = this.tagList.filter(y => this.formData.tags.includes(y._id));
 				this.list[0].title = this.formData.title;
 				this.list[0].description = this.formData.description;
 				this.list[0].tags = this.formData.tags;
-				this.list[0].tagList = tagList.filter(y => this.formData.tags.includes(y.id));
+				this.list[0].tagList = this.tagList.filter(y => this.formData.tags.includes(y._id));
 			},
 			proDelete() {
 				uni.showModal({
