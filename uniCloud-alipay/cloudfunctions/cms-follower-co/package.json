@@ -1,0 +1,7 @@
+{
+  "name": "cms-follower-co",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

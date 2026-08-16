@@ -356,6 +356,23 @@
 					"style": {
 						"navigationBarTitleText": "我关注的"
 					}
+				},
+				{
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/videos",
+			"pages": [
+				{
+					"path": "search/search",
+					"style": {
+						"navigationBarTitleText": "搜索"
+					}
 				}
 			]
 		}

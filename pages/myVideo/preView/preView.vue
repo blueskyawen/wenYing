@@ -1,6 +1,7 @@
 <template>
 	<view class="video-preview">
-		<wy-video ref="vidRef" :list="list" :total="1" :showOpers="true" @show-aciton="showActions"></wy-video>
+		<wy-video ref="vidRef" :list="list" :total="1" :showOpers="showOpers" :likeItems="likeList" 
+			:collectItems="collectList" @show-aciton="showActions" @action-change="handleActionChange"></wy-video>
 		<u-popup class="more-opers" :show="showOperPlane" mode="bottom" @close="closePlane">
 			<view class="share-content">
 				<view class="header">
@@ -54,6 +55,8 @@
 	import parseImageUrl from "@/common/parseImageUrl.js"
 	const cmsVideoCo = uniCloud.importObject('cms-video-co')
 	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
+	const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co');
+	const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co');
 	export default {
 		data() {
 			return {
@@ -115,7 +118,10 @@
 					}
 				},
 				isloading: false,
-				tagList: []
+				tagList: [],
+				showOpers: true,
+				likeList: [],
+				collectList: [],
 			}
 		},
 		computed: {
@@ -134,6 +140,8 @@
 		},
 		onLoad(options) {
 			this.id = options.id;
+			let autor = options.autor;
+			this.showOpers = this.id && autor
 			if (this.id) {
 				this.getList();
 			}			
@@ -141,14 +149,40 @@
 		methods: {
 			async getList() {
 				try {
-					let res2 = await cmsTopicCollectDB.getList();
-					this.tagList = res2.data || [];
+					let res4 = await cmsTopicCollectDB.getList();
+					this.tagList = res4.data || [];
 					this.tagOptions = this.tagList.map(x => {
 						return {
 							value: x._id,
 							text: x.name
 						}
 					})
+					
+					if (!this.showOpers) {
+						let res2 = await cmsVideoLikeDB.getList({
+							id: this.userInfo._id
+						})
+						let res3 = await cmsVideoCollectDB.getList({
+							id: this.userInfo._id
+						})
+						if (res2.data && res2.data.length) {
+							this.likeList = res2.data.map(x => {
+								return {
+									id: x._id,
+									video_id: x.video_id
+								}
+							});
+						}
+						if (res3.data && res3.data.length) {
+							this.collectList = res3.data.map(x => {
+								return {
+									id: x._id,
+									video_id: x.video_id
+								}
+							})
+						}
+					}
+					
 					let res = await cmsVideoCo.getVideoList(this.id);
 					let tmpList = res.data || [];
 					if (tmpList.length) {
@@ -172,8 +206,8 @@
 							if (tmpAvator) {
 								x.avatar_url = tmpAvator.src || '/static/yhdsl/car.png';
 							}
-							x.isLike = false
-							x.isCollect = false
+							x.isLike = !!this.likeList.find(t => t.video_id == x._id);
+							x.isCollect = !!this.collectList.find(t => t.video_id == x._id);
 							if (x.user_id && x.user_id[0]) {
 								x.autorName = x.user_id[0].nickname || '无名氏'
 							}
@@ -356,6 +390,32 @@
 						});
 					}
 				});
+			},
+			handleActionChange(e) {
+				if (e.type == 'like') {
+					if (e.action == 'add') {
+						cmsVideoCo.incLikeCount(e.value.video_id, 1).then(res => {
+							this.likeList.push({...e.value});
+						});
+					}
+					if (e.action == 'del') {
+						cmsVideoCo.incLikeCount(e.value.video_id, -1).then(res => {
+							this.likeList = this.likeList.filter(x => x.id !== e.value.id);
+						});	
+					}
+				}
+				if (e.type == 'collect') {
+					if (e.action == 'add') {
+						cmsVideoCo.incCollectCount(e.value.video_id, 1).then(res => {
+							this.collectList.push({...e.value});
+						});						
+					}
+					if (e.action == 'del') {
+						cmsVideoCo.incCollectCount(e.value.video_id, -1).then(res => {
+							this.collectList = this.collectList.filter(x => x.id !== e.value.id);
+						});	
+					}	
+				}
 			}
 		}
 	}

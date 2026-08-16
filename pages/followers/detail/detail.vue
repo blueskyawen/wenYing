@@ -1,6 +1,6 @@
 <template>
 	<view>
-		我关注的人
+		个人想去 {{ this.id }}
 	</view>
 </template>
 
@@ -8,8 +8,11 @@
 	export default {
 		data() {
 			return {
-				
+				id: ''
 			}
+		},
+		onLoad(options) {
+			this.id = options.id;
 		},
 		methods: {
 			

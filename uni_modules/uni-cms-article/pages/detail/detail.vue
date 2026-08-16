@@ -50,7 +50,7 @@
 				<view class="author">
 					<view>
 						<template v-if="docData.nickname && docData.nickname[0]">
-											<text class="at">{{ docData.nickname[0] || '' }}</text>
+											<text class="at autor-name" @click="tapAutor">{{ docData.nickname[0] || '' }}</text>
 											<text class="split">·</text>
 						</template>
 						<text class="date" v-if="docData.publish_date">{{ publishTime(docData.publish_date) }}</text>
@@ -368,7 +368,12 @@ export default {
     // 监听解锁内容事件，解锁内容后重新加载数据
     async onUnlockContent() {
       this.$refs.detail.loadData()
-    }
+    },
+	tapAutor() {
+		uni.navigateTo({
+			url: `/pages/followers/detail/detail?id=${this.docData.user_id}`
+		})
+	}
   }
 
 }
@@ -467,6 +472,7 @@ export default {
     justify-content: space-between;
     flex-direction: row;
     margin-top: 20rpx;
+
 	.likes {
 		display: inline-flex;
 		align-items: center;
@@ -481,7 +487,9 @@ export default {
       font-size: 26rpx;
       color: #ccc;
     }
-
+	.autor-name:hover {
+		color: #2979ff;
+	}
     .split {
       margin: 0 10rpx;
     }

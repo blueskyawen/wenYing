@@ -7,7 +7,7 @@
 			<view class="note-title">{{ item.content }}</view>
 			<view class="note-date">
 				<view class="date-left">
-					 <view class="note-autor">
+					 <view class="note-autor" @click="tapAutor">
 						{{ item.user_id && item.user_id.length ?  item.user_id[0].nickname : '游客'}}
 					 </view>
 					 <view class="publish-date">发布于 
@@ -227,6 +227,11 @@
 						})
 					}
 				}
+			},
+			tapAutor() {
+				uni.navigateTo({
+					url: `/pages/followers/detail/detail?id=${this.item.user_id[0]._id}`
+				})
 			}
 		}
 	}

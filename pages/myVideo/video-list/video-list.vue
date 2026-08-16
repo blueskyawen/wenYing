@@ -34,7 +34,7 @@
 		methods: {
 			goDetail(item) {
 				uni.navigateTo({
-					url: '/pages/myVideo/preView/preView?id=' + item._id
+					url: '/pages/myVideo/preView/preView?id=' + item._id + '&autor=me'
 				})
 			}
 		}

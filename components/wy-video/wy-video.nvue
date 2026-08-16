@@ -38,9 +38,9 @@
 		</view>
 		<cover-view class="cover-view-right">
 			<view class="item-img">
-				<cover-image class="avator img r-item" :src="curItem.avatar_url"></cover-image>
+				<cover-image class="avator img r-item" :src="curItem.avatar_url" @click="tapAutor"></cover-image>
 				<!-- <cover-image class="right-follow" src="/static/yhdsl/tj.png"></cover-image> -->
-				<cover-view class="right-follow">+</cover-view>
+				<cover-view v-if="!showOpers" class="right-follow" @click="tapfollow">+</cover-view>
 			</view>
 			<view class="item-img" v-if="!showOpers">
 				<cover-image
@@ -252,8 +252,8 @@
 				// this.playVideo()
 			},
 			cilckTag(tag) {
-				uni.showToast({
-					title: tag.name
+				uni.navigateTo({
+					url: `/pages/videos/search/search?tagId=${tag._id}&tagName=${tag.name}`
 				})
 			},
 			checkShowDespMore() {
@@ -406,6 +406,17 @@
 			tapShare() {},
 			openActionsPlane() {
 				this.$emit('show-aciton', {...this.curItem})
+			},
+			tapfollow() {
+				uni.showToast({
+					title: '关注'
+				})
+			},
+			tapAutor() {
+				if (this.showOpers) return;
+				uni.navigateTo({
+					url: `/pages/followers/detail/detail?id=${this.curItem.uploadUser}`
+				})
 			}
 		}
 	}
@@ -506,6 +517,7 @@
 				border-color: #ffffff;
 				height: 90upx;
 				width: 90upx;
+				background-color: #15b5f6;
 			}
 			.right-follow {
 				position: absolute;
