@@ -91,15 +91,16 @@
 	}
 	.title {
 		font-size: 12px;
-		margin: 10px 6px;
-		box-sizing: border-box;
 		color: #fcfcfc;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		position: absolute;
 		left: 0;
-		bottom: 0;
+		bottom: 10px;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 0 6px;
 	}
 }
 </style>

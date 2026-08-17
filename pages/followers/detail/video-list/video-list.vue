@@ -1,7 +1,7 @@
 <template>
 	<view class="page-list">
 		<unicloud-db ref="udb" v-slot:default="{data, pagination, loading, hasMore, error}" :where="udbWhere"
-			collection="cms-video-collect" @load="loadData" @error="isLoading == false"
+			collection="cms-videos" @load="loadData" @error="isLoading == false"
 			:page-size="10">
 			<uni-grid :column="3" :square="false" :showBorder="false">
 				<uni-grid-item v-for="(item,index) in list" :index="index" :key="index">
@@ -62,7 +62,7 @@
 			},
 			goDetail(item) {
 				uni.navigateTo({
-					url: '/pages/myVideo/preView/preView?id=' + item.video_id
+					url: '/pages/myVideo/preView/preView?id=' + item._id
 				})
 			},
 		}
@@ -91,6 +91,7 @@
 	}
 	.title {
 		font-size: 12px;
+		box-sizing: border-box;
 		color: #fcfcfc;
 		white-space: nowrap;
 		overflow: hidden;

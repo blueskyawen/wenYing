@@ -1,7 +1,7 @@
 <template>
 	<view class="video-preview">
 		<wy-video ref="vidRef" :list="list" :total="1" :showOpers="showOpers" :likeItems="likeList" 
-			:collectItems="collectList" @show-aciton="showActions" @action-change="handleActionChange"></wy-video>
+			:collectItems="collectList" :followers="followers" @show-aciton="showActions" @action-change="handleActionChange"></wy-video>
 		<u-popup class="more-opers" :show="showOperPlane" mode="bottom" @close="closePlane">
 			<view class="share-content">
 				<view class="header">
@@ -122,6 +122,7 @@
 				showOpers: true,
 				likeList: [],
 				collectList: [],
+				followers: []
 			}
 		},
 		computed: {
@@ -144,9 +145,25 @@
 			this.showOpers = this.id && autor
 			if (this.id) {
 				this.getList();
-			}			
+			}
+			if (!this.showOpers) {
+				this.getFollowerList();	
+			}
 		},
 		methods: {
+			getFollowerList() {
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				cmsFollowerCollectDB.get({
+					user_id: this.userInfo._id
+				}).then(res => {
+					let tmps = []
+					if (res.data.length) {
+						tmps = res.data[0].followers ? res.data[0].followers.map(x => x.user_id) : []
+					}
+					tmps.push(this.userInfo._id);
+					this.followers = tmps;
+				})
+			},
 			async getList() {
 				try {
 					let res4 = await cmsTopicCollectDB.getList();

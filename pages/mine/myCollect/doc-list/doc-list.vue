@@ -76,4 +76,9 @@
 		height: 100%;
 		overflow-y: auto;
 	}
+	.time-row {
+		margin-top: 8px;
+		font-size: 14px;
+		color: #8f939c;
+	}
 </style>

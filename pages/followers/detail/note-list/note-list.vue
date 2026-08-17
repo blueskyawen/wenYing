@@ -1,13 +1,16 @@
 <template>
 	<view class="page-list">
 		<unicloud-db ref="udb" v-slot:default="{data, pagination, loading, hasMore, error}" :where="udbWhere"
-			collection="cms-video-collect" @load="loadData" @error="isLoading == false"
+			collection="cms-notes" @load="loadData" @error="isLoading == false"
 			:page-size="10">
 			<uni-grid :column="3" :square="false" :showBorder="false">
 				<uni-grid-item v-for="(item,index) in list" :index="index" :key="index">
 					<view class="note-item" @tap="goDetail(item)">
 						<image :src="item.cover_src"></image>
-						<view class="title">{{ item.title }}</view>
+						<view class="descript">{{ item.content }}</view>
+						<view class="publish-date">
+							<uni-dateformat  :date="item.publish_date" format="yyyy-MM-dd"></uni-dateformat>
+						</view>
 					</view>
 				</uni-grid-item>
 			</uni-grid>
@@ -62,7 +65,7 @@
 			},
 			goDetail(item) {
 				uni.navigateTo({
-					url: '/pages/myVideo/preView/preView?id=' + item.video_id
+					url: '/pages/notes/noteView/noteView?id=' + item._id
 				})
 			},
 		}
@@ -76,11 +79,10 @@
 	}
 .note-item {
 	border: solid 1px #dcdcdc;
-	border-radius: 3px;
+	border-radius: 6px;
 	display: flex;
 	flex-direction: column;
 	margin: 3px;
-	position: relative;
 	image {
 		width: 100%;
 		display: block;
@@ -89,18 +91,45 @@
 		height: auto;
 		border-radius: 6px 6px 0 0;
 	}
-	.title {
-		font-size: 12px;
-		color: #fcfcfc;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		position: absolute;
-		left: 0;
-		bottom: 10px;
+	.descript {
+		font-size: 14px;
+		margin: 12px 8px;
 		box-sizing: border-box;
-		width: 100%;
-		padding: 0 6px;
+		line-height: 1.5em;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;    /* 限制显示行数 */
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.publish-date {
+		display: flex;
+		justify-content: flex-end;
+		font-size: 12px;
+		margin-bottom: 8px;
+		margin-right: 8px;
+	}
+	.oper-row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		margin: 12rpx;
+		align-items: center;
+		.oper-i {
+			font-size: 10px;
+			display: inline-flex;
+			border: solid 1px #d4e4ff;
+			padding: 1px 2px;
+			border-radius: 8px;
+			background-color: #d4e4ff;
+			&.ml-2 {
+				margin-left: 6px;
+			}
+		}
+		.oper-r {
+			border-color: #e43d33;
+			background-color: #e43d33;
+			color: #fff;
+		}
 	}
 }
 </style>
