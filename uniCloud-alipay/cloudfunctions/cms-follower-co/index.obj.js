@@ -12,6 +12,14 @@ module.exports = {
 		}).get();
 		return res;
 	},
+	updateFollower: async function(event) {
+		let id = event._id;
+		let followers = event.followers;
+		const res = await cmsFollowerCollection.doc(id).update({
+			"followers": followers
+		})
+		return res;
+	},
 	addFollower: async function(event) {
 		let user_id = event.user_id;
 		let addData = {...event.addData};
@@ -23,11 +31,10 @@ module.exports = {
 			let fdData =  res.data[0];
 			let newList = fdData.followers || []
 			newList.push(addData)
-			let res2 = await cmsVideoCollection.where({
-				_id: fdData._id
-			}).update({
-			  followers: newList
-			})
+			let res2 = await cmsFollowerCollection.doc(fdData._id)
+												.update({
+												  followers: newList
+												})
 			return res2;
 		} else {
 			const res2 = await cmsFollowerCollection.add({

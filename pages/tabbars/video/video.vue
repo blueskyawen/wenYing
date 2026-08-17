@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<wy-video ref="vidRef" :list="list" :total="count" :likeItems="likeList" :collectItems="collectList" 
-		@action-change="handleActionChange" @loadMore="loadMoreData"></wy-video>
+		 :followers="followers" @action-change="handleActionChange" @loadMore="loadMoreData"></wy-video>
 	</view>
 </template>
 
@@ -11,6 +11,7 @@
 	const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co');
 	const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co');
 	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
+	const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
 	import {
 		store
 	} from '@/uni_modules/uni-id-pages/common/store.js';
@@ -29,7 +30,8 @@
 				likeList: [],
 				collectList: [],
 				isFirst: true,
-				tagList: []
+				tagList: [],
+				followers: []
 			}
 		},
 		onLoad() {
@@ -64,6 +66,7 @@
 				clearTimeout(this.timerId);
 				this.timerId = null;
 			}
+			this.getFollowerList();
 		},
 		onHide() {
 			console.log('cmsVideoCo == onHide');
@@ -91,6 +94,18 @@
 				this.count = 0;
 				this.hasMore = true;
 				this.list = [];
+			},
+			getFollowerList() {
+				cmsFollowerCollectDB.get({
+					user_id: this.userInfo._id
+				}).then(res => {
+					let tmps = []
+					if (res.data.length) {
+						tmps = res.data[0].followers ? res.data[0].followers.map(x => x.user_id) : []
+					}
+					tmps.push(this.userInfo._id);
+					this.followers = tmps;
+				})
 			},
 			async getList(isLoadMore) {
 				console.log('count='+this.count+';hasMore='+this.hasMore)
@@ -221,6 +236,22 @@
 						});	
 					}	
 				}
+				if (e.type == 'follow') {
+					this.doAddFollower(e.value)
+				}
+			},
+			doAddFollower(value) {
+				cmsFollowerCollectDB.addFollower({
+					user_id: this.userInfo._id,
+					addData: {
+						...value
+					}
+				}).then(res => {
+					this.followers.push(value.user_id);
+					uni.showToast({
+						title: '关注成功'
+					})
+				})	
 			}
 		}
 	}

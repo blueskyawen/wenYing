@@ -40,7 +40,7 @@
 			<view class="item-img">
 				<cover-image class="avator img r-item" :src="curItem.avatar_url" @click="tapAutor"></cover-image>
 				<!-- <cover-image class="right-follow" src="/static/yhdsl/tj.png"></cover-image> -->
-				<cover-view v-if="!showOpers" class="right-follow" @click="tapfollow">+</cover-view>
+				<cover-view v-if="!showOpers && !isFollow" class="right-follow" @click="tapfollow">+</cover-view>
 			</view>
 			<view class="item-img" v-if="!showOpers">
 				<cover-image
@@ -102,6 +102,10 @@
 				type: Array,
 				default: () => []
 			},
+			followers: {
+				type: Array,
+				default: () => []
+			}
 		},
 		data() {
 			return {
@@ -152,6 +156,9 @@
 			hasLogin(){
 				return store.hasLogin
 			},
+			isFollow() {
+				return this.followers.includes(this.curItem.uploadUser)
+			}
 		},
 		methods: {
 			pauseChange() {
@@ -408,8 +415,21 @@
 				this.$emit('show-aciton', {...this.curItem})
 			},
 			tapfollow() {
-				uni.showToast({
-					title: '关注'
+				if (!this.hasLogin) {
+					uni.showToast({
+						title: "请先登录",
+						icon: "none"
+					});
+					return;
+				}
+				this.$emit('action-change', {
+					type: 'follow',
+					action: '',
+					value: {
+						user_id: this.curItem.uploadUser,
+						name: this.curItem.autorName,
+						avatar: this.curItem.avatar_url
+					}
 				})
 			},
 			tapAutor() {
