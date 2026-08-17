@@ -19,13 +19,13 @@
 		</u-sticky>
 		<swiper class="swiper" :style="{height: heighth + 'px'}" :current="curTab" @change="swiperChange">
 			<swiper-item>
-				<doc-list ref="list-0"  :udbWhere="udbWhere.doc"></doc-list>
+				<doc-list v-if="id" ref="list-0"  :udbWhere="udbWhere.doc"></doc-list>
 			</swiper-item>
 			<swiper-item>
-				<note-list ref="list-1" :udbWhere="udbWhere.note"></note-list>
+				<note-list v-if="id" ref="list-1" :udbWhere="udbWhere.note"></note-list>
 			</swiper-item>
 			<swiper-item>
-				<video-list ref="list-2" :udbWhere="udbWhere.video"></video-list>
+				<video-list v-if="id" ref="list-2" :udbWhere="udbWhere.video"></video-list>
 			</swiper-item>
 		</swiper>
 	</view>
@@ -75,14 +75,20 @@
 		},
 		onLoad(options) {
 			this.id = options.id;
-			if (this.id) {
-				this.getFollowers();
-				this.getUserInfo();
-			}
 			this.heighth = uni.getWindowInfo().windowHeight - 44;
 			this.udbWhere.doc = `user_id == '${this.id}' && article_status == 1`;
 			this.udbWhere.note = `user_id == '${this.id}'`;
 			this.udbWhere.video = `uploadUser == '${this.id}' && read_type == 1`;
+			if (this.id) {
+				this.getFollowers();
+				this.getUserInfo();
+			}
+		},
+		onPullDownRefresh() {
+			this.$refs[`list-${this.curTab}`].refreshData();
+		},
+		onReachBottom() {
+			this.$refs[`list-${this.curTab}`].loadMore();
 		},
 		computed: {
 			userInfo() {
