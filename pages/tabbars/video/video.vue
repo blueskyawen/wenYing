@@ -164,9 +164,14 @@
 							if (tmpurl) {
 								x.url = tmpurl.src;
 							}
-							let tmpAvator = resUserUrls.find(y => y.source == x.user_id[0].avatar_file.url)
+							let tmpAvator = resUserUrls.find(y => {
+								if (!x.user_id[0].avatar_file) return false;
+								return y.source == x.user_id[0].avatar_file.url;
+							})
 							if (tmpAvator) {
 								x.avatar_url = tmpAvator.src || '/static/logo.jpg';
+							} else {
+								x.avatar_url = '/static/logo.jpg';
 							}
 
 							if (x.user_id && x.user_id[0]) {

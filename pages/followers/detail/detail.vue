@@ -116,6 +116,8 @@
 								x.avator_src = img.src;
 							}
 						})
+					} else {
+						tmps[0].avator_src = '/static/logo.jpg';
 					}
 					this.userData = tmps[0];
 					console.log('getUserInfo')
@@ -194,8 +196,10 @@ page {
 					padding: 5px;
 					background-color: #f2f2f2;
 				}
-				button {
+				.mini-btn {
 					margin: 0;
+					padding: 0 10px;
+					line-height: 1.8;
 				}
 			}
 		}

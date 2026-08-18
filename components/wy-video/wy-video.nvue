@@ -39,7 +39,6 @@
 		<cover-view class="cover-view-right">
 			<view class="item-img">
 				<cover-image class="avator img r-item" :src="curItem.avatar_url" @click="tapAutor"></cover-image>
-				<!-- <cover-image class="right-follow" src="/static/yhdsl/tj.png"></cover-image> -->
 				<cover-view v-if="!showOpers && !isFollow" class="right-follow" @click="tapfollow">+</cover-view>
 			</view>
 			<view class="item-img" v-if="!showOpers">
@@ -428,7 +427,7 @@
 					value: {
 						user_id: this.curItem.uploadUser,
 						name: this.curItem.autorName,
-						avatar: this.curItem.avatar_url
+						avatar: this.curItem.avatar_url == '/static/logo.jpg' ? '' : this.curItem.avatar_url
 					}
 				})
 			},

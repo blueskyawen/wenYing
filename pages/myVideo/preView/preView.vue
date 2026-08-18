@@ -142,7 +142,7 @@
 		onLoad(options) {
 			this.id = options.id;
 			let autor = options.autor;
-			this.showOpers = this.id && autor
+			this.showOpers = !!(this.id && autor)
 			if (this.id) {
 				this.getList();
 			}
@@ -219,9 +219,14 @@
 							if (tmpurl) {
 								x.url = tmpurl.src;
 							}
-							let tmpAvator = resUserUrls.find(y => y.source == x.user_id[0].avatar_file.url)
+							let tmpAvator = resUserUrls.find(y => {
+								if (!x.user_id[0].avatar_file) return false;
+								return y.source == x.user_id[0].avatar_file.url;
+							})
 							if (tmpAvator) {
 								x.avatar_url = tmpAvator.src || '/static/yhdsl/car.png';
+							} else {
+								x.avatar_url = '/static/logo.jpg';
 							}
 							x.isLike = !!this.likeList.find(t => t.video_id == x._id);
 							x.isCollect = !!this.collectList.find(t => t.video_id == x._id);

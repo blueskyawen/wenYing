@@ -487,8 +487,8 @@ export default {
       font-size: 26rpx;
       color: #ccc;
     }
-	.autor-name:hover {
-		color: #2979ff;
+	.autor-name {
+		font-weight: 600;
 	}
     .split {
       margin: 0 10rpx;

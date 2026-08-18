@@ -2,7 +2,7 @@
 	<view class="page-list">
 		<view class="list-item" v-for="(item, index) in  list" :key="index">
 			<view class="item-left">
-				<image class="avator-image" :src="item.avatar"></image>
+				<image class="avator-image" :src="item.avatarUrl"></image>
 				<text class="mick-name">{{ item.name }}</text>
 			</view>
 			<view class="item-right">
@@ -49,6 +49,11 @@
 					}
 					tmps.forEach(x => {
 						x.isCheck = true;
+						if (x.avatar) {
+							x.avatarUrl = x.avatar;
+						} else {
+							x.avatarUrl = '/static/logo.jpg';
+						}
 					})
 					this.list = tmps;
 					this.isloading = false;

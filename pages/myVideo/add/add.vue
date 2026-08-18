@@ -8,14 +8,14 @@
 			<view class="add-uploader__input-box" v-else>
 				<uni-icons type="plusempty" size="150" color="#e9e9eb" @tap="chooseFile"></uni-icons>
 			</view>
-			<cover-view class="replace-uploader" v-if="src">
+			<view class="replace-uploader" v-if="src">
 				<view class="ipder-icon">
 					<view class="replace-up" @tap="chooseFile">
 						<uni-icons type="videocam" size="45" color="#fff"></uni-icons>
 					</view>
 					<view class="replace-title">点击更改视频</view>
 				</view>
-			</cover-view>
+			</view>
 		</view>
 		<view v-else class="form-content">
 			<uni-forms ref="videoForm" :modelValue="formData" label-position="top" :rules="rules">
@@ -531,6 +531,7 @@
 			top: 30%;
 			left: 50%;
 			transform: translateX(-50%) translateY(-50%);
+			z-index: 2;
 			.ipder-icon {
 				display: inline-flex;
 				flex-direction: column;
