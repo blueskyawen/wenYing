@@ -4,7 +4,7 @@
 			<view class="uni-uploader__files">
 				<block v-for="(image,index) in imageList" :key="index">
 					<view class="uni-uploader__file">
-						<image mode="aspectFit" class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+						<image mode="widthFix" class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
 					</view>
 				</block>
 				<view class="add-uploader__input-box" v-if="!imageList.length">
@@ -346,10 +346,10 @@
 			.uni-uploader__img {
 				width: 100%;
 				height: 100%;
-				::v-deep img {
-					position: relative;
-					opacity: initial;
-				}
+				// ::v-deep img {
+				// 	position: relative;
+				// 	opacity: initial;
+				// }
 			}
 		}
 		.add-uploader__input-box {

@@ -55,7 +55,8 @@ module.exports = {
 							  $.eq(['$_id', '$$user_id'])
 							))
 							.project({
-							  nickname: true
+							  nickname: true,
+							  username: true
 							})
 							.done(),
 						  as: 'user_id'
@@ -80,7 +81,8 @@ module.exports = {
 							  $.eq(['$_id', '$$user_id'])
 							))
 							.project({
-							  nickname: true
+							  nickname: true,
+							  username: true
 							})
 							.done(),
 						  as: 'user_id'
@@ -102,6 +104,7 @@ module.exports = {
 							))
 							.project({
 							  nickname: true,
+							  username: true,
 							  _id: true
 							})
 							.done(),

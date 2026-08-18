@@ -49,9 +49,9 @@
 				</view>
 				<view class="author">
 					<view>
-						<template v-if="docData.nickname && docData.nickname[0]">
-											<text class="at autor-name" @click="tapAutor">{{ docData.nickname[0] || '' }}</text>
-											<text class="split">·</text>
+						<template v-if="docData.nickname || docData.username">
+							<text class="at autor-name" @click="tapAutor">{{ docData.nickname[0] || docData.username[0] || '' }}</text>
+							<text class="split">·</text>
 						</template>
 						<text class="date" v-if="docData.publish_date">{{ publishTime(docData.publish_date) }}</text>
 					</view>
@@ -147,7 +147,7 @@ export default {
     collection() {
       return [
         db.collection(articleDBName).field('user_id,thumbnail,excerpt,publish_date,title,content').getTemp(),
-        db.collection(userDBName).field('_id, nickname').getTemp()
+        db.collection(userDBName).field('_id, nickname, username').getTemp()
       ]
     }
   },
@@ -208,7 +208,8 @@ export default {
 			          $.eq(['$_id', '$$user_id'])
 			        ))
 			        .project({
-			          nickname: true
+			          nickname: true,
+					  username: true
 			        })
 			        .done(),
 			      as: 'name'
@@ -223,7 +224,9 @@ export default {
 				  publish_date: true,
 				  title: true,
 				  content: true,
-				  nickname: "$name.nickname"
+				  name: true,
+				  nickname: "$name.nickname",
+				  username: "$name.username"
 			    })
 			    .end()
 				.then(res => {

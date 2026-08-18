@@ -93,7 +93,7 @@
 				let twhere = '"article_status" == 1 && "category_id" == "' + this.categeryId + '"';
 			  return [
 			    db.collection(articleDBName).where(twhere).field('thumbnail,title,publish_date,user_id').getTemp(), // 文章集合
-			    db.collection(userDBName).field('_id,nickname').getTemp() // 用户集合
+			    db.collection(userDBName).field('_id,nickname,username').getTemp() // 用户集合
 			  ]
 			}
 		},

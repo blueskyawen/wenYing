@@ -3,14 +3,14 @@
 		<uni-sign-in ref="signIn"></uni-sign-in>
 		<view class="userInfo" @click.capture="toUserInfo"  :style="{ height: heighth + 'px' }">
 			<view class="user">
-				<u-avatar v-if="hasLogin && (userInfo.nickname || (userInfo.avatar_file && userInfo.avatar_file.url))" 
-					:src="avatorImg" :text="nameText" :size="60" :font-size="24" bg-color="#ffb34b"></u-avatar>
+				<u-avatar v-if="hasLogin && (userInfo.username || (userInfo.avatar_file && userInfo.avatar_file.url))" 
+					:src="avatorImg" :text="nameText" :size="60" :font-size="28" bg-color="#ffb34b"></u-avatar>
 				<view v-else class="defaultAvatarUrl">
 					<uni-icons color="#ffffff" size="50" type="person-filled" />
 				</view>
 
 				<view class="logo-title">
-					<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile|| '未设置'}}</text>
+					<text class="uer-name" v-if="hasLogin">{{userInfo.nickname || userInfo.username || userInfo.mobile || '未设置'}}</text>
 					<text class="uer-name" v-else>请登录</text>
 				</view>
 			</view>
@@ -155,7 +155,8 @@
 		},
 		computed: {
 			nameText() {
-				return this.avatorImg ? '' : this.userInfo && this.userInfo.nickname ? this.userInfo.nickname[0] : '';
+				let nameT = this.userInfo ? (this.userInfo.nickname || this.userInfo.username) : '无';
+				return this.avatorImg ? '' : nameT[0];
 			},
 			userInfo() {
 				return store.userInfo
@@ -337,6 +338,8 @@ page {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			position: relative;
+			top: 8px;
 		}
 		.defaultAvatarUrl{
 			width: 150rpx;

@@ -2,13 +2,13 @@
 	<view class="note-view">
 		<view class="item" v-if="item">
 			<view class="note-img">
-				<image :src="item.cover_src"></image>
+				<image class="img-show" mode="widthFix" :src="item.cover_src"></image>
 			</view>
 			<view class="note-title">{{ item.content }}</view>
 			<view class="note-date">
 				<view class="date-left">
 					 <view class="note-autor" @click="tapAutor">
-						{{ item.user_id && item.user_id.length ?  item.user_id[0].nickname : '游客'}}
+						{{ item.user_id && item.user_id.length ?  (item.user_id[0].nickname || item.user_id[0].username) : '游客'}}
 					 </view>
 					 <view class="publish-date">发布于 
 						 <uni-dateformat :date="item.publish_date" format="yyyy-MM-dd"></uni-dateformat>
@@ -243,9 +243,15 @@
 	padding-bottom: 20px;
 	.item {
 		.note-img {
-			image {
+			.img-show {
 				width: 100%;
-				height: 360px;
+				min-height: 240px;
+				height: inherit;
+				border-radius: 8px 8px 0 0;
+				// ::v-deep img {
+				// 	position: relative;
+				// 	opacity: initial;
+				// }
 			}
 		}
 		.note-title {

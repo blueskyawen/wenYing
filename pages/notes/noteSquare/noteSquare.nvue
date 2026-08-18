@@ -6,12 +6,12 @@
 					 <view class="note-item-box" v-for="(item, index) in listLeft" :key="index">
 						 <view class="note-item" @tap="goDetail(item)">
 							 <view class="note-img">
-								 <image :src="item.cover_src"></image>
+								 <image mode="widthFix" :src="item.cover_src"></image>
 							 </view>
 							 <view class="note-title">{{ item.content }}</view>
 							 <view class="note-date">
 								 <view class="note-autor">
-									{{ item.user_id && item.user_id.length ?  item.user_id[0].nickname : '游客'}}
+									{{ item.user_id && item.user_id.length ?  (item.user_id[0].nickname || item.user_id[0].username) : '游客'}}
 								 </view>
 								 <view class="publish-date">
 									 <uni-dateformat :date="item.publish_date" format="yyyy-MM-dd"></uni-dateformat>
@@ -24,12 +24,12 @@
 					 <view class="note-item-box" v-for="(item2, index) in listRight" :key="index">
 						 <view class="note-item" @tap="goDetail(item2)">
 							 <view class="note-img">
-								 <image :src="item2.cover_src"></image>
+								 <image mode="widthFix" :src="item2.cover_src"></image>
 							 </view>
 							 <view class="note-title">{{ item2.content }}</view>
 							 <view class="note-date">
 								 <view class="note-autor">
-									{{ item2.user_id && item2.user_id.length ?  item2.user_id[0].nickname : '游客'}}
+									{{ item2.user_id && item2.user_id.length ?  (item2.user_id[0].nickname || item2.user_id[0].username) : '游客'}}
 								 </view>
 								 <view class="publish-date">
 									 <uni-dateformat :date="item2.publish_date" format="yyyy-MM-dd"></uni-dateformat>

@@ -75,6 +75,7 @@ module.exports = {
 									))
 									.project({
 									  nickname: true,
+									  username: true,
 									  avatar_file: true,
 									})
 									.done(),
@@ -101,6 +102,7 @@ module.exports = {
 							))
 							.project({
 							  nickname: true,
+							  username: true,
 							  avatar_file: true,
 							})
 							.done(),

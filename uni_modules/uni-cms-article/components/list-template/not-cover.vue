@@ -11,7 +11,7 @@
           <text class="title">{{ data.title }}</text>
         </view>
         <view class="info">
-          <text class="author">{{ data.user_id[0] ? data.user_id[0].nickname : '' }}</text>
+          <text class="author">{{ data.user_id[0] ? (data.user_id[0].nickname || data.user_id[0].username): '' }}</text>
           <text class="publish_date">{{ publishTime(data.publish_date) }}</text>
         </view>
       </view>

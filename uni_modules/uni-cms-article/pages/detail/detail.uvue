@@ -108,7 +108,7 @@
           title: "加载中..."
         })
         const articledb = db.collection(articleDBName).where(this.where).field('user_id,thumbnail,excerpt,publish_date,title,content').getTemp()
-        const userdb = db.collection(userDBName).field('_id, nickname').getTemp()
+        const userdb = db.collection(userDBName).field('_id, nickname, username').getTemp()
         const res = await db.collection(articledb, userdb).get()
 
         this.loadData(res.data)

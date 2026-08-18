@@ -18,6 +18,7 @@
 	import {
 		store
 	} from '@/uni_modules/uni-id-pages/common/store.js';
+	import parseImageUrl from "@/common/parseImageUrl.js"
 	export default {
 		data() {
 			return {
@@ -36,28 +37,41 @@
 			},
 		},
 		methods: {
-			getList() {
+			async getList() {
 				this.isloading = true;
 				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
-				cmsFollowerCollectDB.get({
-					user_id: this.userInfo._id
-				}).then(res => {
-					let tmps = []
-					if (res.data.length) {
-						this.docId = res.data[0]._id;
-						tmps = res.data[0].followers ? res.data[0].followers : []
-					}
-					tmps.forEach(x => {
+				const userCollectDB = uniCloud.importObject('cms-user-co');
+				let res = await cmsFollowerCollectDB.get({ user_id: this.userInfo._id});
+				let tmpFollowers = [];
+				if (res.data.length) {
+					this.docId = res.data[0]._id;
+					tmpFollowers = res.data[0].followers ? res.data[0].followers : []
+				}
+				if (tmpFollowers.length) {
+					let ids = tmpFollowers.map(x => x.user_id);
+					let res1 = await userCollectDB.getList({ids});
+					let users = res1.data || [];
+					tmpFollowers.forEach(x => {
 						x.isCheck = true;
-						if (x.avatar) {
-							x.avatarUrl = x.avatar;
+						let fdItem = users.find(y => y._id == x.user_id);
+						x.avatar = fdItem && fdItem.avatar_file && fdItem.avatar_file.url ? fdItem.avatar_file.url : '';
+						if (fdItem) {
+							x.name = fdItem.nickname || fdItem.username;
+						}
+					});
+					let images = tmpFollowers.map(x => x.avatar);
+					let resImgs = await parseImageUrl(images);
+					tmpFollowers.forEach(x => {
+						let img = resImgs.find(y => y.source == x.avatar)
+						if (img) {
+							x.avatarUrl = img.src || '/static/logo.jpg';
 						} else {
 							x.avatarUrl = '/static/logo.jpg';
 						}
-					})
-					this.list = tmps;
-					this.isloading = false;
-				})
+					});
+					this.list = tmpFollowers;
+				}
+				this.isloading = false;
 			},
 			doFollow(item) {
 				if (this.isInoper) return;
@@ -88,7 +102,7 @@
 					"followers": newList
 				}).then(res => {
 					item.isCheck = isCheck;
-					let textT = isCheck ? '关注成功' : '取消关注'
+					let textT = isCheck ? '关注成功' : '已取消关注'
 					uni.showToast({
 						title: textT
 					})

@@ -5,11 +5,11 @@
 				<image v-if="userData.avator_src" :src="userData.avator_src"></image>
 			</view>
 			<view class="user-name">
-				<view class="name">{{ userData.nickname }}</view>
+				<view class="name">{{ userData.nickname || userData.username }}</view>
 				<view class="opers" v-if="isShowOper">
 					<text v-if="isFollow">已关注</text>
-					<button v-if="isFollow" class="mini-btn" type="warn" size="mini">取消关注</button>
-					<button v-else class="mini-btn" type="primary" size="mini">关注</button>
+					<button v-if="isFollow" class="mini-btn" type="warn" size="mini" @click="doFollow">取消关注</button>
+					<button v-else class="mini-btn" type="primary" size="mini" @click="doFollow">关注</button>
 				</view>
 			</view>
 		</view>
@@ -71,6 +71,9 @@
 					note: '',
 					video: ''
 				},
+				follDocId: '',
+				isInoper: false,
+				followerList: []
 			}
 		},
 		onLoad(options) {
@@ -131,7 +134,9 @@
 				}).then(res => {
 					let tmps = []
 					if (res.data.length) {
-						tmps = res.data[0].followers ? res.data[0].followers.map(x => x.user_id) : []
+						this.follDocId = res.data[0]._id;
+						this.followerList = res.data[0].followers || []
+						tmps = this.followerList.map(x => x.user_id)
 					}
 					this.followers = tmps;
 				})
@@ -143,6 +148,77 @@
 				this.clickTab({
 					index: e.detail.current
 				});
+			},
+			doFollow() {
+				if (this.isInoper) return;
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				if (!this.follDocId) {
+					console.log('no follDocId')
+					cmsFollowerCollectDB.addFollower({
+						user_id: this.userInfo._id,
+						addData: {
+							user_id: this.userData._id,
+							name: this.userData.nickname || this.userData.username,
+							avatar: this.userData.avator_src
+						}
+					}).then(res => {
+						if (res.id) {
+							this.follDocId = res.id;
+							this.followers.push(this.userData._id);
+							this.followerList.push({
+								user_id: this.userData._id,
+								name: this.userData.nickname || this.userData.username,
+								avatar: this.userData.avator_src
+							})
+							uni.showToast({
+								title: '关注成功'
+							})
+						}
+					})
+					return;
+				}
+				let followFlag = !this.isFollow;
+				let newList = JSON.parse(JSON.stringify(this.followerList));
+				if (followFlag) {
+					newList.push({
+						user_id: this.userData._id,
+						name: this.userData.nickname || this.userData.username,
+						avatar: this.userData.avator_src
+					})
+				} else {
+					let fdIndex = newList.findIndex(x => x.user_id == this.userData._id);
+					if (fdIndex >= 0) {
+						newList.splice(fdIndex, 1);
+					}
+				}
+				this.isInoper = true;
+				cmsFollowerCollectDB.updateFollower({
+					"_id": this.follDocId,
+					"followers": newList
+				}).then(res => {
+					let textT = '';
+					if (followFlag) {
+						this.followerList.push({
+							user_id: this.userData._id,
+							name: this.userData.nickname || this.userData.username,
+							avatar: this.userData.avator_src
+						});
+						this.followers.push(this.userData._id);
+						textT = '关注成功';
+					} else {
+						let fdIndex1 = this.followerList.findIndex(x => x.user_id == this.userData._id);
+						if (fdIndex1 >= 0) {
+							this.followerList.splice(fdIndex1, 1);
+						}
+						this.followers = this.followers .filter(x => x !== this.userData._id);
+						textT = '已取消关注'
+					}
+					uni.showToast({
+						title: textT
+					})
+				}).finally(e => {
+					this.isInoper = false;
+				})
 			}
 		}
 	}

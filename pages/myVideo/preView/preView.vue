@@ -231,7 +231,7 @@
 							x.isLike = !!this.likeList.find(t => t.video_id == x._id);
 							x.isCollect = !!this.collectList.find(t => t.video_id == x._id);
 							if (x.user_id && x.user_id[0]) {
-								x.autorName = x.user_id[0].nickname || '无名氏'
+								x.autorName = x.user_id[0].nickname || x.user_id[0].username || '无名氏'
 							}
 							
 							x.tagList = this.tagList.filter(y => x.tags.includes(y._id));

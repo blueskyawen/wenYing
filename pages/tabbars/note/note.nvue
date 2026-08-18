@@ -42,13 +42,13 @@
 				 <view class="note-item-box" v-for="(item, index) in list" :key="index">
 					<view class="note-item">
 						 <view class="note-img">
-							 <image :src="item.cover_src"></image>
+							 <image class="img-show" mode="widthFix" :src="item.cover_src"></image>
 						 </view>
 						 <view class="note-title">{{ item.content }}</view>
 						 <view class="note-date">
 							 <view class="note-autor">
 								 <text class="left"></text>
-								 <text class="right">@{{ item.user_id && item.user_id.length ?  item.user_id[0].nickname : '游客'}}</text>
+								 <text class="right">@{{ item.user_id && item.user_id.length ?  (item.user_id[0].nickname || item.user_id[0].username) : '游客'}}</text>
 							 </view>
 							 <text class="publish-date">
 								 <uni-dateformat :date="item.publish_date" format="yyyy-MM-dd"></uni-dateformat>
@@ -569,10 +569,15 @@ page {
 			 	border-radius: 8px;
 				box-shadow: 0 0 5px rgba($color: #8f939c, $alpha: 0.5);
 				.note-img {
-					image {
+					.img-show {
 						width: 100%;
-						height: 280px;
+						min-height: 240px;
+						height: inherit;
 						border-radius: 8px 8px 0 0;
+						// ::v-deep img {
+						// 	position: relative;
+						// 	opacity: initial;
+						// }
 					}
 				}
 				.note-title {

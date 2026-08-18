@@ -10,6 +10,19 @@ module.exports = {
 		const res = await userCollection.where({
 			'_id': user_id
 		}).field({
+			username: true,
+			nickname: true,
+			avatar_file: true
+		}).get();
+		return res;
+	},
+	getList: async function({ids}) {
+		const dbCmd = db.command;
+		let res = await userCollection.where({
+			'_id': dbCmd.in(ids)
+		}).field({
+			_id: true,
+			username: true,
 			nickname: true,
 			avatar_file: true
 		}).get();

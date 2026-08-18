@@ -14,7 +14,7 @@
         </view>
         <view class="author">
           <template v-if="articleData.user_id && articleData.user_id[0]">
-            <text class="at">{{ articleData.user_id[0].nickname || '' }}</text>
+            <text class="at">{{ articleData.user_id[0].nickname || articleData.user_id[0].username || '' }}</text>
             <text class="split">·</text>
           </template>
           <text class="date">{{ publishTime(articleData.publish_date) }}</text>
@@ -67,7 +67,7 @@ export default {
     collection() {
       return [
         db.collection(articleDBName).where(this.where).field('user_id,thumbnail,excerpt,publish_date,title,content,preview_secret,preview_expired,article_status').getTemp(),
-        db.collection(userDBName).field('_id, nickname').getTemp()
+        db.collection(userDBName).field('_id, nickname, username').getTemp()
       ]
     }
   },
