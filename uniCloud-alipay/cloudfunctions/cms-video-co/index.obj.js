@@ -117,7 +117,22 @@ module.exports = {
 			'uploadUser': e.userId
 		}).get();
 		return res;
-	}
+	},
+	getListByIds: async function(ids) {
+		const dbCmd = db.command;
+		let res = await cmsVideoCollection.where({
+			'_id': dbCmd.in(ids)
+		}).field({
+			_id: true,
+			tags: true,
+			like_count: true,
+			collect_count: true,
+			zhuanfa_count: true,
+			title: true,
+			description: true
+		}).get();
+		return res;
+	},
 	/**
 	 * method1方法描述
 	 * @param {string} param1 参数1描述

@@ -54,7 +54,12 @@
 				isCollect: false,
 				likeObj: {},
 				collectObj: {},
-				isInOper: false
+				isInOper: false,
+				from: '',
+				saveOldFlag: {
+					like: false,
+					collect: false
+				}
 			}
 		},
 		computed: {
@@ -67,9 +72,13 @@
 		},
 		onLoad(options) {
 			this.id = options.id;
+			this.from = options.from;
 			if (this.id) {
 				this.getData();
 			}
+		},
+		onUnload() {
+			this.checkIfUpdate();
 		},
 		onShareAppMessage(e) {
 			if (e.from === 'button') {
@@ -109,6 +118,7 @@
 							let fdItem = res2.data.find(x => x.note_id == this.item._id);
 							if (fdItem) {
 								this.isLike = true;
+								this.saveOldFlag.like = true;
 								this.likeObj = {
 									id: fdItem._id,
 									note_id: fdItem.note_id
@@ -119,6 +129,7 @@
 							let fdItem = res3.data.find(x => x.note_id == this.item._id);
 							if (fdItem) {
 								this.isCollect = true;
+								this.saveOldFlag.collect = true;
 								this.collectObj = {
 									id: fdItem._id,
 									note_id: fdItem.note_id
@@ -232,6 +243,14 @@
 				uni.navigateTo({
 					url: `/pages/followers/detail/detail?id=${this.item.user_id[0]._id}`
 				})
+			},
+			checkIfUpdate() {
+				if (this.from == 'likes' && this.saveOldFlag.like !== this.isLike) {
+					uni.$emit('refresh-like-list',{});
+				}
+				if (this.from == 'collects' && this.saveOldFlag.collect !== this.isCollect) {
+					uni.$emit('refresh-collect-list',{});
+				}
 			}
 		}
 	}
@@ -247,7 +266,6 @@
 				width: 100%;
 				min-height: 240px;
 				height: inherit;
-				border-radius: 8px 8px 0 0;
 				// ::v-deep img {
 				// 	position: relative;
 				// 	opacity: initial;
@@ -258,6 +276,7 @@
 			padding: 25px;
 			box-sizing: border-box;
 			line-height: 1.6em;
+			white-space: pre-wrap;
 		}
 		.note-date {
 			display: flex;

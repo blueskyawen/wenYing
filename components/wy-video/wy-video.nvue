@@ -30,41 +30,69 @@
 				<view class="text-content-text" :class="{'visive': isExpand}">{{ curItem.description }}</view>
 <!-- 				<u-icon v-if="isShowDesMore" class="more" :name="isExpand ? 'arrow-up-fill' : 'arrow-down-fill'"
 					color="#fcfcfc" size="13" @click="isExpand = !isExpand"></u-icon> -->
-				<image class="more" src="/static/yhdsl/shouqi.png" :class="{'zhankai': !isExpand}" @click="isExpand = !isExpand"></image>
+				<image v-if="isShowDesMore" class="more" src="/static/yhdsl/shouqi.png" :class="{'zhankai': !isExpand}" @click="isExpand = !isExpand"></image>
 			</view>
 			<view class="view-tags" v-if="curItem.tagList">
-				<text v-for="tag in curItem.tagList" :key="tag.id" @tap="cilckTag(tag)">#{{tag.name}}</text>
+				<text v-for="tag in curItem.tagList" :key="tag._id" @tap="cilckTag(tag)">#{{tag.name}}</text>
 			</view>
 		</view>
-		<cover-view class="cover-view-right">
+<!-- 		<view class="cover-view-right">
 			<view class="item-img">
-				<cover-image class="avator img r-item" :src="curItem.avatar_url" @click="tapAutor"></cover-image>
-				<cover-view v-if="!showOpers && !isFollow" class="right-follow" @click="tapfollow">+</cover-view>
+				<image class="avator img r-item" :src="curItem.avatar_url" @tap="tapAutor"></image>
+				<text v-if="!showOpers && !isFollow" class="right-follow" @tap="tapfollow">+</text>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-				<cover-image
+				<mage
 					:src="curItem.isLike ? '/static/yhdsl/like2.png' : '/static/yhdsl/like1.png'"
-					class="img-left" @click="tapLike"
-				></cover-image>
-				<!-- <u-icon name="heart-fill" size="38" :color="curItem.isLike ? '#fa3534' : '#fff'" -->
-					<!-- @click="tapLike"></u-icon> -->
-				<cover-view class="right-text">{{ curItem.like_count || 0 }}</cover-view>
+					class="img-left" @tap="tapLike"
+				></mage>
+				<u-icon name="heart-fill" size="38" :color="curItem.isLike ? '#fa3534' : '#fff'"
+					 @click="tapLike"></u-icon>
+				<text class="right-text">{{ curItem.like_count || 0 }}</text>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-				<cover-image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
-					class="img-left" @click="tapCollect"></cover-image>
-				<!-- <u-icon name="star-fill" size="38" :color="curItem.isCollect ? '#ff9900' : '#fff'" @click="tapCollect"></u-icon> -->
-				<cover-view class="right-text">{{ curItem.collect_count || 0 }}</cover-view>
+				<image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
+					class="img-left" @tap="tapCollect"></image>
+				<u-icon name="star-fill" size="38" :color="curItem.isCollect ? '#ff9900' : '#fff'" @click="tapCollect"></u-icon>
+				<text class="right-text">{{ curItem.collect_count || 0 }}</text>
 			</view>
 			<view class="item-img" v-if="!showOpers">
-				<cover-image src="/static/yhdsl/zhuanfa.png" class="img-left"></cover-image>
-				<cover-view class="right-text" @click="tapShare">{{ curItem.zhuanfa_count || 0 }}</cover-view>
+				<image src="/static/yhdsl/zhuanfa.png" class="img-left"></image>
+				<text class="right-text" @tap="tapShare">{{ curItem.zhuanfa_count || 0 }}</text>
 			</view>
 			<view class="item-img" v-if="showOpers">
-				<cover-image src="/static/yhdsl/more-opers.png" 
-					class="img-left"  @click="openActionsPlane"></cover-image>
-				<cover-view class="right-text" @click="openActionsPlane">更多</cover-view>
+				<image src="/static/yhdsl/more-opers.png" 
+					class="img-left"  @tap="openActionsPlane"></image>
+				<text class="right-text"@tap="openActionsPlane">更多</text>
 			</view>
+			<image src="/static/yhdsl/changp.png" class="carIcon img"></image>
+		</view> -->
+		<cover-view class="cover-view-right">
+			<cover-view class="item-img">
+				<cover-image class="avator img r-item" :src="curItem.avatar_url" @tap="tapAutor"></cover-image>
+				<cover-view v-if="!showOpers && !isFollow" class="right-follow" @tap="tapfollow">+</cover-view>
+			</cover-view>
+			<cover-view class="item-img" v-if="!showOpers">
+				<cover-image
+					:src="curItem.isLike ? '/static/yhdsl/like2.png' : '/static/yhdsl/like1.png'"
+					class="img-left" @tap="tapLike"
+				></cover-image>
+				<cover-view class="right-text">{{ curItem.like_count || 0 }}</cover-view>
+			</cover-view>
+			<cover-view class="item-img" v-if="!showOpers">
+				<cover-image :src="curItem.isCollect ? '/static/yhdsl/shouchang2.png' : '/static/yhdsl/shouchang1.png'" 
+					class="img-left" @tap="tapCollect"></cover-image>
+				<cover-view class="right-text">{{ curItem.collect_count || 0 }}</cover-view>
+			</cover-view>
+			<cover-view class="item-img" v-if="!showOpers">
+				<cover-image src="/static/yhdsl/zhuanfa.png" class="img-left"></cover-image>
+				<cover-view class="right-text" @tap="tapShare">{{ curItem.zhuanfa_count || 0 }}</cover-view>
+			</cover-view>
+			<cover-view class="item-img" v-if="showOpers">
+				<cover-image src="/static/yhdsl/more-opers.png" 
+					class="img-left"  @tap="openActionsPlane"></cover-image>
+				<cover-view class="right-text"@tap="openActionsPlane">更多</cover-view>
+			</cover-view>
 			<cover-image src="/static/yhdsl/changp.png" class="carIcon img"></cover-image>
 		</cover-view>
 		<view id="curDes" class="cur-des">
@@ -116,7 +144,6 @@
 				pauseUrl: '',
 				// isShowDesMore: false,
 				isExpand: false,
-				isInOper: false,
 				curRefWidth: 0,
 				allRefWidth: 0
 			}
@@ -274,7 +301,6 @@
 				// this.isShowDesMore = (innerwidth * 2) < scrollwidth;
 			},
 			tapLike() {
-				if (this.isInOper) return;
 				if (!this.hasLogin) {
 					uni.showToast({
 						title: "请先登录",
@@ -282,67 +308,15 @@
 					});
 					return;
 				}
-				let fdItem = this.list.find(x => x._id === this.curItem._id);
-				if (fdItem) {
-					let isLike = !fdItem.isLike;
-					this.isInOper = true;
-					if (isLike) {
-						cmsVideoLikeDB.add({
-							"user_id": this.userInfo._id,
-							"video_id": fdItem._id,
-							"cover": fdItem.cover,
-							"src": fdItem.src,
-							"title": fdItem.title,
-							"description": fdItem.description,
-							"read_type": fdItem.read_type,
-							"create_date": Date.now()
-						}).then(res => {
-							fdItem.isLike = isLike;
-							fdItem.like_count++;
-							this.$emit('action-change', {
-								type: 'like',
-								action: 'add',
-								value: {
-									id: res.id || '',
-									video_id: fdItem._id
-								}
-							});
-							uni.showToast({
-								title: "收藏至个人喜爱",
-								icon: "none"
-							});
-						}).finally(res => {
-							this.isInOper = false
-						})
-					} else {
-						let tmpItem = this.likeItems.find(x => x.video_id == this.curItem._id);
-						if (tmpItem) {
-							cmsVideoLikeDB.delete({id: tmpItem.id}).then(res => {
-								if (res.status == 0) {
-									fdItem.isLike = isLike;
-									fdItem.like_count--;
-									this.$emit('action-change', {
-										type: 'like',
-										action: 'del',
-										value: {
-											id: tmpItem.id,
-											video_id: fdItem._id
-										}
-									})
-									uni.showToast({
-										title: "取消喜爱",
-										icon: "none"
-									});
-								}
-							}).finally(res => {
-								this.isInOper = false;
-							})
-						}
+				this.$emit('action-change', {
+					type: 'tapLike',
+					action: 'click',
+					value: {
+						...this.curItem
 					}
-				}
+				});
 			},
 			tapCollect() {
-				if (this.isInOper) return;
 				if (!this.hasLogin) {
 					uni.showToast({
 						title: "请先登录",
@@ -350,64 +324,13 @@
 					});
 					return;
 				}
-				let fdItem = this.list.find(x => x._id === this.curItem._id);
-				if (fdItem) {
-					let isCollect = !fdItem.isCollect;
-					this.isInOper = true;
-					if (isCollect) {
-						cmsVideoCollectDB.add({
-							"user_id": this.userInfo._id,
-							"video_id": fdItem._id,
-							"cover": fdItem.cover,
-							"src": fdItem.src,
-							"title": fdItem.title,
-							"description": fdItem.description,
-							"read_type": fdItem.read_type,
-							"create_date": Date.now()
-						}).then(res => {
-							fdItem.isCollect = isCollect;
-							fdItem.collect_count++;
-							this.$emit('action-change', {
-								type: 'collect',
-								action: 'add',
-								value: {
-									id: res.id || '',
-									video_id: fdItem._id
-								}
-							});
-							uni.showToast({
-								title: "收藏至个人中心",
-								icon: "none"
-							});
-						}).finally(res => {
-							this.isInOper = false
-						})
-					} else {
-						let tmpItem = this.collectItems.find(x => x.video_id == this.curItem._id);
-						if (tmpItem) {
-							cmsVideoCollectDB.delete({id: tmpItem.id}).then(res => {
-								if (res.status == 0) {
-									fdItem.isCollect = isCollect;
-									fdItem.collect_count--;
-									this.$emit('action-change', {
-										type: 'collect',
-										action: 'del',
-										value: {
-											id: tmpItem.id,
-											video_id: fdItem._id
-										}
-									})
-									uni.showToast({
-										title: "取消收藏",
-										icon: "none"
-									});
-								}
-							}).finally(res => {
-								this.isInOper = false;
-							})
-						}
+				this.$emit('action-change', {
+					type: 'tapCollect',
+					action: 'click',
+					value: {
+						...this.curItem
 					}
-				}
+				});
 			},
 			tapShare() {},
 			openActionsPlane() {

@@ -122,7 +122,13 @@
 				showOpers: true,
 				likeList: [],
 				collectList: [],
-				followers: []
+				followers: [],
+				isInOper: false,
+				from: '',
+				saveOldFlag: {
+					like: false,
+					collect: false
+				}
 			}
 		},
 		computed: {
@@ -142,10 +148,16 @@
 		onLoad(options) {
 			this.id = options.id;
 			let autor = options.autor;
+			this.from = options.from;
 			this.showOpers = !!(this.id && autor)
 			if (this.id) {
 				this.getList();
 			}
+		},
+		onUnload() {
+			this.checkIfUpdate();
+		},
+		onShow() {
 			if (!this.showOpers) {
 				this.getFollowerList();	
 			}
@@ -237,6 +249,8 @@
 							x.tagList = this.tagList.filter(y => x.tags.includes(y._id));
 						});
 						this.list = tmpList;
+						this.saveOldFlag.like = tmpList[0].isLike;
+						this.saveOldFlag.collect = tmpList[0].isCollect;
 						this.autoPlay();
 						uni.setNavigationBarTitle({
 						  title: this.list[0].title
@@ -414,29 +428,165 @@
 				});
 			},
 			handleActionChange(e) {
-				if (e.type == 'like') {
-					if (e.action == 'add') {
-						cmsVideoCo.incLikeCount(e.value.video_id, 1).then(res => {
-							this.likeList.push({...e.value});
-						});
-					}
-					if (e.action == 'del') {
-						cmsVideoCo.incLikeCount(e.value.video_id, -1).then(res => {
-							this.likeList = this.likeList.filter(x => x.id !== e.value.id);
-						});	
+				if (e.type == 'tapLike') {
+					this.doTapLike(e.value);
+					return;
+				}
+				if (e.type == 'tapCollect') {
+					this.doTapCollect(e.value);
+					return;
+				}
+				if (e.type == 'follow') {
+					this.doAddFollower(e.value);
+					return;
+				}
+			},
+			doTapLike(value) {
+				if (this.isInOper) return;
+				const cmsVideoCo2 = uniCloud.importObject('cms-video-co', {
+					customUI: true
+				})
+				let curItem = value;
+				let fdItem = this.list.find(x => x._id === curItem._id);
+				if (fdItem) {
+					let isLike = !fdItem.isLike;
+					this.isInOper = true;
+					if (isLike) {
+						cmsVideoLikeDB.add({
+							"user_id": this.userInfo._id,
+							"video_id": fdItem._id,
+							"cover": fdItem.cover,
+							"src": fdItem.src,
+							"title": fdItem.title,
+							"description": fdItem.description,
+							"read_type": fdItem.read_type,
+							"create_date": Date.now()
+						}).then(res => {
+							fdItem.isLike = isLike;
+							fdItem.like_count++;
+							uni.showToast({
+								title: "收藏至个人喜爱",
+								icon: "none"
+							});
+							let tmpValue = {
+								id: res.id || '',
+								video_id: fdItem._id
+							}
+							cmsVideoCo2.incLikeCount(tmpValue.video_id, 1).then(res => {
+								this.likeList.push(tmpValue);
+							});
+						}).finally(res => {
+							this.isInOper = false
+						})
+					} else {
+						let tmpItem = this.likeList.find(x => x.video_id == curItem._id);
+						if (tmpItem) {
+							cmsVideoLikeDB.delete({id: tmpItem.id}).then(res => {
+								if (res.status == 0) {
+									fdItem.isLike = isLike;
+									fdItem.like_count--;
+									uni.showToast({
+										title: "取消喜爱",
+										icon: "none"
+									});
+									let tmpValue = {
+										id: tmpItem.id,
+										video_id: tmpItem.video_id
+									};
+									cmsVideoCo2.incLikeCount(tmpValue.video_id, -1).then(res => {
+										this.likeList = this.likeList.filter(x => x.id !== tmpValue.id);
+									});	
+								}
+							}).finally(res => {
+								this.isInOper = false;
+							})
+						}
 					}
 				}
-				if (e.type == 'collect') {
-					if (e.action == 'add') {
-						cmsVideoCo.incCollectCount(e.value.video_id, 1).then(res => {
-							this.collectList.push({...e.value});
-						});						
+			},
+			doTapCollect(value) {
+				if (this.isInOper) return;
+				const cmsVideoCo2 = uniCloud.importObject('cms-video-co', {
+					customUI: true
+				})
+				let curItem = value;
+				let fdItem = this.list.find(x => x._id === curItem._id);
+				if (fdItem) {
+					let isCollect = !fdItem.isCollect;
+					this.isInOper = true;
+					if (isCollect) {
+						cmsVideoCollectDB.add({
+							"user_id": this.userInfo._id,
+							"video_id": fdItem._id,
+							"cover": fdItem.cover,
+							"src": fdItem.src,
+							"title": fdItem.title,
+							"description": fdItem.description,
+							"read_type": fdItem.read_type,
+							"create_date": Date.now()
+						}).then(res => {
+							fdItem.isCollect = isCollect;
+							fdItem.collect_count++;
+							uni.showToast({
+								title: "收藏至个人中心",
+								icon: "none"
+							});
+							let tmpValue = {
+								id: res.id || '',
+								video_id: fdItem._id
+							}
+							cmsVideoCo2.incCollectCount(tmpValue.video_id, 1).then(res => {
+								this.collectList.push(tmpValue);
+							});
+						}).finally(res => {
+							this.isInOper = false
+						})
+					} else {
+						let tmpItem = this.collectList.find(x => x.video_id == curItem._id);
+						if (tmpItem) {
+							cmsVideoCollectDB.delete({id: tmpItem.id}).then(res => {
+								if (res.status == 0) {
+									fdItem.isCollect = isCollect;
+									fdItem.collect_count--;
+									uni.showToast({
+										title: "取消收藏",
+										icon: "none"
+									});
+									let tmpValue = {
+										id: tmpItem.id,
+										video_id: tmpItem.video_id
+									};
+									cmsVideoCo2.incCollectCount(tmpValue.video_id, -1).then(res => {
+										this.collectList = this.collectList.filter(x => x.id !== tmpValue.id);
+									});	
+								}
+							}).finally(res => {
+								this.isInOper = false;
+							})
+						}
 					}
-					if (e.action == 'del') {
-						cmsVideoCo.incCollectCount(e.value.video_id, -1).then(res => {
-							this.collectList = this.collectList.filter(x => x.id !== e.value.id);
-						});	
-					}	
+				}
+			},
+			doAddFollower(value) {
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				cmsFollowerCollectDB.addFollower({
+					user_id: this.userInfo._id,
+					addData: {
+						...value
+					}
+				}).then(res => {
+					this.followers.push(value.user_id);
+					uni.showToast({
+						title: '关注成功'
+					})
+				})	
+			},
+			checkIfUpdate() {
+				if (this.from == 'likes' && this.saveOldFlag.like !== this.list[0].isLike) {
+					uni.$emit('refresh-like-list',{});
+				}
+				if (this.from == 'collects' && this.saveOldFlag.collect !== this.list[0].isCollect) {
+					uni.$emit('refresh-collect-list',{});
 				}
 			}
 		}

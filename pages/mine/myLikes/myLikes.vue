@@ -56,6 +56,10 @@
 		onLoad() {
 			this.udbWhere = `user_id=='${this.loginUserId}'`;
 			this.heighth = uni.getWindowInfo().windowHeight - 44;
+			uni.$on('refresh-like-list', this.refreshData);
+		},
+		onUnload() {
+			uni.$off('refresh-like-list')
 		},
 		onPullDownRefresh() {
 			this.$refs[`likes-${this.curTab}`].refreshData();
@@ -64,6 +68,9 @@
 			this.$refs[`likes-${this.curTab}`].loadMore();
 		},
 		methods: {
+			refreshData() {
+				this.$refs[`likes-${this.curTab}`].refreshData();
+			},
 			clickTab(e) {
 				this.curTab = e.index;
 				setTimeout(() => {

@@ -64,7 +64,7 @@
 			},
 			handleItemClick(item) {
 				uni.navigateTo({
-					url: '/uni_modules/uni-cms-article/pages/detail/detail?id=' + item.article_id
+					url: '/uni_modules/uni-cms-article/pages/detail/detail?id=' + item.article_id + '&from=collects'
 				})
 			},
 		}

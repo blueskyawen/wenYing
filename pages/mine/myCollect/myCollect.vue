@@ -59,7 +59,11 @@
 		},
 		onLoad() {
 			this.heighth = uni.getWindowInfo().windowHeight - 44;
-			this.udbWhere = `user_id=='${this.loginUserId}'`
+			this.udbWhere = `user_id=='${this.loginUserId}'`;
+			uni.$on('refresh-collect-list', this.refreshData);
+		},
+		onUnload() {
+			uni.$off('refresh-collect-list')
 		},
 		onPullDownRefresh() {
 			console.log('doclist====onPullDownRefresh')
@@ -71,6 +75,9 @@
 			// this.$refs.udb.loadMore()
 		},
 		methods: {
+			refreshData() {
+				this.$refs[`list-${this.curTab}`].refreshData();
+			},
 			clickTab(e) {
 				this.curTab = e.index;
 			},

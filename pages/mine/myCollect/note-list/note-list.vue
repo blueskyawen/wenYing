@@ -50,8 +50,8 @@
 							x.cover_src = img.src;
 						}
 					});
-					this.list = pagination['current'] == 1 ? data : this.list.concat(data);
 				}
+				this.list = pagination['current'] == 1 ? data : this.list.concat(data);
 			},
 			refreshData() {
 				this.$refs.udb.loadData({
@@ -65,7 +65,7 @@
 			},
 			goDetail(item) {
 				uni.navigateTo({
-					url: '/pages/notes/noteView/noteView?id=' + item.note_id
+					url: '/pages/notes/noteView/noteView?id=' + item.note_id + '&from=collects'
 				})
 			},
 		}

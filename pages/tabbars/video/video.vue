@@ -31,7 +31,8 @@
 				collectList: [],
 				isFirst: true,
 				tagList: [],
-				followers: []
+				followers: [],
+				isInOper: false,
 			}
 		},
 		onLoad() {
@@ -61,6 +62,7 @@
 				this.isLoaded = true;
 			} else {
 				this.autoPlay();
+				this.getVideoInfos();
 			}
 			if (this.timerId) {
 				clearTimeout(this.timerId);
@@ -94,6 +96,52 @@
 				this.count = 0;
 				this.hasMore = true;
 				this.list = [];
+			},
+			async  getVideoInfos() {
+				const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co', {
+					customUI: true
+				});
+				const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co', {
+					customUI: true
+				});
+				const cmsVideoCo = uniCloud.importObject('cms-video-co', {
+					customUI: true
+				});
+				let res2 = await cmsVideoLikeDB.getList({id: this.userInfo._id});
+				let res3 = await cmsVideoCollectDB.getList({id: this.userInfo._id});
+				if (res2.data && res2.data.length) {
+					this.likeList = res2.data.map(x => {
+						return {
+							id: x._id,
+							video_id: x.video_id
+						}
+					});
+				}
+				if (res3.data && res3.data.length) {
+					this.collectList = res3.data.map(x => {
+						return {
+							id: x._id,
+							video_id: x.video_id
+						}
+					})
+				}
+				let videoIds = this.list.map(x => x._id);
+				let res4 = await cmsVideoCo.getListByIds(videoIds);
+				let videos = res4.data || [];
+				this.list.forEach(x => {
+					x.isLike = !!this.likeList.find(t => t.video_id == x._id);
+					x.isCollect = !!this.collectList.find(t => t.video_id == x._id);
+					let fdItem = videos.find(y => y._id == x._id);
+					if (fdItem) {
+						x.like_count = fdItem.like_count;
+						x.collect_count = fdItem.collect_count;
+						x.zhuanfa_count = fdItem.zhuanfa_count;
+						x.title = fdItem.title;
+						x.description = fdItem.description;
+						x.tags = fdItem.tags;
+						x.tagList = this.tagList.filter(y => fdItem.tags.includes(y._id));
+					}
+				})
 			},
 			getFollowerList() {
 				cmsFollowerCollectDB.get({
@@ -217,32 +265,143 @@
 				})
 			},
 			handleActionChange(e) {
-				if (e.type == 'like') {
-					if (e.action == 'add') {
-						cmsVideoCo.incLikeCount(e.value.video_id, 1).then(res => {
-							this.likeList.push({...e.value});
-						});
-					}
-					if (e.action == 'del') {
-						cmsVideoCo.incLikeCount(e.value.video_id, -1).then(res => {
-							this.likeList = this.likeList.filter(x => x.id !== e.value.id);
-						});	
-					}
+				if (e.type == 'tapLike') {
+					this.doTapLike(e.value);
+					return;
 				}
-				if (e.type == 'collect') {
-					if (e.action == 'add') {
-						cmsVideoCo.incCollectCount(e.value.video_id, 1).then(res => {
-							this.collectList.push({...e.value});
-						});						
-					}
-					if (e.action == 'del') {
-						cmsVideoCo.incCollectCount(e.value.video_id, -1).then(res => {
-							this.collectList = this.collectList.filter(x => x.id !== e.value.id);
-						});	
-					}	
+				if (e.type == 'tapCollect') {
+					this.doTapCollect(e.value);
+					return;
 				}
 				if (e.type == 'follow') {
-					this.doAddFollower(e.value)
+					this.doAddFollower(e.value);
+					return;
+				}
+			},
+			doTapCollect(value) {
+				if (this.isInOper) return;
+				const cmsVideoCo2 = uniCloud.importObject('cms-video-co', {
+					customUI: true
+				})
+				let curItem = value;
+				let fdItem = this.list.find(x => x._id === curItem._id);
+				if (fdItem) {
+					let isCollect = !fdItem.isCollect;
+					this.isInOper = true;
+					if (isCollect) {
+						cmsVideoCollectDB.add({
+							"user_id": this.userInfo._id,
+							"video_id": fdItem._id,
+							"cover": fdItem.cover,
+							"src": fdItem.src,
+							"title": fdItem.title,
+							"description": fdItem.description,
+							"read_type": fdItem.read_type,
+							"create_date": Date.now()
+						}).then(res => {
+							fdItem.isCollect = isCollect;
+							fdItem.collect_count++;
+							uni.showToast({
+								title: "收藏至个人中心",
+								icon: "none"
+							});
+							let tmpValue = {
+								id: res.id || '',
+								video_id: fdItem._id
+							}
+							cmsVideoCo2.incCollectCount(tmpValue.video_id, 1).then(res => {
+								this.collectList.push(tmpValue);
+							});	
+						}).finally(res => {
+							this.isInOper = false
+						})
+					} else {
+						let tmpItem = this.collectList.find(x => x.video_id == curItem._id);
+						if (tmpItem) {
+							cmsVideoCollectDB.delete({id: tmpItem.id}).then(res => {
+								if (res.status == 0) {
+									fdItem.isCollect = isCollect;
+									fdItem.collect_count--;
+									uni.showToast({
+										title: "取消收藏",
+										icon: "none"
+									});
+									let tmpValue = {
+										id: tmpItem.id,
+										video_id: tmpItem.video_id
+									};
+									cmsVideoCo2.incCollectCount(tmpValue.video_id, -1).then(res => {
+										this.collectList = this.collectList.filter(x => x.id !== tmpValue.id);
+									});	
+								}
+							}).finally(res => {
+								this.isInOper = false;
+							})
+						}
+					}
+				}
+			},
+			doTapLike(value) {
+				if (this.isInOper) return;
+				const cmsVideoCo2 = uniCloud.importObject('cms-video-co', {
+					customUI: true
+				})
+				let curItem = value;
+				let fdItem = this.list.find(x => x._id === curItem._id);
+				if (fdItem) {
+					let isLike = !fdItem.isLike;
+					this.isInOper = true;
+					if (isLike) {
+						cmsVideoLikeDB.add({
+							"user_id": this.userInfo._id,
+							"video_id": fdItem._id,
+							"cover": fdItem.cover,
+							"src": fdItem.src,
+							"title": fdItem.title,
+							"description": fdItem.description,
+							"read_type": fdItem.read_type,
+							"create_date": Date.now()
+						}).then(res => {
+							fdItem.isLike = isLike;
+							fdItem.like_count++;
+							uni.showToast({
+								title: "收藏至个人喜爱",
+								icon: "none"
+							});
+							let tmpValue = {
+								id: res.id || '',
+								video_id: fdItem._id
+							}
+							cmsVideoCo2.incLikeCount(tmpValue.video_id, 1).then(res => {
+								this.likeList.push(tmpValue);
+							});
+						}).finally(res => {
+							this.isInOper = false
+						})
+					} else {
+						let tmpItem = this.likeList.find(x => x.video_id == curItem._id);
+						if (tmpItem) {
+							cmsVideoLikeDB.delete({id: tmpItem.id}).then(res => {
+								if (res.status == 0) {
+									fdItem.isLike = isLike;
+									fdItem.like_count--;
+									uni.showToast({
+										title: "取消喜爱",
+										icon: "none"
+									});
+									let tmpValue = {
+										id: tmpItem.id,
+										video_id: tmpItem.video_id
+									};
+									cmsVideoCo2.incLikeCount(tmpValue.video_id, -1).then(res => {
+										this.likeList = this.likeList.filter(x => x.id !== tmpValue.id);
+									});	
+								}
+							}).finally(res => {
+								this.isInOper = false;
+							})
+						}
+					}
 				}
 			},
 			doAddFollower(value) {

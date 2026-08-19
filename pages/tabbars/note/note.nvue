@@ -584,6 +584,7 @@ page {
 					padding: 25px;
 					box-sizing: border-box;
 					line-height: 1.6em;
+					white-space: pre-wrap;
 				}
 				.note-date {
 					display: flex;

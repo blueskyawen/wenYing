@@ -47,8 +47,8 @@
 							x.cover_src = img.src;
 						}
 					});
-					this.list = pagination['current'] == 1 ? data : this.list.concat(data);
 				}
+				this.list = pagination['current'] == 1 ? data : this.list.concat(data);
 			},
 			refreshData() {
 				this.$refs.udb.loadData({
@@ -62,7 +62,7 @@
 			},
 			goDetail(item) {
 				uni.navigateTo({
-					url: '/pages/myVideo/preView/preView?id=' + item.video_id
+					url: '/pages/myVideo/preView/preView?id=' + item.video_id + '&from=likes'
 				})
 			},
 		}

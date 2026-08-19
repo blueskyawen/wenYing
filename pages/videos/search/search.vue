@@ -1,6 +1,6 @@
 <template>
 	<view>
-		搜索 {{ this.topic.name }}
+		搜索 {{ topic.name }}
 	</view>
 </template>
 

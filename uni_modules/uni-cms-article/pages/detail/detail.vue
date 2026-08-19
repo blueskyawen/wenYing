@@ -124,7 +124,12 @@ export default {
 		},
 		// 广告相关配置
 		adpId: "", // TODO: 请填写广告位ID
-		watchAdUniqueType: "device" // TODO: 观看广告的唯一标识类型，可选值为 user 或者 device，user 表示用户唯一，device 表示设备唯一
+		watchAdUniqueType: "device" ,// TODO: 观看广告的唯一标识类型，可选值为 user 或者 device，user 表示用户唯一，device 表示设备唯一
+		from: '',
+		saveOldFlag: {
+			like: false,
+			collect: false
+		}
     }
   },
   computed: {
@@ -164,6 +169,7 @@ export default {
   },
   onLoad(event) {
     //获取文章id，通常 id 来自上一个页面
+	this.from = event.from;
     if (event.id) {
       this.id = event.id;
 	  this.getDocData();
@@ -175,7 +181,8 @@ export default {
   },
   onUnload() {
     // 页面卸载时，移除监听事件
-    uni.$off('onUnlockContent', this.onUnlockContent)
+    uni.$off('onUnlockContent', this.onUnlockContent);
+	this.checkIfUpdate();
   },
   onPageScroll(e) {
 	  this.scrollTop = e.scrollTop
@@ -254,6 +261,7 @@ export default {
 						id: res.data[0]._id
 					};
 					this.isInCollect = true;
+					this.saveOldFlag.collect = true;
 				}
 			});
 			cmsLikesCo.get({
@@ -265,6 +273,7 @@ export default {
 						id: res.data[0]._id
 					};
 					this.isInLikes = true;
+					this.saveOldFlag.like = true;
 				}
 			});
 		  }
@@ -376,6 +385,14 @@ export default {
 		uni.navigateTo({
 			url: `/pages/followers/detail/detail?id=${this.docData.user_id}`
 		})
+	},
+	checkIfUpdate() {
+		if (this.from == 'likes' && this.saveOldFlag.like !== this.isInLikes) {
+			uni.$emit('refresh-like-list',{});
+		}
+		if (this.from == 'collects' && this.saveOldFlag.collect !== this.isInCollect) {
+			uni.$emit('refresh-collect-list',{});
+		}
 	}
   }
 
