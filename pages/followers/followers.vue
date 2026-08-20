@@ -2,7 +2,7 @@
 	<view class="page-list">
 		<view class="list-item" v-for="(item, index) in  list" :key="index">
 			<view class="item-left">
-				<image class="avator-image" :src="item.avatarUrl"></image>
+				<image class="avator-image" :src="item.avatarUrl" @click="goDetail(item)"></image>
 				<text class="mick-name">{{ item.name }}</text>
 			</view>
 			<view class="item-right">
@@ -109,7 +109,12 @@
 				}).finally(e => {
 					this.isInoper = false;
 				})
-			} 
+			},
+			goDetail(item) {
+				uni.navigateTo({
+					url: `/pages/followers/detail/detail?id=${item.user_id}`
+				})
+			}
 		}
 	}
 </script>

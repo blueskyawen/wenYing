@@ -156,7 +156,7 @@
 			// #ifdef MP
 			this.initNavBarSize() // 初始化导航栏大小
 			// #endif
-			this.topHeght = uni.getWindowInfo().statusBarHeight;
+			//this.topHeght = uni.getWindowInfo().statusBarHeight;
 		},
 		computed: {
 			userInfo() {
