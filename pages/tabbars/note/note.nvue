@@ -37,7 +37,7 @@
 			</view>
 		</view>
 			
-		<mescroll-body class="body-content" @init="mescrollInit" @down="downCallback" @up="upCallback">
+		<mescroll-body class="body-content" :top="topHeght" @init="mescrollInit" :up="upOption"  @down="downCallback" @up="upCallback" @emptyclick="goNoteQuare">
 			 <view class="note-list">
 				 <view class="note-item-box" v-for="(item, index) in list" :key="index">
 					<view class="note-item">
@@ -109,12 +109,18 @@
 		mixins: [MescrollMixin],
 		data() {
 			return {
+				upOption: {
+					noMoreSize: 5,
+					empty: {
+						btnText: '逛小记广场',
+						zIndex: 8
+					}
+				},
 				list: [],
 				dateValue: Date.now(),
 				show: false,
 				likeIdList: [],
 				collectIdList: [],
-				isFirst: true,
 				isInOper: false,
 				providerList: [],
 				showShare: false,
@@ -122,11 +128,19 @@
 				shareNoteItem: {},
 				navBarHeight: 44, // 导航栏高度
 				mpButtonLeftPlaceholderSize: 0, // 小程序左侧icon占位大小
-				mpButtonPlaceholderSize: 87 // 小程序导航栏按钮占位大小
+				mpButtonPlaceholderSize: 87, // 小程序导航栏按钮占位大小
+				topHeght: 0,
+				isHide: false
 			}
 		},
+		onHide() {
+			this.isHide = true;
+		},
 		onShow() {
-			this.isFirst = true;
+			if (this.isHide) {
+				this.reloadList();
+				this.isHide = false;
+			}
 		},
 		onUnload() {
 			uni.$off('add-note-sucess')
@@ -134,11 +148,15 @@
 		onLoad() {
 			this.getShareProviders();
 			uni.$on('add-note-sucess', this.reloadList);
+			// console.log('windowHeight= '+uni.getWindowInfo().windowHeight)
+			// console.log('statusBarHeight= '+uni.getWindowInfo().statusBarHeight)
+			// console.log('screenHeight= '+uni.getWindowInfo().screenHeight)
 		},
 		onReady() {
 			// #ifdef MP
 			this.initNavBarSize() // 初始化导航栏大小
 			// #endif
+			this.topHeght = uni.getWindowInfo().statusBarHeight;
 		},
 		computed: {
 			userInfo() {
@@ -193,7 +211,7 @@
 				console.log('start=' + start)
 				console.log('end=' + end)
 				try {
-					if (this.isFirst && this.hasLogin) {
+					if (this.hasLogin) {
 						let res2 = await cmsNoteLikeDB.getList({
 							id: this.userInfo._id
 						})
@@ -216,7 +234,6 @@
 								}
 							})
 						}
-						this.isFirst = false
 					}
 					let res = await cmsNoteDB.getSearchList(pageNum, pageSize, {
 						start: start,

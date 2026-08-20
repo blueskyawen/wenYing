@@ -290,8 +290,6 @@
 				})
 			},
 			checkShowDespMore() {
-				let innerwidth = this.$refs.desRef && this.$refs.desRef.$el ? (this.$refs.desRef.$el.offsetWidth || 0) : 0
-				let scrollwidth = this.$refs.curDes && this.$refs.curDes.$el ? (this.$refs.curDes.$el.offsetWidth || 0) : 0
 				uni.createSelectorQuery().in(this).select("#desRef").boundingClientRect().exec(e => {
 					this.curRefWidth = e[0] ? e[0].width : 0
 				})

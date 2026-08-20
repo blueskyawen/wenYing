@@ -6,7 +6,9 @@
 	text-align: center;
 	clear: both;
 }
-
+.mescroll-upwarp .upwarp-content {
+	align-items: center;
+}
 /*提示文本 */
 .mescroll-upwarp .upwarp-tip,
 .mescroll-upwarp .upwarp-nodata {

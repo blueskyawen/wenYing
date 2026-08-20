@@ -27,9 +27,9 @@
 		<u-sticky bgColor="#fff">
 			<u-tabs :list="categaryList" @click="clickTab" :current="curTab"></u-tabs>
 		</u-sticky>
-		<swiper class="swiper" :style="{height: heighth + 'px'}" :current="curTab" @change="swiperChange">
+		<swiper class="swiper" :style="{height: listHeight}" :current="curTab" @change="swiperChange">
 			<swiper-item v-for="(tab,indexx) in categaryList" :key="indexx">
-				<mescroll-item :listHeight="listHeight" :categeryId="categeryId"></mescroll-item>
+				<mescroll-item :ref="'listRef-' + indexx" :listHeight="listHeight" :categeryId="categeryId"></mescroll-item>
 			</swiper-item>
 		</swiper>
     </view>
@@ -77,8 +77,18 @@
       this.initNavBarSize() // 初始化导航栏大小
       // #endif
       /* 可用窗口高度 - 搜索框高 - 状态栏高 */
-      this.listHeight = uni.getSystemInfoSync().windowHeight - uni.getSystemInfoSync().statusBarHeight - this.navBarHeight + 'px'; // 计算列表高度
+	  // console.log('screenHeight= '+uni.getSystemInfoSync().screenHeight)
+	  // console.log('windowHeight= '+uni.getSystemInfoSync().windowHeight)
+	  // console.log('statusBarHeight= '+uni.getSystemInfoSync().statusBarHeight)
+      this.listHeight = (uni.getSystemInfoSync().windowHeight - uni.getSystemInfoSync().statusBarHeight - this.navBarHeight - 44) + 'px'; // 计算列表高度
     },
+	// #ifdef H5
+	onPullDownRefresh() {
+		if (this.$refs['listRef-' + this.curTab]) {
+			this.$refs['listRef-' + this.curTab].refresh();
+		}
+	},
+	// #endif
     methods: {
 		init() {
 			const uniCaptchaDemo = uniCloud.importObject('cms-categary-co')

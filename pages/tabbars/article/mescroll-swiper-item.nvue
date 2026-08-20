@@ -1,0 +1,107 @@
+<template>
+	<mescroll-uni class="mescrol-content" @init="mescrollInit" :height="height" :down="downOption" @down="downCallback" 
+		:up="upOption" @up="upCallback">
+		<doc-list :list="list"></doc-list>
+	</mescroll-uni>
+</template>
+
+<script>
+	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import MescrollMoreItemMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more-item.js";
+	import docList from "./doc-list.nvue";
+	import {parseImageUrl} from "@/uni_modules/uni-cms-article/common/parse-image-url";
+	const uniDocsDemo = uniCloud.importObject('cms-article-co');
+	
+	export default {
+		mixins: [MescrollMixin,MescrollMoreItemMixin],
+		components: {
+			docList
+		},
+		props: {
+			i: Number,
+			index: {
+				type: Number,
+				default() {
+					return 0
+				}
+			},
+			tabs: {
+				type: Array,
+				default() {
+					return []
+				}
+			},
+			height: [Number,String] // mescroll的高度
+		},
+		data() {
+			return {
+				list: [],
+				downOption: {
+					auto:false
+				},
+				upOption: {
+					auto:false,
+					noMoreSize: 5
+				},
+				offsetY: 0,
+				curPageLen: 0,
+				hasNext: true,
+				pageNum: 1
+			}
+		},
+		methods: {
+			downCallback() {
+				// 下拉刷新的回调,默认重置上拉加载列表为第一页 (自动执行 page.num=1, 再触发upCallback方法 )
+				this.mescroll.resetUpScroll()
+			},
+			upCallback(page) {
+				console.log('upCallback===')
+				uni.showLoading()
+				let curTab = this.tabs[this.index]
+				if (!curTab) return;
+				let pageNum = page.num; // 页码, 默认从1开始
+				let pageSize = page.size; // 页长, 默认每页10条
+				let category_id = curTab._id;
+				uniDocsDemo.getSearch(pageNum, pageSize, category_id).then(res => {
+					if (res) {
+						console.log('uniDocsDemo.getSearch')
+						this.listLoad(res.data || []).then(res => {
+							console.log('listLoad')
+							if(pageNum == 1) this.list = []; //如果是第一页需手动制空列表
+							this.list = this.list.concat(res); //追加新数据
+							this.pageNum = pageNum; // 页码
+							this.curPageLen = res.length; // 当前页长
+							this.hasNext = this.curPageLen >= pageSize;
+							this.mescroll.endSuccess(this.curPageLen, this.hasNext);
+						})
+					}
+				}).catch(err => {
+					this.mescroll.endErr()
+				}).finally(() => {
+					uni.hideLoading();
+				})
+			},
+			async listLoad(data) {
+			  if (!data.length) return data;
+			  const listData = data.map(item => {
+			    if (typeof item.thumbnail === 'string') {
+			      item.thumbnail = [item.thumbnail]
+			    }
+			
+			    return item
+			  })
+			
+			  // 处理腾讯云文件链接
+			  for (const article of listData) {
+			    const parseImages = await parseImageUrl(article.thumbnail)
+			
+			    article.thumbnail = parseImages ? parseImages.map(image => image.src): []
+			  }
+			 return listData;
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+</style>

@@ -7,9 +7,9 @@
 			<three-cover v-else-if="item.thumbnail && item.thumbnail.length === 3"
 						 :data="item"></three-cover>
 		</template>
-		<view class="data-empty" v-if="!isLoading && !list.length">
+<!-- 		<view class="data-empty" v-if="!isLoading && !list.length">
 			<u-empty></u-empty>
-		</view>
+		</view> -->
 	</view>
 </template>
 

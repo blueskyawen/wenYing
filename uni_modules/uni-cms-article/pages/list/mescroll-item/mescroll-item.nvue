@@ -120,7 +120,12 @@
 			 console.log(this.loadType)
 			 console.log(this.categeryId)
 			  this.listData = this.loadType === 'loadMore' ? this.listData.concat(listData) : listData
-			  this.loadType = null
+			  // if (this.loadType !== 'loadMore') {
+				 //  for (let i = 0;i < 2;i++) {
+				 //  	 this.listData = this.listData.concat(listData)
+				 //  }
+			  // }
+			  this.loadType = null;
 			},
 			// 刷新
 			refresh() {
@@ -142,12 +147,7 @@
 			retry() {
 			  this.refresh()
 			},
-		},
-		// #ifdef H5
-		onPullDownRefresh() {
-		  this.refresh()
 		}
-		// #endif
 	}
 </script>
 

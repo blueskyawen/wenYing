@@ -156,7 +156,7 @@
 		computed: {
 			nameText() {
 				let nameT = this.userInfo ? (this.userInfo.nickname || this.userInfo.username) : '无';
-				return this.avatorImg ? '' : nameT[0];
+				return this.avatorImg ? '' : nameT ? nameT[0] : '';
 			},
 			userInfo() {
 				return store.userInfo

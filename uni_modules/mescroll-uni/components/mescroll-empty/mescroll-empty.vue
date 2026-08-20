@@ -80,6 +80,9 @@ export default {
 	padding: 100rpx 50rpx;
 	text-align: center;
 }
+.mescroll-empty > view {
+	display: block;
+}
 
 .mescroll-empty.empty-fixed {
 	z-index: 99;

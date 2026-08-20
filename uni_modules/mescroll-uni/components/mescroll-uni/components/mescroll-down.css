@@ -17,6 +17,7 @@
 	min-height: 60rpx;
 	padding: 20rpx 0;
 	text-align: center;
+	display: block;
 }
 
 /* 下拉刷新--提示文本 */

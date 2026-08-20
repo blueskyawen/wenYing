@@ -5,13 +5,13 @@
 		</u-sticky>
 		<swiper class="swiper" :style="{height: heighth + 'px'}" :current="curTab" @change="swiperChange">
 			<swiper-item>
-				<doc-list ref="list-0" :udbWhere="udbWhere"></doc-list>
+				<doc-list v-if="udbWhere" ref="list-0" :udbWhere="udbWhere"></doc-list>
 			</swiper-item>
 			<swiper-item>
-				<note-list ref="list-1" :udbWhere="udbWhere"></note-list>
+				<note-list v-if="udbWhere" ref="list-1" :udbWhere="udbWhere"></note-list>
 			</swiper-item>
 			<swiper-item>
-				<video-list ref="list-2" :udbWhere="udbWhere"></video-list>
+				<video-list v-if="udbWhere" ref="list-2" :udbWhere="udbWhere"></video-list>
 			</swiper-item>
 		</swiper>
 	</view>
