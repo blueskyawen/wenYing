@@ -1,7 +1,9 @@
 <template>
 	<view>
 		<wy-video ref="vidRef" :list="list" :total="count" :likeItems="likeList" :collectItems="collectList" 
-		 :followers="followers" @action-change="handleActionChange" @loadMore="loadMoreData"></wy-video>
+			:followers="followers" @action-change="handleActionChange" @loadMore="loadMoreData"></wy-video>
+<!-- 		<wt-video ref="vidRef" :list="list" :total="count" :likeItems="likeList" :collectItems="collectList"
+		  :followers="followers" @action-change="handleActionChange" @loadMore="loadMoreData"></wt-video> -->
 	</view>
 </template>
 

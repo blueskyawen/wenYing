@@ -276,7 +276,8 @@
 						msg = data ? ('当前积分为 ' + data.balance) : '当前无积分';
 						uni.showToast({
 							title: msg,
-							icon: 'none'
+							icon: 'none',
+							duration: 3000
 						});
 					}).finally(()=>{
 						uni.hideLoading()
