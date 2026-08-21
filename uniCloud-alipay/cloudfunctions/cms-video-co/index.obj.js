@@ -133,6 +133,42 @@ module.exports = {
 		}).get();
 		return res;
 	},
+	getTotalByTag: async function(tagId) {
+		let res = cmsVideoCollection.where({
+								"read_type": 1,
+								"tags": tagId
+							  })
+							  .count()
+		return res;
+	},
+	getListByTag: async function(pageNum, pageSize, tagId) {
+		const dbCmd = db.command;
+		let curPageNum = pageNum > 0 ? pageNum - 1 : 0
+		let skipNum = curPageNum * pageSize
+		const $ = dbCmd.aggregate;
+		const res = cmsVideoCollection.aggregate()
+						.lookup({
+						  from: userDBName,
+						  let: {
+							user_id: '$uploadUser'
+						  },
+						  pipeline: $.pipeline()
+							.match(dbCmd.expr(
+							  $.eq(['$_id', '$$user_id'])
+							))
+							.project({
+							  nickname: true,
+							  username: true,
+							  avatar_file: true
+							})
+							.done(),
+						  as: 'user_id'
+						}).match({
+							"read_type": 1,
+							"tags": tagId
+						}).skip(skipNum).limit(pageSize).end();
+		return res;
+	},
 	/**
 	 * method1方法描述
 	 * @param {string} param1 参数1描述

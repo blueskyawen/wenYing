@@ -68,7 +68,9 @@
 				clearTimeout(this.timerId);
 				this.timerId = null;
 			}
-			this.getFollowerList();
+			if (this.hasLogin) {
+				this.getFollowerList();
+			}
 		},
 		onHide() {
 			console.log('cmsVideoCo == onHide');
@@ -107,23 +109,25 @@
 				const cmsVideoCo = uniCloud.importObject('cms-video-co', {
 					customUI: true
 				});
-				let res2 = await cmsVideoLikeDB.getList({id: this.userInfo._id});
-				let res3 = await cmsVideoCollectDB.getList({id: this.userInfo._id});
-				if (res2.data && res2.data.length) {
-					this.likeList = res2.data.map(x => {
-						return {
-							id: x._id,
-							video_id: x.video_id
-						}
-					});
-				}
-				if (res3.data && res3.data.length) {
-					this.collectList = res3.data.map(x => {
-						return {
-							id: x._id,
-							video_id: x.video_id
-						}
-					})
+				if (this.hasLogin) {
+					let res2 = await cmsVideoLikeDB.getList({id: this.userInfo._id});
+					let res3 = await cmsVideoCollectDB.getList({id: this.userInfo._id});
+					if (res2.data && res2.data.length) {
+						this.likeList = res2.data.map(x => {
+							return {
+								id: x._id,
+								video_id: x.video_id
+							}
+						});
+					}
+					if (res3.data && res3.data.length) {
+						this.collectList = res3.data.map(x => {
+							return {
+								id: x._id,
+								video_id: x.video_id
+							}
+						})
+					}
 				}
 				let videoIds = this.list.map(x => x._id);
 				let res4 = await cmsVideoCo.getListByIds(videoIds);

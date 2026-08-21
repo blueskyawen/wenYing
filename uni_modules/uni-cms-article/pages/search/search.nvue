@@ -558,7 +558,7 @@ export default {
 					[associativeSearchField]: new RegExp(value, 'gi'),
 				}).field(associativeField).get().then(res => {
 					// 将查询结果赋值给联想词列表，并显示联想词
-					this.associativeList = res.result.data;
+					this.associativeList = res.result ? res.result.data : [];
 					this.associativeShow = true
 				})
 			} else {

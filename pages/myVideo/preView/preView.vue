@@ -99,7 +99,7 @@
 				showEditPlane: false,
 				formData: {
 					title: '',
-					description: [],
+					description: '',
 					tags: [],
 				},
 				tagOptions: [],
@@ -135,6 +135,9 @@
 			userInfo() {
 				return store.userInfo
 			},
+			hasLogin(){
+				return store.hasLogin
+			},
 			pubOptions() {
 				return this.operList.filter(x => x.value !== 'toprivate')
 			},
@@ -158,7 +161,7 @@
 			this.checkIfUpdate();
 		},
 		onShow() {
-			if (!this.showOpers) {
+			if (!this.showOpers && this.hasLogin) {
 				this.getFollowerList();	
 			}
 		},
@@ -187,7 +190,7 @@
 						}
 					})
 					
-					if (!this.showOpers) {
+					if (!this.showOpers && this.hasLogin) {
 						let res2 = await cmsVideoLikeDB.getList({
 							id: this.userInfo._id
 						})
