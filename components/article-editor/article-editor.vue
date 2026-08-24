@@ -98,7 +98,7 @@
 				this.readOnly = !this.readOnly
 			},
 			onEditorReady() {
-				uni.createSelectorQuery().select('#editor').context((res) => {
+				uni.createSelectorQuery().in(this).select('#editor').context((res) => {
 					this.editorCtx = res.context;
 					if (this.html) {
 					    this.editorCtx.setContents({

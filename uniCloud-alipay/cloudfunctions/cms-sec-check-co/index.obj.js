@@ -8,6 +8,22 @@ const config = createConfig({
 	pluginId: 'uni-cms'
 }).config()
 
+const errmsgMap = {
+	'uni-sec-check-invoke-out-of-limit': '接口调用频率/次数超出限制',
+	'uni-sec-check-system-error': '系统错误',
+	'uni-sec-check-invalid-appid': 'appid不正确',
+	'uni-sec-check-invalid-appsecret': 'appsecret不正确',
+	'uni-sec-check-invalid-access-token': 'accessToken不正确',
+	'uni-sec-check-access-token-expired': 'accessToken已过期',
+	'uni-sec-check-invalid-image-size': '图片大小超出限制',
+	'uni-sec-check-invalid-request-url': '错误的请求地址',
+	'uni-sec-check-empty-image': '图片文件内容为空',
+	'uni-sec-check-param-required': '缺少必要参数',
+	'uni-sec-check-invalid-request-param': '错误的请求参数',
+	'uni-sec-check-invalid-request-format': '错误的请求格式',
+	'uni-sec-check-invalid-file-type': '错误的文件类型'
+}
+
 module.exports = {
 	_before: function () { // 通用预处理器
 		console.warn('unicheck_before: ' + JSON.stringify(config.contentSecurity))
@@ -18,7 +34,8 @@ module.exports = {
 			 // 实例化内容安全检测模块
 			this.uniSecCheck = new UniSecCheck({
 				provider: 'mp-weixin', // 使用微信小程序的内容安全检测
-				requestId: this.getUniCloudRequestId() // 请求ID为当前云函数请求ID
+				requestId: this.getUniCloudRequestId(), // 请求ID为当前云函数请求ID
+				appId: '__UNI__E93A4F9'
 			})
 		}
 	},
@@ -61,10 +78,16 @@ module.exports = {
 				errMsg: errorMsg ? `${errorMsg}, 图片已删除, 请修改后提交` : '图片违规已删除, 请修改后提交'
 			}
 		} else if (res.errCode !== 0) {
-			// 如果内容安全检测异常，抛出异常并打印错误信息
-			throw {
-				errCode: res.errCode,
-				errMsg: errorMsg ? `${errorMsg}, 请修改后提交` : '内容安全检测异常, 请修改后提交'
+			if (res.errCode == 'uni-sec-check-invoke-out-of-limit') {
+				return {
+					errCode: 0
+				}
+			} else {
+				// 如果内容安全检测异常，抛出异常并打印错误信息
+				throw {
+					errCode: res.errCode,
+					errMsg: errmsgMap[res.errCode] ? errmsgMap[res.errCode] : '内容安全检测异常, 请修改后提交'
+				}
 			}
 		}
 
@@ -95,9 +118,15 @@ module.exports = {
 			}
 		} else if (res.errCode !== 0) {
 			console.error(res)
-			throw {
-				errCode: res.errCode,
-				errMsg: errorMsg ? `${errorMsg}, 请修改后提交` : '内容安全检测异常, 请修改后提交'
+			if (res.errCode == 'uni-sec-check-invoke-out-of-limit') {
+				return {
+					errCode: 0
+				}
+			} else {
+				throw {
+					errCode: res.errCode,
+					errMsg: errmsgMap[res.errCode] ? errmsgMap[res.errCode] : '内容安全检测异常, 请修改后提交'
+				}
 			}
 		}
 
