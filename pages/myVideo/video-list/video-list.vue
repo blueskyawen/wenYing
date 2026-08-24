@@ -6,7 +6,7 @@
 					<image :src="item.cover_src"></image>
 					<view class="like-c">
 						<uni-icons type="heart" size="12" color="#fcfcfc"></uni-icons>
-						<text class="text1">{{ item.dianzan }}</text>
+						<text class="text1">{{ item.like_count }}</text>
 					</view>
 				</view>
 			</uni-grid-item>

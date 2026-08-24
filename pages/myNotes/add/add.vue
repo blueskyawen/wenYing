@@ -133,7 +133,17 @@
 				let filePath, tempFile;
 				if ((this.id || this.relateId) && this.imageUrls[0].src === this.imageList[0]) {
 					// 编辑时没有更改图片
-					this.submitForm();
+					this.checkDataSec().then(res => {
+						this.submitForm();
+					}).catch(err => {
+						uni.showToast({
+							title: err.errMsg || '图片或文字存在违规, 请修改',
+							icon: 'error',
+							duration: 3000
+						});
+						this.isInOper = false;
+					})
+					return;
 				} else {
 					// 新增, 编辑时更改了图片
 					filePath = this.imageList[0];
@@ -148,13 +158,36 @@
 					onUploadProgress() {},
 					success(e) {
 						that.formData.cover = e.fileID;
-						that.submitForm();
+						
+						that.checkDataSec().then(res => {
+							that.submitForm();
+						}).catch(err => {
+							uni.showToast({
+								title: err.errMsg || '图片或文字存在违规, 请修改',
+								icon: 'error',
+								duration: 3000
+							});
+							that.isInOper = false;
+						})
 					},
 					fail() {
 						that.isInOper = false;
 					},
 					complete() {}
 				});
+			},
+			async checkDataSec() {
+				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
+				  customUI: true
+				});
+				console.log('checkDataSec==start')
+				console.log(this.formData.content);
+				console.log(this.formData.cover);
+				const parallel = [];
+				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.content, '文字内容存在敏感词'));
+				parallel.push(cmsSecCheckCo.checkImageSec(this.formData.cover, '图片存在违规'));
+				console.log('checkDataSec==end')
+				return Promise.all(parallel);	
 			},
 			submitForm() {
 				let addData = {...this.formData};

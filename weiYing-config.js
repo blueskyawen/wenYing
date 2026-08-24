@@ -21,7 +21,7 @@ export default {
 	//关于应用
 	"about": {
 		//应用名称
-		"appName": "文影",
+		"appName": "轻拾刻",
 		//应用logo
 		"logo": "/static/logo.jpg",
 		//公司名称

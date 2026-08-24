@@ -210,12 +210,29 @@
 				if (this.uploading) return;
 				try {
 					await this.$refs.videoForm.validate();
+					await this.checkDataSec();
 					await this.startUpload();
 					this.addVideo();
 				} catch (e) {
 					this.uploading = false;
-					console.error(e)
+					console.error(JSON.stringify(e))
+					if (e.detail && e.detail.action && e.detail.action == 'secCheck') {
+						uni.showToast({
+							title: e.errMsg || '文字内容存在违规, 请修改',
+							icon: 'error',
+							duration: 3000
+						})
+					}
 				}
+			},
+			async checkDataSec() {
+				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
+				  customUI: true
+				});
+				const parallel = [];
+				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.title, '标题存在敏感词'));
+				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.description, '描述内容存在敏感词'));
+				return Promise.all(parallel);	
 			},
 			chooseFile() {
 				uni.chooseVideo({

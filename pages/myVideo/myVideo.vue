@@ -89,7 +89,6 @@
 							if (img) {
 								x.cover_src = img.src;
 							}
-							x.dianzan = 999
 						})
 						this.list = tmpList;
 						this.isLoading = false;

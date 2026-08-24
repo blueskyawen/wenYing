@@ -34,7 +34,15 @@ module.exports = {
 						}).skip(skipNum).limit(pageSize).end()
 		// const res = await cmsDocCollection.skip(skipNum).limit(pageSize).get();
 			return res;
-	}
+	},
+	updateViewCount: async function(value) {
+		let res = cmsDocCollection.where({
+						_id: this.id
+					}).update({
+					  view_count: db.command.inc(value)
+					})
+		return res;
+	},
 	/**
 	 * method1方法描述
 	 * @param {string} param1 参数1描述

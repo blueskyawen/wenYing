@@ -301,38 +301,58 @@
 				this.closePlane();
 				this.showEditPlane = true;
 			},
+			checkDataSec() {
+				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
+				  customUI: true
+				});
+				const parallel = [];
+				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.title, '标题存在敏感词'));
+				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.description, '描述内容存在敏感词'));
+				return Promise.all(parallel);	
+			},
 			confirmEdit() {
 				this.$refs.editForm.validate().then(res => {
 					if (this.isModify()) {
-						this.isloading = true;
-						uni.showLoading({
-							title: '处理中'
-						})
-						cmsVideoCo.updateFields({
-							id: this.operItem._id,
-							title: this.formData.title,
-							description: this.formData.description,
-							tags: this.formData.tags
-						}).then(res => {
-							if (res.status == 0) {
-							  uni.showToast({
-								title: res.msg,
-								icon: "none"
-							  });
-							  this.modCurData();
-							  this.closeEditPlane();
-							} else {
-								uni.showToast({
+						this.checkDataSec().then(res => {
+							this.isloading = true;
+							uni.showLoading({
+								title: '处理中'
+							})
+							cmsVideoCo.updateFields({
+								id: this.operItem._id,
+								title: this.formData.title,
+								description: this.formData.description,
+								tags: this.formData.tags
+							}).then(res => {
+								if (res.status == 0) {
+								  uni.showToast({
 									title: res.msg,
-									icon: "error"
-								});
-							}
-							this.isloading = false;
-							uni.hideLoading();
+									icon: "none"
+								  });
+								  this.modCurData();
+								  this.closeEditPlane();
+								} else {
+									uni.showToast({
+										title: res.msg,
+										icon: "error"
+									});
+								}
+								this.isloading = false;
+								uni.hideLoading();
+							}).catch(e => {
+								this.isloading = false;
+								uni.hideLoading();
+							});	
 						}).catch(e => {
-							this.isloading = false;
-							uni.hideLoading();
-						});	
+							if (e.detail && e.detail.action && e.detail.action == 'secCheck') {
+								uni.showToast({
+									title: e.errMsg || '文字内容存在违规, 请修改',
+									icon: 'error',
+									duration: 3000
+								})
+							}
+						})
+
 					} else {
 						this.closeEditPlane();
 					}

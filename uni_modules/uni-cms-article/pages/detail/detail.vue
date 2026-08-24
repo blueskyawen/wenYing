@@ -87,7 +87,7 @@
 				</view>
 			</view>
 		</view>
-		<u-line v-if="!isLoading" margin="50rpx 0" color="#c8c9cc" length="90%"></u-line>
+		<view v-if="!isLoading" class="botton-line"></view>
 		<u-back-top :scroll-top="scrollTop" :iconStyle="iconStyle" :top="200"></u-back-top>
 	</view>
 </template>
@@ -198,6 +198,35 @@ export default {
     }
   },
   methods: {
+	  getDocDataJQL() {
+		  const db = uniCloud.databaseForJQL();
+		  if (this.id) {
+			this.isLoading = true;
+			const articleDb = db.collection(articleDBName).field('user_id,thumbnail,excerpt,publish_date,title,content').getTemp();
+			const userDb = db.collection(userDBName).field('_id, nickname, username').getTemp();
+
+			db.collection(articleDb, userDb)
+			  .where(`_id == "${this.id}"`)
+			  .get()
+			  .then(res => {
+				console.log('databaseForJQL==');
+				if (res.data) {
+					this.docData = res.data[0] || {};
+				}
+				this.loadData(this.docData);
+			  }).catch(err => {
+				console.error(err)
+			  }).finally(() => {
+				  this.isLoading = false;
+			  })
+		  }
+	  },
+	  updateViewCount() {
+		  const cmsArticleCo = uniCloud.importObject('cms-article-co', {
+			  customUI: true
+		  })
+		  cmsArticleCo.updateViewCount(1).then(res => {});
+	  },
 	  getDocData() {
 		  if (this.id) {
 			  this.isLoading = true;
@@ -241,6 +270,7 @@ export default {
 						this.docData = res.result.data[0] || {}
 					}
 					this.loadData(this.docData);
+					this.updateViewCount();
 				}).catch(err => {
 			      console.error(err)
 			    }).finally(() => {
@@ -382,9 +412,11 @@ export default {
       this.$refs.detail.loadData()
     },
 	tapAutor() {
-		uni.navigateTo({
-			url: `/pages/followers/detail/detail?id=${this.docData.user_id}`
-		})
+		if (this.docData.user_id) {
+			uni.navigateTo({
+				url: `/pages/followers/detail/detail?id=${this.docData.user_id}`
+			})
+		}
 	},
 	checkIfUpdate() {
 		if (this.from == 'likes' && this.saveOldFlag.like !== this.isInLikes) {
@@ -416,6 +448,12 @@ export default {
 	padding: 20rpx 30rpx;
 	width: 100%;
 	box-sizing: border-box;
+	.botton-line {
+		height: 1px;
+		background-color: #c8c9cc;
+		width: 90%;
+		margin: 50rpx 0;
+	}
 	.article {
 	  width: 100%;
 	}
