@@ -5,7 +5,7 @@
 				<uni-easyinput placeholder="文章标题" v-model="formData.title" trim="both" :maxlength="100"></uni-easyinput>
 			</uni-forms-item>
 			<uni-forms-item name="content" label="文章内容" required>
-				<article-editor v-model="formData.content" dir="cms-article"></article-editor>
+				<article-editor ref="editoRef" v-model="formData.content" dir="cms-article"></article-editor>
 			</uni-forms-item>
 			<uni-forms-item name="category_id" label="分类" required>
 				<uni-data-select v-model="formData.category_id" :localdata="categaryList"></uni-data-select>
@@ -88,7 +88,7 @@
 						this.formData.user_id = tmp.user_id;
 						this.formData.create_date = tmp.create_date;
 						this.formData.last_modify_date = tmp.last_modify_date;
-						if (tmp.avatarFile) {
+						if (tmp.avatarFile && tmp.avatarFile.name) {
 							this.formData.avatarObj = {...tmp.avatarFile}
 						} else {
 							if (tmp.avatar && tmp.avatar.indexOf('.') !== -1) {
@@ -153,24 +153,37 @@
 							this.doSubmitForm(addData);
 						})
 					} else {
+						addData.avatarFile = {};
 						this.doSubmitForm(addData);
 					}
 				}
 			},
 			doSubmitForm(addData) {
-				delete addData.avatarObj;
+				if (!(addData.avatarFile && addData.avatarFile.name) && addData.avatar) {
+					addData.avatar = '';
+				}
 				addData['last_modify_date'] = Date.now();
 				if (!this.id) {
 					addData['create_date'] = Date.now()
-				}				
-				uni.showLoading({
-					title: '保存中'
-				})
-				if (this.id) {
-					this.procEdit(addData);
-				} else {
-					this.procAdd(addData);
 				}
+				this.checkDataSec(addData).then(res => {
+					delete addData.avatarObj;
+					uni.showLoading({
+						title: '保存中'
+					})
+					if (this.id) {
+						this.procEdit(addData);
+					} else {
+						this.procAdd(addData);
+					}
+				}).catch(e => {
+					uni.showToast({
+						title: e.errMsg || '图片或文字存在违规, 请修改',
+						icon: 'error',
+						duration: 3000
+					});
+					this.isInOper = false;
+				})
 			},
 			procEdit(addData) {
 				let cmsWorksDB = uniCloud.importObject('cms-works-co');
@@ -213,6 +226,27 @@
 			},
 			goBack() {
 				uni.navigateBack();			
+			},
+			async checkDataSec(addData) {
+				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
+				  customUI: true
+				});
+				console.log(addData);
+				const parallel = [];
+				parallel.push(cmsSecCheckCo.checkContentSec(addData.title, '标题存在敏感词'));
+				if (addData.excerpt) {
+					parallel.push(cmsSecCheckCo.checkContentSec(addData.excerpt, '摘要存在敏感词'));
+				}
+				if (addData.avatar) {
+					parallel.push(cmsSecCheckCo.checkImageSec(addData.avatar, '封面图片存在违规'));
+				}
+				
+				let textCont = this.$refs.editoRef.getTextContent();
+				if (textCont) {
+					console.log(textCont);
+					parallel.push(cmsSecCheckCo.checkContentSec(textCont, '文章内容存在敏感词'));
+				}
+				return Promise.all(parallel);	
 			}
 		}
 	}

@@ -63,7 +63,8 @@
 			return {
 				readOnly: false,
 				formats: {},
-				html: ''
+				html: '',
+				textContent: ''
 			}
 		},
 		watch: {
@@ -79,6 +80,9 @@
 		    }
 		},
 		methods: {
+			getTextContent() {
+				return this.textContent;
+			},
 			onBlur() {
 				this.getContents();
 			},
@@ -86,6 +90,7 @@
 				this.editorCtx.getContents({
 				    success: res => {
 				        this.$emit('input', res.html);
+						this.textContent = res.text;
 				    }
 				});
 			},

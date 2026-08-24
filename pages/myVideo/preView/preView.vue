@@ -311,6 +311,7 @@
 				return Promise.all(parallel);	
 			},
 			confirmEdit() {
+				if (this.isloading) return;
 				this.$refs.editForm.validate().then(res => {
 					if (this.isModify()) {
 						this.checkDataSec().then(res => {
