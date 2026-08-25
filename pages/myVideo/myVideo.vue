@@ -24,7 +24,10 @@
 
 <script>
 	import videoList from "./video-list/video-list.vue";
-	import parseImageUrl from "@/common/parseImageUrl.js"
+	import parseImageUrl from "@/common/parseImageUrl.js";
+	const cmsScoreDB = uniCloud.importObject('cms-score-co', {
+		customUI: true
+	});
 	export default {
 		components: {
 			videoList
@@ -45,7 +48,8 @@
 				],
 				curTab: 0,
 				heighth: 400,
-				isLoading: true
+				isLoading: true,
+				score: 0
 			}
 		},
 		computed: {
@@ -64,14 +68,35 @@
 		},
 		onLoad() {
 			this.heighth = uni.getWindowInfo().windowHeight - 94;
+			// this.getList();
+			uni.$on('add-video-sucess', this.handleAddVideo);
+		},
+		onUnload() {
+			uni.$off('add-video-sucess')
 		},
 		onShow() {
 			this.getList();
+			this.getMyScore();
 		},
 		onHide() {
 			this.isSetting = false;
 		},
 		methods: {
+			getMyScore() {
+				cmsScoreDB.get({
+					user_id: this.loginUserId
+				}).then(res => {
+					this.score = res.data && res.data[0] ? res.data[0].balance : 0;
+				})
+			},
+			handleAddVideo(v) {
+				if (v.usescore) {
+					cmsScoreDB.updateScore({
+						user_id: this.loginUserId,
+						value: -10
+					}).then(res => {})
+				}
+			},
 			async getList() {
 				this.isLoading = true;
 				uni.showLoading({})
@@ -104,9 +129,32 @@
 				this.isSetting = !this.isSetting;
 			},
 			clickAdd() {
-				uni.navigateTo({
-					url: '/pages/myVideo/add/add'
-				})
+				if (this.list.length >= 10) {
+					uni.showModal({
+						title: "提示",
+						content: "个人最多可创建10篇短视频, 新建需消耗10个积分, 确认吗",
+						showCancel: true,
+						success: (e) => {
+							if (e.confirm) {
+								if (this.score >= 10) {
+									uni.navigateTo({
+										url: '/pages/myVideo/add/add?usescore=1'
+									})
+								} else {
+									uni.showToast({
+										title: '当前积分不足10个, 请签到获取积分',
+										icon: 'none',
+										duration: 2000
+									})
+								}
+							}
+						}
+					})
+				} else {
+					uni.navigateTo({
+						url: '/pages/myVideo/add/add'
+					})
+				}
 			},
 			clickTab(e) {
 				this.curTab = e.index;

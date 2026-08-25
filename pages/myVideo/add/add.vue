@@ -125,11 +125,13 @@
 					}
 				},
 				tagOptions: [],
-				tagList: []
+				tagList: [],
+				usescore: 0
 			}
 		},
 		onLoad(options) {
 			console.log('add video == onload');
+			this.usescore = options.usescore;
 			this.heighth = uni.getWindowInfo().windowHeight;
 			this.getTagList();
 		},
@@ -474,7 +476,7 @@
 						title: '保存成功',
 						icon: "none"
 					});
-					uni.$emit('add-video-sucess',{});
+					uni.$emit('add-video-sucess',{usescore: this.usescore});
 					setTimeout(() => {
 						uni.navigateBack();
 					}, 1000);

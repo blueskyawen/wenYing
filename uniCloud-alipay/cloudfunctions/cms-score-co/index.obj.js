@@ -10,15 +10,35 @@ module.exports = {
 	get: async function({user_id}) {
 		const res = await cmsScoreCollection.where({
 			'user_id': user_id
-		}).field('score,balance').limit(1).get();
+		}).limit(1).get();
 		return res;
 	},
-	updateScore: async function({user_id, score}) {
+	updateScore: async function({user_id, value}) {
+		const dbCmd = db.command;
 		const res = await cmsScoreCollection.where({
 			'user_id': user_id
 		}).update({
-			score: score
+			balance: dbCmd.inc(value) // 10, -10
 		});
+		return res;
+	},
+	deleteTrashs: async function({user_id}) {
+		const dbCmd = db.command;
+		const res = await cmsScoreCollection.where({
+							user_id: user_id
+						})
+						.orderBy("create_date", "desc")
+						.get()
+		let tmps = res.data || [];
+		if (tmps.length > 1) {
+			tmps.shift();
+			let ids = tmps.map(x => x._id);
+			const res2 = await cmsScoreCollection.where({
+					   "_id": dbCmd.in(ids)
+				   }).remove();
+			return res2;
+		}
+		
 		return res;
 	},
 	/**

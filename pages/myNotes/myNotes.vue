@@ -40,13 +40,17 @@
 
 <script>
 	const cmsNoteDB = uniCloud.importObject('cms-note-co');
-	import parseImageUrl from "@/common/parseImageUrl.js"
+	import parseImageUrl from "@/common/parseImageUrl.js";
+	const cmsScoreDB = uniCloud.importObject('cms-score-co', {
+		customUI: true
+	});
 	export default {
 		data() {
 			return {
 				list: [],
 				isSetting: false,
-				isLoading: true
+				isLoading: true,
+				score: 0
 			}
 		},
 		computed: {
@@ -59,7 +63,8 @@
 		},
 		onLoad() {
 			this.refreshData();
-			uni.$on('add-note-sucess', this.refreshData);
+			this.getMyScore();
+			uni.$on('add-note-sucess', this.handleAddNote);
 		},
 		onUnload() {
 			uni.$off('add-note-sucess')
@@ -68,6 +73,22 @@
 			this.isSetting = false;
 		},
 		methods: {
+			getMyScore() {
+				cmsScoreDB.get({
+					user_id: this.loginUserId
+				}).then(res => {
+					this.score = res.data && res.data[0] ? res.data[0].balance : 0;
+				})
+			},
+			handleAddNote(v) {
+				this.refreshData();
+				if (v.type == 'add' && v.usescore) {
+					cmsScoreDB.updateScore({
+						user_id: this.loginUserId,
+						value: -10
+					}).then(res => {})
+				}
+			},
 			async refreshData() {
 				this.isLoading = true;
 				let res = await cmsNoteDB.getList({
@@ -89,9 +110,32 @@
 				this.isSetting = !this.isSetting;
 			},
 			clickAdd() {
-				uni.navigateTo({
-					url: '/pages/myNotes/add/add'
-				})
+				if (this.list.length >= 50) {
+					uni.showModal({
+						title: "提示",
+						content: "个人最多可创建50篇小记, 新建需消耗10个积分, 确认吗",
+						showCancel: true,
+						success: (e) => {
+							if (e.confirm) {
+								if (this.score >= 10) {
+									uni.navigateTo({
+										url: '/pages/myNotes/add/add?usescore=1'
+									})
+								} else {
+									uni.showToast({
+										title: '当前积分不足10个, 请签到获取积分',
+										icon: 'none',
+										duration: 2000
+									})
+								}
+							}
+						}
+					})
+				} else {
+					uni.navigateTo({
+						url: '/pages/myNotes/add/add'
+					})
+				}
 			},
 			clickEdit(item) {
 				uni.navigateTo({

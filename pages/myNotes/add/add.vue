@@ -41,6 +41,9 @@
 		['camera', 'album']
 	];
 	const cmsNotesDB = uniCloud.importObject('cms-note-co');
+	const cmsScoreDB = uniCloud.importObject('cms-score-co', {
+		customUI: true
+	});
 	export default {
 		data() {
 			return {
@@ -64,7 +67,8 @@
 				sourceTypeIndex: 2,
 				imageUrls: [],
 				id: '',
-				relateId: ''
+				relateId: '',
+				usescore: 0
 			}
 		},
 		computed: {
@@ -75,6 +79,7 @@
 		onLoad(options) {
 			this.id = options.id;
 			this.relateId = options.relateId;
+			this.usescore = options.usescore;
 			if (this.id) {
 				this.getEditNote();
 				uni.setNavigationBarTitle({
@@ -232,7 +237,7 @@
 						title: '保存成功',
 						icon: "none"
 					});
-					uni.$emit('add-note-sucess',{});
+					uni.$emit('add-note-sucess',{type: 'add', usescore: this.usescore});
 					setTimeout(() => {
 						uni.navigateBack();
 					}, 1000);

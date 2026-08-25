@@ -54,7 +54,10 @@
 	import callCheckVersion from '@/uni_modules/uni-upgrade-center-app/utils/call-check-version';
 	// #endif
 	const db = uniCloud.database();
-	import parseImageUrl from "@/common/parseImageUrl.js"
+	import parseImageUrl from "@/common/parseImageUrl.js";
+	const cmsScoreDB = uniCloud.importObject('cms-score-co', {
+		customUI: true
+	});
 	
 	export default {
 		data() {
@@ -252,6 +255,11 @@
 				}
 				// #endif
 			},
+			checkDelTrash() {
+				cmsScoreDB.deleteTrashs({
+					user_id: this.userInfo._id
+				}).then(res => {})
+			},
 			getScore() {
 				if (!this.userInfo) {
 					return uni.showToast({
@@ -259,29 +267,26 @@
 						icon: 'none'
 					});
 				}
-
-				uni.showLoading({
-					mask: true
-				})
-				db.collection("uni-id-scores")
-					.where('"user_id" == $env.uid')
-					.field('score,balance')
-					.orderBy("create_date", "desc")
-					.limit(1)
-					.get()
-					.then((res) => {
-						console.log(res);
-						const data = res.result.data[0];
+				if (this.userInfo._id) {
+					this.checkDelTrash();
+					uni.showLoading({
+						mask: true
+					});
+					cmsScoreDB.get({
+						"user_id": this.userInfo._id
+					}).then((res) => {
+						const data = res.data[0] || {};
 						let msg = '';
-						msg = data ? ('当前积分为 ' + data.balance) : '当前无积分';
+						msg = data && data.balance ? ('当前积分为 ' + data.balance) : '当前无积分';
 						uni.showToast({
 							title: msg,
 							icon: 'none',
 							duration: 3000
 						});
-					}).finally(()=>{
-						uni.hideLoading()
+					}).finally(e => {
+						uni.hideLoading();
 					})
+				}
 			},
 			async checkVersion() {
 				let res = await callCheckVersion()

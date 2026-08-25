@@ -43,14 +43,13 @@ module.exports = {
 		})
 		
 		//查出来用户当前有多少积分
-		let {data: [userScore]} = await scoresTable
-										.where({user_id:state.auth.uid})
-										.orderBy("create_date", "desc")
-										.limit(1)
-										.get()
+		let resT = await scoresTable
+							.where({user_id:state.auth.uid})
+							.limit(1)
+							.get()
 		let balance = 0
-		if(userScore){
-			balance = userScore.balance
+		if(resT.data.length){
+			balance = resT.data[0].balance
 		}
 		
 		if(state.type == 'create'){
@@ -62,16 +61,26 @@ module.exports = {
 				console.log({setIsDeleteRes});
 			}
 			//给加积分
-			let score = n+days.length==14?60:10 //如果连续签到7天就多加50分，也就是60分
-			balance += score
-			let addScores = await scoresTable.add({
-				user_id:state.auth.uid,
-				balance,
-				score,
-				type:1,
-				create_date:Date.now()
-			})
-			console.log({addScores});
+			let score = n+days.length==14 ? 60 : 10 //如果连续签到7天就多加50分，也就是60分
+			balance += score;
+			if(resT.data.length) {
+				let res2 = await scoresTable
+									.doc(resT.data[0]._id)
+									.update({
+										create_date: Date.now(),
+										score: score,
+										balance: balance
+									})
+			} else {
+				let addScores = await scoresTable.add({
+					user_id:state.auth.uid,
+					balance,
+					score,
+					type:1,
+					create_date:Date.now()
+				})
+				console.log({addScores});
+			}
 		}
 		return {...result,score:balance,signInData,n,days}
 	}
