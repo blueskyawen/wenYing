@@ -8,6 +8,7 @@ module.exports = {
 		// console.log({state});
 		if(state.type == 'create'){
 			let date = todayTimestamp()
+			console.log(date);
 			let {total} = await signInTable.where({
 				user_id:state.auth.uid,
 				date,
@@ -95,5 +96,5 @@ function todayTimestamp(){
 	//一天一共多少毫秒
 	const D = 3600*24*1000
 	//去掉余数，再减去东8区的8小时 得到当天凌晨的时间戳
-	return parseInt(timestamp/D)*D - 3600*1000*8
+	return parseInt(timestamp/D)*D - 3600*1000*8 + D
 }
