@@ -56,7 +56,8 @@
             "minified" : true
         },
         "usingComponents" : true,
-        "lazyCodeLoading" : "requiredComponents"
+        "lazyCodeLoading" : "requiredComponents",
+        "permission" : {}
     },
     "mp-alipay" : {
         "usingComponents" : true
@@ -71,5 +72,17 @@
         "enable" : false
     },
     "vueVersion" : "2",
-    "locale" : "zh-Hans"
+    "locale" : "zh-Hans",
+    "h5" : {
+        "sdkConfigs" : {
+            "maps" : {
+                "tencent" : {
+                    "key" : "6JCBZ-63XKU-ZOTVC-GV4DV-RLFEO-HYFUG"
+                }
+            }
+        },
+        "devServer" : {
+            "https" : true
+        }
+    }
 }

@@ -28,7 +28,7 @@ module.exports = {
 	_before: function () { // 通用预处理器
 		console.warn('unicheck_before: ' + JSON.stringify(config.contentSecurity))
 		// 如果内容安全配置存在
-		if (config.contentSecurity) {
+		if (config.contentSecurity && !this.uniSecCheck) {
 			// 引入内容安全检测模块
 			const UniSecCheck = safeRequire('uni-sec-check')
 			 // 实例化内容安全检测模块

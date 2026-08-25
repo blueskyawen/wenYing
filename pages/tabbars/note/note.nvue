@@ -20,7 +20,7 @@
 							<u-icon v-else class="u-icon" name="arrow-up-fill" :size="12"></u-icon>
 						</view>
 						<!-- #ifndef MP -->
-						<view class="text">地球 · 58度</view>
+						<view class="text">{{ location.city || '地球' }} · {{ weatherInfo.weather || '晴'}}</view>
 						<!-- #endif -->
 					</view>
 					<u-datetime-picker
@@ -130,7 +130,10 @@
 				mpButtonLeftPlaceholderSize: 0, // 小程序左侧icon占位大小
 				mpButtonPlaceholderSize: 87, // 小程序导航栏按钮占位大小
 				topHeght: 0,
-				isHide: false
+				isHide: false,
+				jinweidu: {},
+				location: {},
+				weatherInfo: {}
 			}
 		},
 		onHide() {
@@ -141,6 +144,18 @@
 				this.reloadList();
 				this.isHide = false;
 			}
+			// #ifdef H5
+			if (!this.jinweidu.longitude) {
+				this.getLocation()
+			} else {
+				if (!this.location.city) {
+					this.getCityLocation();
+				}
+				if (!this.weatherInfo.weather) {
+					this.getCityWeather()
+				}
+			}
+			// #endif
 		},
 		onUnload() {
 			uni.$off('add-note-sucess')
@@ -181,6 +196,51 @@
 			  this.mpButtonPlaceholderSize = menuButtonInfo.width + 10
 			  // 获取系统信息，判断是否为 iOS 系统，设置导航栏高度
 			  this.navBarHeight = uni.getSystemInfoSync().system.toLowerCase().includes('ios') ? 44 : 48
+			},
+			getLocation() {
+				uni.getLocation({
+					success: (res) => {
+						this.jinweidu = {
+							longitude: res.longitude, // 经度
+							latitude: res.latitude  // 纬度
+						}
+						this.getCityLocation();
+						this.getCityWeather();
+					},
+					fail: (err) => {
+						console.error(err)
+					}
+				});
+			},
+			getCityLocation() {
+				const uniMapDB = uniCloud.importObject('uni-map-co', {
+					customUI:true
+				});
+				uniMapDB.location2address({
+					location: `${this.jinweidu.latitude},${this.jinweidu.longitude}`
+				}).then(res => {
+					this.location = res.result && res.result.result ? res.result.result : {}
+				})
+			},
+			getCityWeather() {
+				const uniMapDB = uniCloud.importObject('uni-map-co', {
+					customUI:true
+				});
+				uniMapDB.getLocationWeather({
+							location: `${this.jinweidu.latitude},${this.jinweidu.longitude}`
+						})
+						.then(res => {
+							if (res.result && res.result.originalResult && res.result.originalResult.status == 0) {
+								let resData = res.result.originalResult.result || {}
+								let realtimeInfo = resData.realtime && resData.realtime.length ? resData.realtime[0] : {};
+								this.weatherInfo = realtimeInfo.infos || {};
+							}
+						}).catch(err => {
+							uni.showToast({
+								title: err.errMsg,
+								icon: 'error'
+							})
+						})
 			},
 			showDateSelect() {
 				this.show = true;
