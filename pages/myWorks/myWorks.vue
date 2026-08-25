@@ -69,6 +69,12 @@
 
 <script>
 	import uniLoadState from "@/uni_modules/uni-cms-article/components/uni-load-state/uni-load-state.vue";
+	const cmsScoreDB = uniCloud.importObject('cms-score-co', {
+		customUI: true
+	});
+	const cmsWorksDB = uniCloud.importObject('cms-works-co', {
+		customUI: true
+	});
 	export default {
 		components: {
 			uniLoadState
@@ -92,7 +98,9 @@
 				curTab: 0,
 				isLoading: true,
 				categaryObj: {},
-				isSetting: false
+				isSetting: false,
+				score: 0,
+				total: 0
 			}
 		},
 		computed: {
@@ -118,7 +126,11 @@
 		},
 		onLoad() {
 			this.init();
-			uni.$on('add-doc-sucess', this.refreshData);
+			uni.$on('add-doc-sucess', this.handleAddDoc);
+		},
+		onShow() {
+			this.getMyScore();
+			this.getArticleCount();
 		},
 		onUnload() {
 			uni.$off('add-doc-sucess')
@@ -141,6 +153,29 @@
 						})
 					}
 				});
+			},
+			getMyScore() {
+				cmsScoreDB.get({
+					user_id: this.loginUserId
+				}).then(res => {
+					this.score = res.data && res.data[0] ? res.data[0].balance : 0;
+				})
+			},
+			getArticleCount() {
+				cmsWorksDB.getList({
+					id: this.loginUserId
+				}).then(res => {
+					this.total = res.data ? res.data.length : 0;
+				})
+			},
+			handleAddDoc(v) {
+				this.refreshData();
+				if (v.usescore) {
+					cmsScoreDB.updateScore({
+						user_id: this.loginUserId,
+						value: -10
+					}).then(res => {})
+				}
 			},
 			showTime(i) {
 				return this.curTab == 0 ? i.create_date : this.curTab == 1 ? i.publish_date  : i.review_date; 
@@ -170,9 +205,32 @@
 				this.isSetting = !this.isSetting;
 			},
 			clickAdd() {
-				uni.navigateTo({
-					url: '/pages/myWorks/add/add'
-				})
+				if (this.total >= 30) {
+					uni.showModal({
+						title: "提示",
+						content: "个人最多可创建30篇文章, 新建需消耗10个积分, 确认吗",
+						showCancel: true,
+						success: (e) => {
+							if (e.confirm) {
+								if (this.score >= 10) {
+									uni.navigateTo({
+										url: '/pages/myWorks/add/add?usescore=1'
+									})
+								} else {
+									uni.showToast({
+										title: '当前积分不足10个, 请签到获取积分',
+										icon: 'none',
+										duration: 2000
+									})
+								}
+							}
+						}
+					})
+				} else {
+					uni.navigateTo({
+						url: '/pages/myWorks/add/add'
+					})
+				}
 			},
 			clickEdit(item) {
 				uni.navigateTo({
@@ -199,7 +257,7 @@
 				});
 			},
 			procDel(item) {
-				let cmsWorksDB = uniCloud.importObject('cms-works-co');
+				// let cmsWorksDB = uniCloud.importObject('cms-works-co');
 				cmsWorksDB.delete({
 					id: item._id
 				}).then(res => {
@@ -230,7 +288,7 @@
 				});
 			},
 			procCloseReview(item) {
-				let cmsWorksDB = uniCloud.importObject('cms-works-co');
+				// let cmsWorksDB = uniCloud.importObject('cms-works-co');
 				cmsWorksDB.updateStatus({
 					id: item._id,
 					article_status: 0
@@ -262,7 +320,7 @@
 				});
 			},
 			procReview(item, isDelPublish) {
-				let cmsWorksDB = uniCloud.importObject('cms-works-co');
+				// let cmsWorksDB = uniCloud.importObject('cms-works-co');
 				cmsWorksDB.updateStatus({
 					id: item._id,
 					article_status: isDelPublish ? 3 : 2,

@@ -50,7 +50,8 @@
 				},
 				rules: {...addRules},
 				isInOper: false,
-				id: ''
+				id: '',
+				usescore: 0
 			}
 		},
 		computed: {
@@ -60,6 +61,7 @@
 		},
 		onLoad(options) {
 			this.id = options.id;
+			this.usescore = options.usescore;
 			if (this.id) {
 				this.getEditDoc();
 				uni.setNavigationBarTitle({
@@ -215,7 +217,7 @@
 						title: '保存成功',
 						icon: "none"
 					});
-					uni.$emit('add-doc-sucess',{});
+					uni.$emit('add-doc-sucess',{usescore: this.usescore});
 					setTimeout(() => {
 						uni.navigateBack();
 					}, 1000);
