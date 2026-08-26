@@ -2,12 +2,12 @@
   "name": "database",
   "dependencies": {
     "uni-captcha": "file:../../uni_modules/uni-captcha/uniCloud/cloudfunctions/common/uni-captcha",
-    "quill-delta-converter": "file:../../uni_modules/uni-cms-article/uniCloud/cloudfunctions/common/quill-delta-converter",
     "uni-config-center": "file:../../uni_modules/uni-config-center/uniCloud/cloudfunctions/common/uni-config-center",
     "uni-id-common": "file:../../uni_modules/uni-id-common/uniCloud/cloudfunctions/common/uni-id-common",
     "uni-open-bridge-common": "file:../../uni_modules/uni-open-bridge-common/uniCloud/cloudfunctions/common/uni-open-bridge-common",
     "uni-sec-check": "file:../../uni_modules/uni-sec-check/uniCloud/cloudfunctions/common/uni-sec-check",
-    "sign-in": "file:../../uni_modules/uni-sign-in/uniCloud/cloudfunctions/common/sign-in"
+    "sign-in": "file:../../uni_modules/uni-sign-in/uniCloud/cloudfunctions/common/sign-in",
+    "quill-delta-converter": "file:../../uni_modules/uni-cms-article/uniCloud/cloudfunctions/common/quill-delta-converter"
   },
   "extensions": {}
 }

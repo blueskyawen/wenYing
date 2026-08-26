@@ -136,7 +136,7 @@ import permision from "@/common/permission.js"
 import translatePublishTime from "@/uni_modules/uni-cms-article/common/publish-time";
 import parseScanResult from "@/uni_modules/uni-cms-article/common/parse-scan-result";
 import {parseImageUrl} from "@/uni_modules/uni-cms-article/common/parse-image-url";
-
+import { store} from '@/uni_modules/uni-id-pages/common/store.js';
 const searchLogDbName = 'opendb-search-log'; // 搜索记录数据库
 const articleDbName = 'uni-cms-articles'; // 文章数据库
 const associativeSearchField = 'title'; // 联想时，搜索框值检索数据库字段名
@@ -217,7 +217,7 @@ export default {
 			// 是否弹出键盘
 			keyBoardPopup: false,
 			// 搜索热词
-			hotWorld: 'DCloud', //	搜索热词，如果没有输入即回车，则搜索热词，但是不会加入搜索记录
+			hotWorld: '搜索热词，输入回车', //	搜索热词，如果没有输入即回车，则搜索热词，但是不会加入搜索记录
 			// 是否自动聚焦
 			focus: true,
 			// 语音识别引擎
@@ -261,6 +261,12 @@ export default {
 			// 	db.collection(articleDBName).where(this.where).field('thumbnail,title,publish_date,user_id').getTemp(),
 			// 	db.collection(userDBName).field('_id,nickname').getTemp()
 			// ]
+		},
+		loginUserId() {
+			return uniCloud.getCurrentUserInfo() ? uniCloud.getCurrentUserInfo().uid : '';
+		},
+		hasLogin() {
+			return store.hasLogin
 		}
 	},
 	// 页面初次渲染完成时执行
@@ -388,7 +394,7 @@ export default {
 			 */
 			this.getDeviceId().then(device_id => {
 				this.searchLogDb.add({
-					// user_id: device_id,
+					user_id: this.loginUserId || '',
 					device_id,
 					content: value,
 					create_date: Date.now()

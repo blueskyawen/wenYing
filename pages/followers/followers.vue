@@ -29,6 +29,8 @@
 			}
 		},
 		onLoad() {
+		},
+		onShow() {
 			this.getList();
 		},
 		computed: {

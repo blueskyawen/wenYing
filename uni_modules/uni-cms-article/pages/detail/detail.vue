@@ -1,6 +1,6 @@
 <template>
 	<view class="detail-page">
-		<unicloud-db v-if="id" v-slot:default="{data, loading, error, options}" collection="uni-cms-articles" 
+<!-- 		<unicloud-db v-if="id" v-slot:default="{data, loading, error, options}" collection="uni-cms-articles" 
 				   :getone="true" :where="where" ref="detail" :field="fields" @load="loadData" class="article">
 			<template v-if="!isLoading">
 			  <view class="meta">
@@ -35,8 +35,8 @@
 			<view class="detail-loading" v-else>
 			  <uni-icons type="spinner-cycle" size="35px"/>
 			</view>
-		</unicloud-db>
-<!-- 		<view class="article">
+		</unicloud-db> -->
+		<view class="article">
 			<view v-if="!isLoading">
 			  <view class="meta">
 				<view class="title">
@@ -70,7 +70,7 @@
 			<view class="detail-loading" v-else>
 			  <uni-icons type="spinner-cycle" size="35px"/>
 			</view>
-		</view> -->
+		</view>
 		<view class="infrite-action" v-if="!isLoading">
 			<view class="action">
 				<view class="action-i" @tap.stop="clickLike">
@@ -177,7 +177,7 @@ export default {
 	this.from = event.from;
     if (event.id) {
       this.id = event.id;
-	  // this.getDocData();
+	  this.getDocData();
 	  this.getDocFavorite();
     }
 
@@ -409,8 +409,8 @@ export default {
       // 设置文章标题
       this.title = data.title;
 	  this.dataInfo = data;
-	  this.getDocAutor(data);
-	  this.isLoading = false;
+	  // this.getDocAutor(data);
+	  // this.isLoading = false;
       // 将文章添加进阅读历史
       this.setReadHistory()
     },
@@ -437,9 +437,9 @@ export default {
       this.$refs.detail.loadData()
     },
 	tapAutor() {
-		if (this.dataInfo.user_id) {
+		if (this.docData.user_id) {
 			uni.navigateTo({
-				url: `/pages/followers/detail/detail?id=${this.dataInfo.user_id}`
+				url: `/pages/followers/detail/detail?id=${this.docData.user_id}`
 			})
 		}
 	},
