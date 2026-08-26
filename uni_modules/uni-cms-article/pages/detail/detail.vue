@@ -1,44 +1,42 @@
 <template>
 	<view class="detail-page">
-<!-- 		<unicloud-db v-if="id" v-slot:default="{data, loading, error, options}" :collection="collection" :options="formData"
-				   :getone="true" :where="where" :manual="true" ref="detail" foreignKey="uni-cms-articles.user_id"
-				   @load="loadData"
-				   class="article">
-			<template v-if="!loading && data">
+		<unicloud-db v-if="id" v-slot:default="{data, loading, error, options}" collection="uni-cms-articles" 
+				   :getone="true" :where="where" ref="detail" :field="fields" @load="loadData" class="article">
+			<template v-if="!isLoading">
 			  <view class="meta">
 				<view class="title">
-				  <text class="text">{{ data.title }}</text>
+				  <text class="text">{{ dataInfo.title }}</text>
 				</view>
 				<view class="excerpt">
-				  <text class="text">{{ data.excerpt }}</text>
+				  <text class="text">{{ dataInfo.excerpt }}</text>
 				</view>
 				<view class="author">
 					<view>
-						<template v-if="data.user_id && data.user_id[0]">
-											<text class="at">{{ data.user_id ? data.user_id[0].nickname : '' }}</text>
-											<text class="split">·</text>
+						<template v-if="author.id">
+							<text class="at autor-name">{{ author.nickname || author.username || '' }}</text>
+							<text class="split">·</text>
 						</template>
-						<text class="date">{{ publishTime(data.publish_date) }}</text>
+						<text class="date" v-if="dataInfo.publish_date">{{ publishTime(dataInfo.publish_date) }}</text>
 					</view>
 					<view class="likes">
-						<u-icon v-show="!isInLikes" name="heart" color="#b9b9b9" size="20" title="喜欢" @tap="clickLike"></u-icon>
-						<u-icon v-show="isInLikes" name="heart-fill" color="#fa3534" size="20" title="喜欢" @tap="clickLike"></u-icon>
-						<u-icon class="like-2" v-show="!isInCollect" name="star" color="#b9b9b9" size="20" title="收藏" @tap="clickCollect"></u-icon>
-						<u-icon class="like-2"  v-show="isInCollect" name="star-fill" color="#f3a73f" size="20" title="已收藏" @tap="clickCollect"></u-icon>
+						<u-icon v-if="!isInLikes" name="heart" color="#b9b9b9" size="20" title="喜欢" @tap="clickLike"></u-icon>
+						<u-icon v-else name="heart-fill" color="#fa3534" size="20" title="喜欢" @tap="clickLike"></u-icon>
+						<u-icon class="like-2" v-if="!isInCollect" name="star" color="#b9b9b9" size="20" title="收藏" @tap="clickCollect"></u-icon>
+						<u-icon class="like-2" v-else name="star-fill" color="#f3a73f" size="20" title="已收藏" @tap="clickCollect"></u-icon>
 					</view>
 				</view>
 			  </view>
 			  <render-article-detail
-				:content="data.content"
-				:content-images="data.content_images"
+				:content="dataInfo.content"
+				:content-images="dataInfo.content_images"
 				:ad-config="{ adpId, watchAdUniqueType }"
 			  ></render-article-detail>
 			</template>
 			<view class="detail-loading" v-else>
 			  <uni-icons type="spinner-cycle" size="35px"/>
 			</view>
-		</unicloud-db> -->
-		<view class="article">
+		</unicloud-db>
+<!-- 		<view class="article">
 			<view v-if="!isLoading">
 			  <view class="meta">
 				<view class="title">
@@ -72,7 +70,7 @@
 			<view class="detail-loading" v-else>
 			  <uni-icons type="spinner-cycle" size="35px"/>
 			</view>
-		</view>
+		</view> -->
 		<view class="infrite-action" v-if="!isLoading">
 			<view class="action">
 				<view class="action-i" @tap.stop="clickLike">
@@ -108,6 +106,7 @@ export default {
   },
   data() {
     return {
+		dataInfo: {},
 		docData: {},
 		isLoading: true,
 		id: "", // 文章ID
@@ -129,7 +128,13 @@ export default {
 		saveOldFlag: {
 			like: false,
 			collect: false
-		}
+		},
+		author: {
+			id: '',
+			nickname: '',
+			username: ''
+		},
+		fields: 'user_id,thumbnail,excerpt,publish_date,title,content'
     }
   },
   computed: {
@@ -172,7 +177,7 @@ export default {
 	this.from = event.from;
     if (event.id) {
       this.id = event.id;
-	  this.getDocData();
+	  // this.getDocData();
 	  this.getDocFavorite();
     }
 
@@ -380,10 +385,10 @@ export default {
 			  }
 		  }
 	  },
-    // 将时间戳转换为可读的时间格式
-    publishTime(timestamp) {
-      return translatePublishTime(timestamp)
-    },
+	// 将时间戳转换为可读的时间格式
+	publishTime(timestamp) {
+		return translatePublishTime(timestamp)
+	},
     // 将文章加入阅读历史
     setReadHistory() {
       // 获取阅读历史缓存，如果不存在则为空数组
@@ -402,19 +407,39 @@ export default {
     // 加载数据
     loadData(data) {
       // 设置文章标题
-      this.title = data.title
-
+      this.title = data.title;
+	  this.dataInfo = data;
+	  this.getDocAutor(data);
+	  this.isLoading = false;
       // 将文章添加进阅读历史
       this.setReadHistory()
     },
+	getDocAutor(data) {
+		if (data.user_id && !this.author.id) {
+			const cmsUserCo = uniCloud.importObject('cms-user-co', {
+				customUI: true
+			});
+			cmsUserCo.getByUserId({
+				user_id: data.user_id
+			}).then(res => {
+				if (res.data && res.data.length) {
+					this.author = {
+						id: data.user_id,
+						nickname: res.data[0].nickname,
+						username: res.data[0].username
+					}
+				}
+			})
+		}
+	},
     // 监听解锁内容事件，解锁内容后重新加载数据
     async onUnlockContent() {
       this.$refs.detail.loadData()
     },
 	tapAutor() {
-		if (this.docData.user_id) {
+		if (this.dataInfo.user_id) {
 			uni.navigateTo({
-				url: `/pages/followers/detail/detail?id=${this.docData.user_id}`
+				url: `/pages/followers/detail/detail?id=${this.dataInfo.user_id}`
 			})
 		}
 	},

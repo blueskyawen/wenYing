@@ -269,9 +269,7 @@
 				}
 				if (this.userInfo._id) {
 					this.checkDelTrash();
-					uni.showLoading({
-						mask: true
-					});
+					uni.showLoading();
 					cmsScoreDB.get({
 						"user_id": this.userInfo._id
 					}).then((res) => {
