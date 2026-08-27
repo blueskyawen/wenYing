@@ -56,7 +56,7 @@
 			},
 			upCallback(page) {
 				console.log('upCallback===')
-				uni.showLoading()
+				// uni.showLoading()
 				let curTab = this.tabs[this.index]
 				if (!curTab) return;
 				let pageNum = page.num; // 页码, 默认从1开始
@@ -78,7 +78,7 @@
 				}).catch(err => {
 					this.mescroll.endErr()
 				}).finally(() => {
-					uni.hideLoading();
+					// uni.hideLoading();
 				})
 			},
 			async listLoad(data) {

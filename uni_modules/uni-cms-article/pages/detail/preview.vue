@@ -1,5 +1,5 @@
 <template>
-  <unicloud-db v-slot:default="{loading, error, options}" :collection="collection" :options="formData"
+<!--  <unicloud-db v-slot:default="{loading, error, options}" :collection="collection" :options="formData"
                :getone="true" :where="where" :manual="true" ref="detail" foreignKey="uni-cms-articles.user_id"
                @load="loadData"
                class="article">
@@ -26,10 +26,61 @@
         :ad-config="{ adpId, watchAdUniqueType }"
       ></render-article-detail>
     </template>
+	<view class="article" v-if="isLoading">
+		<view class="preview-tip">此页面仅用于临时预览文章，链接将会在短期内失效。</view>
+		<view class="meta">
+		  <view class="title">
+		    <text class="text">{{ docData.title }}</text>
+		  </view>
+		  <view class="excerpt">
+		    <text class="text">{{ docData.excerpt }}</text>
+		  </view>
+		  <view class="author">
+		    <template v-if="docData.user_id && articleData.user_id[0]">
+		      <text class="at">{{ docData.user_id[0].nickname || docData.user_id[0].username || '' }}</text>
+		      <text class="split">·</text>
+		    </template>
+		    <text class="date">{{ publishTime(docData.publish_date) }}</text>
+		  </view>
+		</view>
+		<render-article-detail
+		  :content="docData.content"
+		  :content-images="docData.content_images"
+		  :ad-config="{ adpId, watchAdUniqueType }"
+		></render-article-detail>
+	</view>
     <view class="detail-loading" v-else>
       <uni-icons type="spinner-cycle" size="35px"/>
     </view>
-  </unicloud-db>
+  </unicloud-db> -->
+  <view>
+	  <view class="article" v-if="!isLoading">
+	  	<view class="preview-tip">此页面仅用于临时预览文章，链接将会在短期内失效。</view>
+	  	<view class="meta">
+	  	  <view class="title">
+	  	    <text class="text">{{ docData.title }}</text>
+	  	  </view>
+	  	  <view class="excerpt">
+	  	    <text class="text">{{ docData.excerpt }}</text>
+	  	  </view>
+	  	  <view class="author">
+	  	    <template v-if="docData.user_id && articleData.user_id[0]">
+	  	      <text class="at">{{ docData.user_id[0].nickname || docData.user_id[0].username || '' }}</text>
+	  	      <text class="split">·</text>
+	  	    </template>
+	  	    <text class="date">{{ publishTime(docData.publish_date) }}</text>
+	  	  </view>
+	  	</view>
+	  	<render-article-detail
+	  	  :content="docData.content"
+	  	  :content-images="docData.content_images"
+	  	  :ad-config="{ adpId, watchAdUniqueType }"
+	  	></render-article-detail>
+	  </view>
+	  <view class="detail-loading" v-else>
+	    <uni-icons type="spinner-cycle" size="35px"/>
+	  </view>
+  </view>
 </template>
 
 <script>
@@ -48,6 +99,8 @@ export default {
   },
   data() {
     return {
+		isLoading: true,
+		docData: {},
       id: "", // 文章ID
       title: "", // 文章标题
       secret: "", // 文章预览密钥
@@ -74,7 +127,7 @@ export default {
   onReady() {
     // 开始加载数据，修改 where 条件后才开始去加载 clinetDB 的数据 ，需要等组件渲染完毕后才开始执行 loadData，所以不能再 onLoad 中执行
     if (this.id) { // ID 不为空，则发起查询
-      this.$refs.detail.loadData()
+      //this.$refs.detail.loadData()
     } else {
       uni.showToast({
         icon: 'none',
@@ -87,6 +140,7 @@ export default {
     if (event.id) {
       this.id = event.id
       this.secret = event.secret
+	  this.getDocData();
     }
 
     // 监听解锁内容事件
@@ -109,6 +163,54 @@ export default {
     }
   },
   methods: {
+	  getDocData() {
+		  if (this.id) {
+			  this.isLoading = true;
+			  const dbCmd = db.command
+			  const $ = dbCmd.aggregate
+			  db.collection(articleDBName)
+				.aggregate()
+				.lookup({
+				  from: userDBName,
+				  let: {
+					user_id: '$user_id'
+				  },
+				  pipeline: $.pipeline()
+					.match(dbCmd.expr(
+					  $.eq(['$_id', '$$user_id'])
+					))
+					.project({
+					  nickname: true,
+					  username: true
+					})
+					.done(),
+				  as: 'user_id'
+				})
+				.match({
+				  _id: this.id
+				})
+				.project({
+				  user_id: true,
+				  thumbnail: true,
+				  excerpt: true,
+				  publish_date: true,
+				  title: true,
+				  content: true,
+				  name: true
+				})
+				.end()
+				.then(res => {
+					console.log(res);
+					if (res.result && res.result.data) {
+						this.docData = res.result.data[0] || {}
+					}
+				}).catch(err => {
+				  console.error(err)
+				}).finally(() => {
+					this.isLoading = false;
+				})
+		  }
+	  },
     // 将时间戳转换为可读的时间格式
     publishTime(timestamp) {
       return translatePublishTime(timestamp)

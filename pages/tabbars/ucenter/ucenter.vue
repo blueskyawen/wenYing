@@ -261,7 +261,7 @@
 				}).then(res => {})
 			},
 			getScore() {
-				if (!this.userInfo) {
+				if (!this.hasLogin) {
 					return uni.showToast({
 						title: '请登录后查看积分',
 						icon: 'none'
@@ -269,7 +269,7 @@
 				}
 				if (this.userInfo._id) {
 					this.checkDelTrash();
-					uni.showLoading();
+					// uni.showLoading();
 					cmsScoreDB.get({
 						"user_id": this.userInfo._id
 					}).then((res) => {
@@ -282,7 +282,7 @@
 							duration: 3000
 						});
 					}).finally(e => {
-						uni.hideLoading();
+						// uni.hideLoading();
 					})
 				}
 			},
