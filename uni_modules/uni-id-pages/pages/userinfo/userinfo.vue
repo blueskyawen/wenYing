@@ -84,7 +84,8 @@ const uniIdCo = uniCloud.importObject("uni-id-co")
 			}
 			//判断当前用户是否有密码，否则就不显示密码修改功能
 			let res = await uniIdCo.getAccountInfo()
-			this.hasPwd = res.isPasswordSet
+			this.hasPwd = res.isPasswordSet;
+			this.setNicknameIng = res.isWeixinBound;
 		},
 		methods: {
 			login() {

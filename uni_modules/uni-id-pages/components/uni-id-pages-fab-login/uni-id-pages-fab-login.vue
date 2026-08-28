@@ -583,8 +583,8 @@
 	/* #endif */
 
 	.logo {
-		width: 60rpx;
-		height: 60rpx;
+		width: 80rpx;
+		height: 80rpx;
 		max-width: 40px;
 		max-height: 40px;
 		border-radius: 100%;
@@ -593,7 +593,7 @@
 
 	.login-title {
 		text-align: center;
-		margin-top: 6px;
+		// margin-top: 6px;
 		color: #999;
 		font-size: 10px;
 		width: 80px;

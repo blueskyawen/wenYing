@@ -3,7 +3,7 @@
 		<uni-sign-in ref="signIn"></uni-sign-in>
 		<view class="userInfo" @click.capture="toUserInfo"  :style="{ height: heighth + 'px' }">
 			<view class="user">
-				<u-avatar v-if="hasLogin && (userInfo.username || (userInfo.avatar_file && userInfo.avatar_file.url))" 
+				<u-avatar v-if="hasLogin && (userInfo.username || userInfo.nickname || (userInfo.avatar_file && userInfo.avatar_file.url))" 
 					:src="avatorImg" :text="nameText" :size="60" :font-size="28" bg-color="#ffb34b"></u-avatar>
 				<view v-else class="defaultAvatarUrl">
 					<uni-icons color="#ffffff" size="50" type="person-filled" />
@@ -158,7 +158,7 @@
 		},
 		computed: {
 			nameText() {
-				let nameT = this.userInfo ? (this.userInfo.nickname || this.userInfo.username) : '无';
+				let nameT = this.userInfo ? (this.userInfo.nickname || this.userInfo.username || this.userInfo.mobile) : '无';
 				return this.avatorImg ? '' : nameT ? nameT[0] : '';
 			},
 			userInfo() {
@@ -195,7 +195,7 @@
 			//#endif
 			this.heighth = Math.floor((uni.getWindowInfo().windowHeight * 33) / 100);
 		},
-		onReady() {
+		onShow() {
 			this.getAvatorImg()
 		},
 		methods: {
