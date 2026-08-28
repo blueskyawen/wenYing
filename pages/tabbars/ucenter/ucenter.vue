@@ -279,7 +279,7 @@
 						uni.showToast({
 							title: msg,
 							icon: 'none',
-							duration: 3000
+							duration: 2000
 						});
 					}).finally(e => {
 						// uni.hideLoading();
