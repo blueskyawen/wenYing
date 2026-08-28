@@ -42,7 +42,9 @@
 			async getList() {
 				this.isloading = true;
 				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
-				const userCollectDB = uniCloud.importObject('cms-user-co');
+				const userCollectDB = uniCloud.importObject('cms-user-co', {
+					customUI: true
+				});
 				let res = await cmsFollowerCollectDB.get({ user_id: this.userInfo._id});
 				let tmpFollowers = [];
 				if (res.data.length) {

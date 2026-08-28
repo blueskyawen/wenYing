@@ -314,8 +314,17 @@
 				  customUI: true
 				});
 				const parallel = [];
-				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.title, '标题存在敏感词'));
-				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.description, '描述内容存在敏感词'));
+				if (this.formData.title !== this.operItem.title) {
+					parallel.push(cmsSecCheckCo.checkContentSec(this.formData.title, '标题存在敏感词'));
+				}
+				if (this.formData.description !== this.operItem.description) {
+					parallel.push(cmsSecCheckCo.checkContentSec(this.formData.description, '描述内容存在敏感词'));
+				}
+				
+				if (!parallel.length) {
+					return Promise.resolve();
+				}
+
 				return Promise.all(parallel);	
 			},
 			confirmEdit() {

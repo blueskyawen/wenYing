@@ -39,8 +39,12 @@
 <script>
 	import parseImageUrl from "@/common/parseImageUrl.js"
 	const cmsNoteDB = uniCloud.importObject('cms-note-co');
-	const cmsNoteLikeDB = uniCloud.importObject('cms-note-like-co');
-	const cmsNoteCollectDB = uniCloud.importObject('cms-note-collect-co');
+	const cmsNoteLikeDB = uniCloud.importObject('cms-note-like-co', {
+		customUI: true
+	});
+	const cmsNoteCollectDB = uniCloud.importObject('cms-note-collect-co', {
+		customUI: true
+	});
 	import {
 		store
 	} from '@/uni_modules/uni-id-pages/common/store.js';

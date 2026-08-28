@@ -128,7 +128,9 @@
 				}
 			},
 			getFollowers() {
-				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co', {
+					customUI: true
+				});
 				cmsFollowerCollectDB.get({
 					user_id: this.userInfo._id
 				}).then(res => {

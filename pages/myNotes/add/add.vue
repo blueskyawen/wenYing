@@ -68,7 +68,8 @@
 				imageUrls: [],
 				id: '',
 				relateId: '',
-				usescore: 0
+				usescore: 0,
+				oldData: {}
 			}
 		},
 		computed: {
@@ -116,6 +117,11 @@
 					this.formData.publish_date = temp.publish_date;
 					this.imageUrls = await parseImageUrl([temp.cover]);
 					this.imageList = this.imageUrls.map(x => x.src);
+					this.oldData = {
+						cover: temp.cover,
+						content: temp.content,
+						image: this.imageList[0] || ''
+					}
 				}
 			},
 			submit() {
@@ -132,6 +138,10 @@
 						title: '文字内容不可为空',
 						duration: 1000
 					})
+					return;
+				}
+				if (this.id && !this.isModify()) {
+					uni.navigateBack();
 					return;
 				}
 				this.isInOper = true;
@@ -181,17 +191,26 @@
 					complete() {}
 				});
 			},
+			isModify() {
+				return this.formData.content !== this.oldData.content || this.formData.cover !== this.oldData.cover;
+			},
 			async checkDataSec() {
 				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
 				  customUI: true
 				});
 				console.log('checkDataSec==start')
-				console.log(this.formData.content);
-				console.log(this.formData.cover);
 				const parallel = [];
-				parallel.push(cmsSecCheckCo.checkContentSec(this.formData.content, '文字内容存在敏感词'));
-				parallel.push(cmsSecCheckCo.checkImageSec(this.formData.cover, '图片存在违规'));
-				console.log('checkDataSec==end')
+				if (!this.id || this.formData.content !== this.oldData.content) {
+					parallel.push(cmsSecCheckCo.checkContentSec(this.formData.content, '文字内容存在敏感词'));	
+				}
+				if (!this.id || this.formData.cover !== this.oldData.cover) {
+					parallel.push(cmsSecCheckCo.checkImageSec(this.formData.cover, '图片存在违规'));
+				}
+				
+				if (!parallel.length) {
+					return Promise.resolve();
+				}
+
 				return Promise.all(parallel);	
 			},
 			submitForm() {

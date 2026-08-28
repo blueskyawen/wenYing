@@ -143,7 +143,9 @@
 		},
 		methods: {
 			init() {
-				const uniCaptchaDemo = uniCloud.importObject('cms-categary-co')
+				const uniCaptchaDemo = uniCloud.importObject('cms-categary-co', {
+					customUI: true
+				})
 				uniCaptchaDemo.getList().then(res => {
 					let list = res.data || [];
 					if (list.length) {

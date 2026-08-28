@@ -398,6 +398,7 @@
 					});
 					this.uploading = false;
 					uni.hideLoading();
+					throw new Error('上传失败')
 				}
 			},
 			async setVideoCover(file) {

@@ -51,7 +51,8 @@
 				rules: {...addRules},
 				isInOper: false,
 				id: '',
-				usescore: 0
+				usescore: 0,
+				oldData: {}
 			}
 		},
 		computed: {
@@ -106,6 +107,7 @@
 								}
 							}
 						}
+						this.oldData = JSON.parse(JSON.stringify(this.formData));
 					}
 				})
 			},
@@ -160,6 +162,14 @@
 					}
 				}
 			},
+			isModify(addData) {
+				return !this.id || 
+						(addData.title !== this.oldData.title || 
+						 addData.content !== this.oldData.content || 
+						 addData.excerpt !== this.oldData.excerpt || 
+						 addData.category_id !== this.oldData.category_id || 
+						 addData.avatar !== this.oldData.avatar)
+			},
 			doSubmitForm(addData) {
 				if (!(addData.avatarFile && addData.avatarFile.name) && addData.avatar) {
 					addData.avatar = '';
@@ -167,6 +177,11 @@
 				addData['last_modify_date'] = Date.now();
 				if (!this.id) {
 					addData['create_date'] = Date.now()
+				}
+				if (!this.isModify((addData))) {
+					this.isInOper = false;
+					uni.navigateBack();	
+					return;
 				}
 				this.checkDataSec(addData).then(res => {
 					delete addData.avatarObj;
@@ -235,12 +250,19 @@
 				});
 				console.log(addData);
 				const parallel = [];
-				parallel.push(cmsSecCheckCo.checkContentSec(addData.title, '标题存在敏感词'));
+				if (!this.id || addData.title !== this.oldData.title) {
+					parallel.push(cmsSecCheckCo.checkContentSec(addData.title, '标题存在敏感词'));
+				}
+
 				if (addData.excerpt) {
-					parallel.push(cmsSecCheckCo.checkContentSec(addData.excerpt, '摘要存在敏感词'));
+					if (!this.id || addData.excerpt !== this.oldData.excerpt) {
+						parallel.push(cmsSecCheckCo.checkContentSec(addData.excerpt, '摘要存在敏感词'));	
+					}
 				}
 				if (addData.avatar) {
-					parallel.push(cmsSecCheckCo.checkImageSec(addData.avatar, '封面图片存在违规'));
+					if (!this.id || addData.avatar !== this.oldData.avatar) {
+						parallel.push(cmsSecCheckCo.checkImageSec(addData.avatar, '封面图片存在违规'));	
+					}
 				}
 				
 				let textCont = this.$refs.editoRef.getTextContent();
@@ -248,6 +270,11 @@
 					console.log(textCont);
 					parallel.push(cmsSecCheckCo.checkContentSec(textCont, '文章内容存在敏感词'));
 				}
+				
+				if (!parallel.length) {
+					return Promise.resolve();
+				}
+				
 				return Promise.all(parallel);	
 			}
 		}
