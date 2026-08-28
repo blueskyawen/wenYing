@@ -96,7 +96,9 @@
 	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	import parseImageUrl from "@/common/parseImageUrl.js"
-	const cmsNoteDB = uniCloud.importObject('cms-note-co');
+	const cmsNoteDB = uniCloud.importObject('cms-note-co', {
+		customUI: true
+	});
 	const cmsNoteLikeDB = uniCloud.importObject('cms-note-like-co', {
 		customUI: true
 	});

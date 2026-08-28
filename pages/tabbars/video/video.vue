@@ -110,12 +110,6 @@
 				this.list = [];
 			},
 			async  getVideoInfos() {
-				const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co', {
-					customUI: true
-				});
-				const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co', {
-					customUI: true
-				});
 				const cmsVideoCo = uniCloud.importObject('cms-video-co', {
 					customUI: true
 				});

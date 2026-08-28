@@ -54,9 +54,15 @@
 	} from '@/uni_modules/uni-id-pages/common/store.js';
 	import parseImageUrl from "@/common/parseImageUrl.js"
 	const cmsVideoCo = uniCloud.importObject('cms-video-co')
-	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
-	const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co');
-	const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co');
+	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co', {
+		customUI: true
+	});
+	const cmsVideoLikeDB = uniCloud.importObject('cms-video-like-co', {
+		customUI: true
+	});
+	const cmsVideoCollectDB = uniCloud.importObject('cms-video-collect-co', {
+		customUI: true
+	});
 	export default {
 		data() {
 			return {
@@ -167,7 +173,9 @@
 		},
 		methods: {
 			getFollowerList() {
-				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co', {
+					customUI: true
+				});
 				cmsFollowerCollectDB.get({
 					user_id: this.userInfo._id
 				}).then(res => {
