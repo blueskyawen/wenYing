@@ -9,12 +9,12 @@
 			</uni-list-item>
 			<uni-list-item class="item" @click="bindMobile" title="手机号" :rightText="userInfo.mobile||'未绑定'" link>
 			</uni-list-item>
-			<uni-list-item v-if="userInfo.email" class="item" title="电子邮箱" :rightText="userInfo.email">
+			<uni-list-item v-if="isBindEmail" class="item" title="电子邮箱" :rightText="userInfo.email">
 			</uni-list-item>
 			<!-- #ifdef APP -->
       <!-- 如未开通实人认证服务，可以将实名认证入口注释 -->
-			<uni-list-item class="item" @click="realNameVerify" title="实名认证" :rightText="realNameStatus !== 2 ? '未认证': '已认证'" link>
-			</uni-list-item>
+<!-- 			<uni-list-item class="item" @click="realNameVerify" title="实名认证" :rightText="realNameStatus !== 2 ? '未认证': '已认证'" link>
+			</uni-list-item> -->
 			<!-- #endif -->
 			<uni-list-item v-if="hasPwd" class="item" @click="changePassword" title="修改密码" link>
 			</uni-list-item>
@@ -71,7 +71,8 @@ const uniIdCo = uniCloud.importObject("uni-id-co")
 				// },
 				hasPwd: false,
 				showLoginManage: false ,//通过页面传参隐藏登录&退出登录按钮
-				setNicknameIng:false
+				setNicknameIng:false,
+				isBindEmail: false
 			}
 		},
 		async onShow() {
@@ -86,6 +87,7 @@ const uniIdCo = uniCloud.importObject("uni-id-co")
 			let res = await uniIdCo.getAccountInfo()
 			this.hasPwd = res.isPasswordSet;
 			this.setNicknameIng = res.isWeixinBound;
+			this.isBindEmail = res.isEmailBound;
 		},
 		methods: {
 			login() {

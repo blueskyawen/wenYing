@@ -2,11 +2,11 @@
 	<view class="settings">
 		<uni-list class="mt10" :border="false">
 			<uni-list-item showArrow title="个人资料" to="/uni_modules/uni-id-pages/pages/userinfo/userinfo"></uni-list-item>
-			<uni-list-item showArrow title="修改密码" to="/uni_modules/uni-id-pages/pages/userinfo/change_pwd/change_pwd"></uni-list-item>
-			<uni-list-item v-show="userInfo.mobile" showArrow title="设置密码" to="/uni_modules/uni-id-pages/pages/userinfo/set-pwd/set-pwd"></uni-list-item>
-			<uni-list-item v-show="userInfo.mobile" showArrow title="重置密码" to="/uni_modules/uni-id-pages/pages/retrieve/retrieve"></uni-list-item>
-			<uni-list-item v-show="userInfo.email" showArrow title="通过邮箱重置密码" to="/uni_modules/uni-id-pages/pages/retrieve/retrieve-by-email"></uni-list-item>
-			<uni-list-item v-show="!userInfo.mobile" showArrow title="绑定手机号" to="/uni_modules/uni-id-pages/pages/userinfo/bind-mobile/bind-mobile"></uni-list-item>
+			<uni-list-item v-if="accountInfo.isPasswordSet" showArrow title="修改密码" to="/uni_modules/uni-id-pages/pages/userinfo/change_pwd/change_pwd"></uni-list-item>
+			<uni-list-item v-if="!accountInfo.isPasswordSet" showArrow title="设置密码" to="/uni_modules/uni-id-pages/pages/userinfo/set-pwd/set-pwd"></uni-list-item>
+			<uni-list-item v-if="accountInfo.isPasswordSet && accountInfo.isMobileBound" showArrow title="重置密码" to="/uni_modules/uni-id-pages/pages/retrieve/retrieve"></uni-list-item>
+			<uni-list-item v-if="accountInfo.isPasswordSet && accountInfo.isEmailBound" showArrow title="通过邮箱重置密码" to="/uni_modules/uni-id-pages/pages/retrieve/retrieve-by-email"></uni-list-item>
+			<uni-list-item v-if="!accountInfo.isMobileBound" showArrow title="绑定手机号" to="/uni_modules/uni-id-pages/pages/userinfo/bind-mobile/bind-mobile"></uni-list-item>
 			<uni-list-item showArrow title="注销账号" to="/uni_modules/uni-id-pages/pages/userinfo/deactivate/deactivate"></uni-list-item>
 		</uni-list>
 		<uni-list class="mt10" :border="false">
@@ -36,7 +36,10 @@
 	import {
 		store,
 		mutations
-	} from '@/uni_modules/uni-id-pages/common/store.js'
+	} from '@/uni_modules/uni-id-pages/common/store.js';
+	const uniIdCo = uniCloud.importObject("uni-id-co", {
+		customUI: true
+	})
 	export default {
 		data() {
 			return {
@@ -44,7 +47,8 @@
 				pushServer:pushServer,
 				supportMode:[],
 				i18nEnable: false,
-				currentLanguage: '简体中文'
+				currentLanguage: '简体中文',
+				accountInfo: {}
 			}
 		},
 		computed: {
@@ -82,8 +86,14 @@
 			},300)
 			// #endif
 			//#endif
+			this.getAccountInfo();
 		},
 		methods: {
+			getAccountInfo() {
+				uniIdCo.getAccountInfo().then(res => {
+					this.accountInfo = res || {};
+				})
+			},
 			async changeLoginState(){
 				if(this.hasLogin){
 					await mutations.logout()

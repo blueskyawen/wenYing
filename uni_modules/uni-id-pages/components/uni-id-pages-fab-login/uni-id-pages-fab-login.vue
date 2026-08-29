@@ -499,7 +499,13 @@
 					// #ifdef H5
 					result.loginType = type
 					// #endif
-					mutations.loginSuccess(result)
+					let res = {...result};
+					// #ifdef MP-WEIXIN
+					if (type === 'weixin' && !res.uniIdRedirectUrl) {
+						res.uniIdRedirectUrl = '/uni_modules/uni-id-pages/pages/userinfo/userinfo';
+					}
+					// #endif
+					mutations.loginSuccess(res)
 				})
 				.catch(e=>{
 					uni.showModal({
