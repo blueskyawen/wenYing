@@ -153,7 +153,8 @@
 					// #endif
 				],
 				avatorImg: '',
-				heighth: 160
+				heighth: 160,
+				avatorUrl: ''
 			}
 		},
 		computed: {
@@ -199,8 +200,14 @@
 			this.getAvatorImg()
 		},
 		methods: {
+			isGetAvator() {
+				return this.userInfo.avatar_file && 
+						this.userInfo.avatar_file.url && 
+						this.userInfo.avatar_file.url !== this.avatorUrl;
+			},
 			async getAvatorImg() {
-				if (this.userInfo.avatar_file && this.userInfo.avatar_file.url) {
+				if (this.isGetAvator()) {
+					this.avatorUrl = this.userInfo.avatar_file.url;
 					let images = [this.userInfo.avatar_file.url];
 					let resImgs = await parseImageUrl(images);
 					this.avatorImg = resImgs[0] ? resImgs[0].src : '';
