@@ -285,8 +285,12 @@ export default {
 	  },
 	  getDocFavorite() {
 		  if (this.id && this.loginUserId) {
-			const cmsFavoriteCo = uniCloud.importObject('cms-favorite-co')
-			const cmsLikesCo = uniCloud.importObject('cms-likes-co')
+			const cmsFavoriteCo = uniCloud.importObject('cms-favorite-co', {
+				customUI: true
+			})
+			const cmsLikesCo = uniCloud.importObject('cms-likes-co', {
+				customUI: true
+			})
 			cmsFavoriteCo.get({
 				article_id: this.id, 
 				user_id: this.loginUserId
@@ -321,7 +325,9 @@ export default {
 			  });
 			  return;
 		  }
-		  const cmsFavoriteCo = uniCloud.importObject('cms-favorite-co')
+		  const cmsFavoriteCo = uniCloud.importObject('cms-favorite-co', {
+			  customUI: true
+		  })
 		  if (!this.isInCollect && !this.collectData.id) {
 			  cmsFavoriteCo.add({
 				  "user_id": this.loginUserId,
@@ -357,7 +363,9 @@ export default {
 			  });
 			  return;
 		  }
-		  const cmsLikesCo = uniCloud.importObject('cms-likes-co')
+		  const cmsLikesCo = uniCloud.importObject('cms-likes-co', {
+			  customUI: true
+		  })
 		  if (!this.isInLikes && !this.likeData.id) {
 			  cmsLikesCo.add({
 				  "user_id": this.loginUserId,

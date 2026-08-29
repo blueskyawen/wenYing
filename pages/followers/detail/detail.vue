@@ -106,7 +106,9 @@
 		},
 		methods: {
 			async getUserInfo() {
-				const cmsUserCollectDB = uniCloud.importObject('cms-user-co');
+				const cmsUserCollectDB = uniCloud.importObject('cms-user-co', {
+					customUI: true
+				});
 				let res = await cmsUserCollectDB.getByUserId({ user_id: this.id})
 				if (res.data && res.data.length) {
 					let tmps = res.data;
@@ -153,7 +155,9 @@
 			},
 			doFollow() {
 				if (this.isInoper) return;
-				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co', {
+					customUI: true
+				});
 				if (!this.follDocId) {
 					console.log('no follDocId')
 					cmsFollowerCollectDB.addFollower({

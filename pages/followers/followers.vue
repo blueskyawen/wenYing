@@ -100,7 +100,9 @@
 					}
 				}
 				this.isInoper = true;
-				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co');
+				const cmsFollowerCollectDB = uniCloud.importObject('cms-follower-co', {
+					customUI: true
+				});
 				cmsFollowerCollectDB.updateFollower({
 					"_id": this.docId,
 					"followers": newList

@@ -10,7 +10,9 @@
 	import MescrollMoreItemMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more-item.js";
 	import docList from "./doc-list.nvue";
 	import {parseImageUrl} from "@/uni_modules/uni-cms-article/common/parse-image-url";
-	const uniDocsDemo = uniCloud.importObject('cms-article-co');
+	const uniDocsDemo = uniCloud.importObject('cms-article-co', {
+		customUI: true
+	});
 	
 	export default {
 		mixins: [MescrollMixin,MescrollMoreItemMixin],

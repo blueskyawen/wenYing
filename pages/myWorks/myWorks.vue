@@ -172,6 +172,7 @@
 			},
 			handleAddDoc(v) {
 				this.refreshData();
+				this.getArticleCount();
 				if (v.usescore) {
 					cmsScoreDB.updateScore({
 						user_id: this.loginUserId,
@@ -269,6 +270,7 @@
 						icon: "none"
 					  });
 					  this.refreshData();
+					  this.getArticleCount();
 					} else {
 						uni.showToast({
 							title: res.msg,
@@ -335,6 +337,7 @@
 						icon: "none"
 					  });
 					  this.refreshData();
+					  this.getArticleCount();
 					} else {
 						uni.showToast({
 							title: res.msg,

@@ -46,7 +46,9 @@
 <script>
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	import parseImageUrl from "@/common/parseImageUrl.js"
-	const cmsNoteDB = uniCloud.importObject('cms-note-co');
+	const cmsNoteDB = uniCloud.importObject('cms-note-co', {
+		customUI: true
+	});
 	export default {
 		mixins: [MescrollMixin],
 		data() {
