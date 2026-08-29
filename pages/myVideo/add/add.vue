@@ -56,7 +56,9 @@
 	];
 	const mediaTypes = ['image', 'video'];
 	const cmsVideoCo = uniCloud.importObject('cms-video-co');
-	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co');
+	const cmsTopicCollectDB = uniCloud.importObject('cms-topic-co', {
+		customUI: true
+	});
 	export default {
 		data() {
 			return {

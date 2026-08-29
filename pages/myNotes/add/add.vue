@@ -40,7 +40,9 @@
 		['album'],
 		['camera', 'album']
 	];
-	const cmsNotesDB = uniCloud.importObject('cms-note-co');
+	const cmsNotesDB = uniCloud.importObject('cms-note-co', {
+		customUI: true
+	});
 	const cmsScoreDB = uniCloud.importObject('cms-score-co', {
 		customUI: true
 	});

@@ -112,7 +112,9 @@
 				})
 			},
 			init() {
-				const uniCaptchaDemo = uniCloud.importObject('cms-categary-co')
+				const uniCaptchaDemo = uniCloud.importObject('cms-categary-co', {
+					customUI: true
+				})
 				uniCaptchaDemo.getList().then(res => {
 					let list = res.data || [];
 					this.categaryList = list.map(x => {
@@ -203,7 +205,9 @@
 				})
 			},
 			procEdit(addData) {
-				let cmsWorksDB = uniCloud.importObject('cms-works-co');
+				let cmsWorksDB = uniCloud.importObject('cms-works-co', {
+					customUI: true
+				});
 				cmsWorksDB.update(addData, this.id).then(res => {
 					if (res.status == 0) {
 						uni.showToast({
@@ -226,7 +230,9 @@
 				})
 			},
 			procAdd(addData) {
-				let cmsWorksDB = uniCloud.importObject('cms-works-co');
+				let cmsWorksDB = uniCloud.importObject('cms-works-co', {
+					customUI: true
+				});
 				cmsWorksDB.add(addData).then(res => {
 					uni.showToast({
 						title: '保存成功',

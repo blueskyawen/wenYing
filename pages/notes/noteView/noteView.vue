@@ -98,7 +98,7 @@
 		methods: {
 			async getData() {
 				this.isLoading = true;
-				uni.showLoading();
+				//uni.showLoading();
 				let res = await cmsNoteDB.getOne({ id: this.id })
 				let temps = res.data || [];
 				if (temps.length) {
@@ -142,7 +142,7 @@
 						}
 					}
 					this.isLoading = false;
-					uni.hideLoading();
+					//uni.hideLoading();
 				}
 			},
 			doCollect() {
