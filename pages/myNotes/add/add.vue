@@ -320,9 +320,9 @@
 					success: (res) => {
 						if (res.tempFiles.length) {
 							let file = res.tempFiles[0];
-							if (file.size > 3145728) {
+							if (file.size > 1048576) {
 								uni.showToast({
-									title: '上传图片大小不能大于3MB',
+									title: '上传图片大小不能大于1MB',
 									duration: 2000
 								});
 							} else {

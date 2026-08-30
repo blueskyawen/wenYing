@@ -127,6 +127,23 @@ module.exports = {
 				msg: '删除数据失败'
 			}
 		}
+	},
+	delCoverFile: async function(event) {
+		// console.log(event.cover)
+		let res = await cmsNoteCollection.where({
+			cover: event.cover
+		}).get()
+		if (!res.data || !res.data.length) {
+			await uniCloud.deleteFile({
+				fileList: [event.cover]
+			})
+			return {
+				status: 0
+			}
+		}
+		return {
+			status: 0
+		}
 	}
 	/**
 	 * method1方法描述

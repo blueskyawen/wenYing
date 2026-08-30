@@ -265,7 +265,10 @@
 			checkDelTrash() {
 				cmsScoreDB.deleteTrashs({
 					user_id: this.userInfo._id
-				}).then(res => {})
+				}).then(res => {});
+				cmsScoreDB.deleteSignInTrashs({
+					user_id: this.userInfo._id
+				}).then(res => {});
 			},
 			getScore() {
 				if (!this.hasLogin) {

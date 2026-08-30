@@ -1,7 +1,8 @@
 // 云对象教程: https://uniapp.dcloud.net.cn/uniCloud/cloud-obj
 // jsdoc语法提示教程：https://ask.dcloud.net.cn/docs/#//ask.dcloud.net.cn/article/129
 const db = uniCloud.database()
-const cmsScoreCollection = db.collection('uni-id-scores')
+const cmsScoreCollection = db.collection('uni-id-scores');
+const signInCollection = db.collection('opendb-sign-in');
 const userDBName = 'uni-id-users'
 module.exports = {
 	_before: function () { // 通用预处理器
@@ -20,6 +21,23 @@ module.exports = {
 		}).update({
 			balance: dbCmd.inc(value) // 10, -10
 		});
+		return res;
+	},
+	deleteSignInTrashs: async function({user_id}) {
+		const dbCmd = db.command;
+		const res = await signInCollection.where({
+							user_id: user_id,
+							isDelete: true
+						})
+						.get()
+		let tmps = res.data || [];
+		if (tmps.length > 1) {
+			let ids = tmps.map(x => x._id);
+			const res2 = await signInCollection.where({
+					   "_id": dbCmd.in(ids)
+				   }).remove();
+			return res2;
+		}
 		return res;
 	},
 	deleteTrashs: async function({user_id}) {

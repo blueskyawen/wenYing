@@ -21,7 +21,8 @@ const errmsgMap = {
 	'uni-sec-check-param-required': '缺少必要参数',
 	'uni-sec-check-invalid-request-param': '错误的请求参数',
 	'uni-sec-check-invalid-request-format': '错误的请求格式',
-	'uni-sec-check-invalid-file-type': '错误的文件类型'
+	'uni-sec-check-invalid-file-type': '错误的文件类型',
+	'uni-sec-check-invalid-media-size': '图片大小超出限制'
 }
 
 module.exports = {
@@ -78,6 +79,9 @@ module.exports = {
 				errMsg: errorMsg ? `${errorMsg}, 图片已删除, 请修改后提交` : '图片违规已删除, 请修改后提交'
 			}
 		} else if (res.errCode !== 0) {
+			// passErrcode = ['uni-sec-check-invalid-media-size', 
+			// 				'uni-sec-check-invoke-out-of-limit', 
+			// 				'uni-sec-check-invalid-image-size'];
 			if (res.errCode == 'uni-sec-check-invoke-out-of-limit') {
 				return {
 					errCode: 0

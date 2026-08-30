@@ -171,6 +171,9 @@
 						title: res.msg,
 						icon: "none"
 					  });
+					  cmsNoteDB.delCoverFile({
+						  cover: item.cover
+					  }).then(res => {})
 					  this.list.splice(index, 1);
 					} else {
 						uni.showToast({
