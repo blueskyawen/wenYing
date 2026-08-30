@@ -1,6 +1,6 @@
 <template>
 	<button open-type="chooseAvatar" @chooseavatar="bindchooseavatar" @click="uploadAvatarImg" class="box" :class="{'showBorder':border}"  :style="{width,height,lineHeight:height}">
-		<cloud-image v-if="avatar_file" :src="resolvedAvatarUrl" :width="width" :height="height"></cloud-image>
+		<cloud-image v-if="avatar_file && avatar_file.url" :src="resolvedAvatarUrl" :width="width" :height="height"></cloud-image>
 		<uni-icons v-else :style="{width,height,lineHeight:height}" class="chooseAvatar" type="plusempty" size="30"
 			color="#dddddd"></uni-icons>
 	</button>
@@ -106,7 +106,7 @@
 			},
 			// 调云端拿上传参数后按 mode 分流；返回 { name: cloudPath, url: fileID }
 			async doUploadAvatar(filePath, extname) {
-				const cloudPath = this.userInfo._id + '' + Date.now() + '.' + (extname || 'jpg')
+				const cloudPath = 'avatar-imgs/' + this.userInfo._id + '' + Date.now() + '.' + (extname || 'jpg')
 				let options
 				try {
 					options = await uniIdCo.getUploadFileOptions({ cloudPath })
@@ -164,7 +164,8 @@
 					console.error(e);
 				}
 				console.log('avatar_file',avatar_file);
-				this.setAvatarFile(avatar_file)
+				this.checkDelAvatarFile(avatar_file.url);
+				this.setAvatarFile(avatar_file);
 			},
 			uploadAvatarImg(res) {
 				// #ifdef MP-WEIXIN
@@ -227,7 +228,8 @@
 							const uploaded = await this.doUploadAvatar(filePath, avatar_file.extname)
 							avatar_file.name = uploaded.name
 							avatar_file.url = uploaded.url
-							uni.hideLoading()
+							uni.hideLoading();
+							this.checkDelAvatarFile(avatar_file.url)
 							this.setAvatarFile(avatar_file)
 						} catch (e) {
 							uni.hideLoading()
@@ -236,6 +238,16 @@
 					}
 				})
 				// #endif
+			},
+			checkDelAvatarFile(newUrl) {
+				if (this.avatar_file && this.avatar_file.url && this.avatar_file.url !== newUrl) {
+					let cmsUserCo = uniCloud.importObject("cms-user-co", {
+						customUI: true
+					});
+					cmsUserCo.delCoverFile({
+						url: this.avatar_file.url
+					}).then(res => {})
+				}
 			}
 		}
 	}

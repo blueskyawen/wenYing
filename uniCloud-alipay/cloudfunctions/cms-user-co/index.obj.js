@@ -27,6 +27,14 @@ module.exports = {
 			avatar_file: true
 		}).get();
 		return res;
+	},
+	delCoverFile: async function(event) {
+		await uniCloud.deleteFile({
+			fileList: [event.url]
+		})
+		return {
+			status: 0
+		}
 	}
 	/**
 	 * method1方法描述
