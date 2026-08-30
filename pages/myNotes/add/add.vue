@@ -169,9 +169,17 @@
 				//console.log(this.imageList)
 				//console.log(this.formData);
 				let that = this;
+				let fileName = '';
+				if (tempFile.name) {
+					fileName = `${Date.now()}_${tempFile.name}`;
+				} else {
+					let tmppaths = filePath.split('/');
+					let len = tmppaths.length;
+					fileName = `note_${tmppaths[len - 1]}`;
+				}
 				uniCloud.uploadFile({
 					filePath: filePath,
-					cloudPath: `cms-notes/${Date.now()}_${tempFile.name}`,
+					cloudPath: `cms-notes/${fileName}`,
 					onUploadProgress() {},
 					success(e) {
 						that.formData.cover = e.fileID;
