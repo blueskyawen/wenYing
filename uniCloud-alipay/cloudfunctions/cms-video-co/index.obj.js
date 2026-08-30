@@ -169,6 +169,14 @@ module.exports = {
 						}).skip(skipNum).limit(pageSize).end();
 		return res;
 	},
+	delCloudFile: async function(event) {
+		await uniCloud.deleteFile({
+			fileList: event.fileList
+		})
+		return {
+			status: 0
+		}
+	}
 	/**
 	 * method1方法描述
 	 * @param {string} param1 参数1描述

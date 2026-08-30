@@ -3,7 +3,7 @@
 		<uni-grid :column="3" :square="false" :showBorder="false">
 			<uni-grid-item v-for="(item,index) in list" :index="index" :key="index">
 				<view class="note-item" @tap="goDetail(item)">
-					<image :src="item.cover_src"></image>
+					<image v-if="item.cover_src" :src="item.cover_src"></image>
 					<view class="like-c">
 						<uni-icons type="heart" size="12" color="#fcfcfc"></uni-icons>
 						<text class="text1">{{ item.like_count }}</text>

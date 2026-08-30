@@ -320,14 +320,26 @@
 					success: (res) => {
 						if (res.tempFiles.length) {
 							let file = res.tempFiles[0];
-							if (file.size > 1048576) {
+							if (file.size > 2097152) {
 								uni.showToast({
-									title: '上传图片大小不能大于1MB',
+									title: '上传图片大小不能大于2MB',
 									duration: 2000
 								});
 							} else {
-								this.imageList = res.tempFilePaths;
 								this.imageFiles = res.tempFiles;
+								// #ifdef H5
+								this.imageList = res.tempFilePaths;
+								// #endif
+								// #ifndef H5
+								uni.compressImage({
+									src: res.tempFilePaths[0],
+									quality: 80,
+									compressedWidth: 1080,
+									success: (compressRes) => {
+										this.imageList = [compressRes.tempFilePath]
+									}
+								});
+								// #endif
 							}
 						}
 						// this.imageList = this.imageList.concat(res.tempFilePaths);

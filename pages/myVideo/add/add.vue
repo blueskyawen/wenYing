@@ -380,7 +380,7 @@
 					let result = await uniCloud.uploadFile({
 						filePath: this.videoFile.path,
 						cloudPathAsRealPath: true,
-						cloudPath: `cms-videos/dir_${this.videoFile.dateTime}/${Date.now()}_${this.videoFile.name}`,
+						cloudPath: `cms-videos/${Date.now()}_${this.videoFile.name}`,
 						fileType: this.uploadType,
 						onUploadProgress: (progressEvent) => {
 							if (progressEvent.loaded < 100) {
@@ -439,7 +439,7 @@
 			  try {
 			    const uploadRes = await uniCloud.uploadFile({
 			      filePath: imageBlobUrl,
-			      cloudPath: `cms-videos/dir_${this.videoFile.dateTime}/cover-${Date.now()}.jpg`,
+			      cloudPath: `cms-videos/cover-${Date.now()}.jpg`,
 			      fileType: 'image'
 			    })
 			

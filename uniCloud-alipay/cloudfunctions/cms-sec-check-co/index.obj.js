@@ -79,10 +79,10 @@ module.exports = {
 				errMsg: errorMsg ? `${errorMsg}, 图片已删除, 请修改后提交` : '图片违规已删除, 请修改后提交'
 			}
 		} else if (res.errCode !== 0) {
-			// passErrcode = ['uni-sec-check-invalid-media-size', 
-			// 				'uni-sec-check-invoke-out-of-limit', 
-			// 				'uni-sec-check-invalid-image-size'];
-			if (res.errCode == 'uni-sec-check-invoke-out-of-limit') {
+			let passErrcodes = ['uni-sec-check-invalid-media-size', 
+							'uni-sec-check-invoke-out-of-limit', 
+							'uni-sec-check-invalid-image-size'];
+			if (passErrcodes.includes(res.errCode)) {
 				return {
 					errCode: 0
 				}

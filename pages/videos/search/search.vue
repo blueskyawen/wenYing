@@ -30,7 +30,7 @@
 					</view>
 				</view>
 				<view class="cover">
-					<image mode="widthFix" :src="item.cover_src" @click="tapCover(item)"></image>
+					<image mode="widthFix" v-if="item.cover_src" :src="item.cover_src" @click="tapCover(item)"></image>
 				</view>
 				<view class="opers">
 					<view class="oper like" @click="tapLike(item)">
