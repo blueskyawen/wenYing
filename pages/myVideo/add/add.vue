@@ -134,7 +134,9 @@
 		onLoad(options) {
 			console.log('add video == onload');
 			this.usescore = options.usescore;
-			this.heighth = uni.getWindowInfo().windowHeight - uni.getWindowInfo().statusBarHeight - 67;
+			// console.log('windowHeight='+ uni.getWindowInfo().windowHeight);
+			// console.log('statusBarHeight='+ uni.getWindowInfo().statusBarHeight);
+			this.heighth = uni.getWindowInfo().windowHeight - 67;
 			this.getTagList();
 		},
 		computed: {
@@ -609,6 +611,8 @@
 		left: 0;
 		bottom: 0;
 		width: 100%;
+		z-index: 1000;
+		background: #fff;
 		.uni-button {
 			width: 45%;
 		}
