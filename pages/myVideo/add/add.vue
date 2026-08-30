@@ -1,6 +1,6 @@
 <template>
 	<view class="add-video">
-		<view v-if="step == 1" class="uni-uploader__files" :style="filesStyle">
+		<view v-if="step == 1" class="uni-uploader__files" :style="{ height: heighth + 'px' }">
 			<view class="uni-uploader__file" v-if="src">
 				<video :src="src" class="video-play" :show-fullscreen-btn="false" 
 					:enable-play-gesture="true" :poster="videoFile.cover"></video>
@@ -134,13 +134,13 @@
 		onLoad(options) {
 			console.log('add video == onload');
 			this.usescore = options.usescore;
-			this.heighth = uni.getWindowInfo().windowHeight;
+			this.heighth = uni.getWindowInfo().windowHeight - uni.getWindowInfo().statusBarHeight - 67;
 			this.getTagList();
 		},
 		computed: {
 			filesStyle() {
 				return {
-					height: (this.heighth - 67) + 'px'
+					height: this.heighth + 'px'
 				}
 			},
 			loginUserId() {
@@ -182,7 +182,7 @@
 				this.step = 2;
 			},
 			fillFormDataStep1() {
-				this.formData.originalName = this.videoFile.name;
+				//this.formData.originalName = this.videoFile.name;
 				const ext = this.videoFile.name.includes('.') ? `${this.videoFile.name.split('.').pop().toLowerCase()}` : ''
 				this.formData.fileType = ext;
 				this.formData.duration = this.videoFile.duration;
@@ -247,9 +247,18 @@
 					success: (res) => {
 						console.log("chooseVideo == ")
 						console.log(res)
+						let tmpName = '';
+						let tmpType = '';
+						if (res.tempFile) {
+							tmpName = res.tempFile.name || res.name;
+							tmpType = res.tempFile.type || `video/${tmpName.split('.').pop()}`;
+						} else {
+							tmpName = res.tempFilePath.substring(res.tempFilePath.lastIndexOf('/') + 1);
+							tmpType = `video/${tmpName.split('.').pop()}`;
+						}
 						this.videoFile = {
-							name: res.tempFile ? res.tempFile.name : (res.name || "unkown"),
-							type: res.tempFile ? res.tempFile.type : '',
+							name: tmpName,
+							type: tmpType,
 							path: res.tempFilePath,
 							duration: res.duration,
 							size: res.size,
@@ -261,7 +270,7 @@
 								width: 0
 							},
 							url: '',
-							cover: '',
+							cover: res.thumbTempFilePath || '',
 							dateTime: Date.now()
 						}
 						if (!this.isAllowedFile(this.videoFile)) {
@@ -405,14 +414,14 @@
 			},
 			async setVideoCover(file) {
 				try {
-					const cover = await this.cropVideoCover(file.url);
+					const cover = await this.cropVideoCover(file.url, file.cover);
 					if (!cover) return;
 					file.cover = cover;
 				} catch(e) {
 					console.error('Failed to crop video cover', e)
 				} 
 			},
-			async cropVideoCover(url) {
+			async cropVideoCover(url, cover) {
 			  // #ifdef H5
 			  const isTcbCloud = url.startsWith('cloud://')
 			  const isAlipayCloud = url.startsWith('cloud://env-')
@@ -446,6 +455,18 @@
 			    return uploadRes.fileID
 			  } finally {
 			    URL.revokeObjectURL(imageBlobUrl)
+			  }
+			  // #endif
+			  // #ifdef MP
+			  if (cover) {
+				  let ext = cover.split('.').pop().toLowerCase();
+				  const uploadRes = await uniCloud.uploadFile({
+				    filePath: cover,
+				    cloudPath: `cms-videos/cover-${Date.now()}.${ext}`,
+				    fileType: 'image'
+				  })
+				  			
+				  return uploadRes.fileID
 			  }
 			  // #endif
 			  return ''
