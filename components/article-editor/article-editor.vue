@@ -38,11 +38,12 @@
 			<view class="iconfont icon-indent" data-name="indent" data-value="+1"></view>
 			<view class="iconfont icon-fengexian" @tap="insertDivider"></view>
 			<view class="iconfont icon-charutupian" @tap="insertImage"></view>
+			<view class="iconfont icon-shanchu" @tap="clear"></view>
 		</view>
 
 		<view class="editor-wrapper">
 			<editor id="editor" class="ql-container" placeholder="开始输入..." showImgSize showImgToolbar showImgResize
-			 @statuschange="onStatusChange" :read-only="readOnly" @ready="onEditorReady" @blur="onBlur">
+			 @statuschange="onStatusChange" :read-only="readOnly" @ready="onEditorReady">
 			</editor>
 		</view>
 	</view>
@@ -64,7 +65,8 @@
 				readOnly: false,
 				formats: {},
 				html: '',
-				textContent: ''
+				deltaOps: [],
+				insertImgs: []
 			}
 		},
 		watch: {
@@ -80,24 +82,28 @@
 		    }
 		},
 		methods: {
-			getTextContent() {
-				return this.textContent;
-			},
 			onBlur() {
 				this.getContents();
 			},
 			getContents() {
-				this.editorCtx.getContents({
-				    success: res => {
-				        this.$emit('input', res.html);
-						this.textContent = res.text;
-				    }
-				});
+				return new Promise((resolve, reject) => {
+					this.editorCtx.getContents({
+					    success: res => {
+					        this.$emit('input', res.html);
+							this.deltaOps = res.delta ? (res.delta.ops || []) : [];
+							resolve({...res})
+					    }
+					});
+				})
 			},
 			readOnlyChange() {
 				this.readOnly = !this.readOnly
 			},
 			onEditorReady() {
+				// #ifdef MP-BAIDU
+				this.editorCtx = requireDynamicLib('editorLib').createEditorContext('editor');
+				// #endif
+				// #ifdef APP-PLUS || MP-WEIXIN || H5
 				uni.createSelectorQuery().in(this).select('#editor').context((res) => {
 					this.editorCtx = res.context;
 					if (this.html) {
@@ -105,7 +111,8 @@
 					        html: this.html
 					    });
 					}
-				}).exec()
+				}).exec();
+				// #endif
 			},
 			undo() {
 				this.editorCtx.undo()
@@ -135,9 +142,17 @@
 				})
 			},
 			clear() {
-				this.editorCtx.clear({
-					success: function(res) {
-						console.log("clear success")
+				uni.showModal({
+					title: '清空编辑器',
+					content: '确定清空编辑器全部内容？',
+					success: res => {
+						if (res.confirm) {
+							this.editorCtx.clear({
+								success: function(res) {
+									console.log("clear success")
+								}
+							})
+						}
 					}
 				})
 			},
@@ -146,25 +161,68 @@
 			},
 			insertImage() {
 				uni.chooseImage({
+					count: 1,
 				    success: (res) => {
-						let promises = [];
-						uni.showLoading({
-							title: "图片上传中"
+						if (res.tempFiles[0].size > 3145728) {
+							uni.showToast({
+								title: '上传图片大小不能大于3MB',
+								duration: 2000
+							});
+							return;
+						}
+						
+						this.insertImgs.push({
+							path: res.tempFilePaths[0],
+							name: res.tempFiles[0].name
 						})
-				        res.tempFilePaths.map((filePath, index) => {
-							let names = res.tempFiles[index].name.split(".");
-							let fname = (Math.random() + '').substr(2) + "." + names[names.length - 1];
-							let cpath = this.dir + '/' + fname;
-							let uploadPromise = this.cloudUploadFile(filePath, cpath);
-							promises.push(uploadPromise)
+						
+						this.editorCtx.insertImage({
+						    src: res.tempFilePaths[0],
+						    alt: '图像'
 						});
-						Promise.all(promises).then(res => {
-							console.log(res);
-							uni.hideLoading();
-							this.uploadCallback(res);
-						});
+						// let promises = [];
+						// uni.showLoading({
+						// 	title: "图片上传中"
+						// });
+				  //       res.tempFilePaths.map((filePath, index) => {
+						// 	let fileName = res.tempFiles[index].name || filePath;
+						// 	let ext = fileName.split(".").pop();
+						// 	let fname = (Math.random() + '').substr(2) + "." + ext;
+						// 	let cpath = this.dir + '/' + fname;
+						// 	let uploadPromise = this.cloudUploadFile(filePath, cpath);
+						// 	promises.push(uploadPromise)
+						// });
+						// Promise.all(promises).then(res => {
+						// 	console.log(res);
+						// 	uni.hideLoading();
+						// 	this.uploadCallback(res);
+						// });
 				    }
 				});
+			},
+			async uploadImageFiles() {
+				let imgs = [];
+				let deltaImgs = this.deltaOps.filter(x => x.insert && x.insert.image).map(y => y.insert.image);
+				let newInsertImgs = this.insertImgs.filter(x => deltaImgs.includes(x.path))
+				console.log(newInsertImgs)
+				console.log('newInsertImgs')
+				for (let index = 0; index < newInsertImgs.length; index++) {
+					let tempFilePath = newInsertImgs[index].path;
+					let fileName = newInsertImgs[index].name || tempFilePath
+					let ext = fileName.split(".").pop();
+					let time = Date.now();
+					let randomT = (Math.random() + '').substr(5);
+					let fname = `${time}_${randomT}.${ext}`;
+					let cpath = this.dir + '/' + fname;
+					let result = await this.cloudUploadFile(tempFilePath, cpath);
+					imgs.push({
+						...result,
+						filePath: tempFilePath
+					})
+				}
+				this.insertImgs = this.insertImgs.filter(x => !imgs.find(y => y.path == x.filePath));
+				console.log(this.insertImgs)
+				return imgs;
 			},
 			cloudUploadFile(filePath, cpath) {
 				return new Promise((resolve, reject) => {
@@ -173,18 +231,24 @@
 						cloudPath: cpath,
 						onUploadProgress: pro => {},
 						success: res => {
-							console.log("cloudUploadFile", res)
+							// console.log("cloudUploadFile", res)
 							if (res.fileID.indexOf("cloud://") != -1) {
 								//用这个转换一下，有一个隐藏的好处，可以等待文件发布到cdn，避免立即访问不到
 								uniCloud.getTempFileURL({
 									fileList: [res.fileID]
 								}).then(res2 => {
-									resolve(res2.fileList[0].tempFileURL);
+									resolve({
+										cloudPath: res.fileID,
+										url: res2.fileList[0].tempFileURL,
+									});
 								})
 							} else {
 								//延时返回，可以等待文件发布到cdn，避免立即访问不到
 								setTimeout(() => {
-									resolve(res.fileID);
+									resolve({
+										cloudPath: res.fileID,
+										url: res.fileID
+									});
 								}, 200);
 							}
 						},
@@ -204,10 +268,12 @@
 			}
 		},
 		onLoad() {
+			// #ifndef MP-BAIDU
 			uni.loadFontFace({
 				family: 'Pacifico',
 				source: 'url("https://sungd.github.io/Pacifico.ttf")'
 			})
+			// #endif
 		},
 	}
 </script>

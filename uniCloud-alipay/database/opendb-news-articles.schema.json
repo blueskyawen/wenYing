@@ -195,6 +195,14 @@
 			"bsonType": "string",
 			"description": "文章ID， 参考`uni-cms-articles` 表",
 			"foreignKey": "uni-cms-articles._id"
+		},
+		"deltaOps": {
+			"bsonType": "array",
+			"description": "文章内容ops"
+		},
+		"insert_imgs": {
+			"bsonType": "array",
+			"description": "文章内容ops"
 		}
 	}
 }

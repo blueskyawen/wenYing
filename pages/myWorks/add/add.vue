@@ -18,8 +18,8 @@
 					return-type="object" v-model="formData.avatarObj" :image-styles="imageStyles" dir="cms-article/"> </uni-file-picker>
 			</uni-forms-item>
 			<view class="uni-button-group">
-				<button type="primary" class="uni-button" @click="submit">保存</button>
-				<button class="uni-button" @click="goBack">返回</button>
+				<button :disabled="isInOper" type="primary" class="uni-button" @click="submit">保存</button>
+				<button :disabled="isInOper" class="uni-button" @click="goBack">返回</button>
 			</view>
 		</uni-forms>
 	</view>
@@ -42,6 +42,8 @@
 					"avatar": '',
 					"create_date": "",
 					"last_modify_date": "",
+					"deltaOps": [],
+					"insert_imgs": []
 				},
 				categaryList: [],
 				imageStyles:{
@@ -52,7 +54,9 @@
 				isInOper: false,
 				id: '',
 				usescore: 0,
-				oldData: {}
+				oldData: {},
+				textContent: '',
+				insertImgs: []
 			}
 		},
 		computed: {
@@ -91,6 +95,7 @@
 						this.formData.user_id = tmp.user_id;
 						this.formData.create_date = tmp.create_date;
 						this.formData.last_modify_date = tmp.last_modify_date;
+						this.formData.deltaOps = tmp.deltaOps || [];
 						if (tmp.avatarFile && tmp.avatarFile.name) {
 							this.formData.avatarObj = {...tmp.avatarFile}
 						} else {
@@ -126,16 +131,70 @@
 				});
 			},
 			submit() {
-				if (this.isInOper) return;
-				this.isInOper = true;
-				this.$refs.addForm.validate().then((res) => {
-					this.submitForm(res)
-				}).catch(err => {
-					this.isInOper = false;
-				})
+				this.$refs.editoRef.getContents().then(res => {
+					this.formData.content = res.html;
+					this.formData.deltaOps = res.delta && res.delta.ops ? res.delta.ops : [];
+					this.textContent = res.text;
+					if (this.isInOper) return;
+					this.isInOper = true;
+					uni.showLoading({
+						title: '保存中..'
+					})
+					console.log('submit');
+					console.log(this.formData);
+					console.log(this.textContent);
+					this.$refs.addForm.validate().then((res) => {
+						this.startUploadInsertImages();
+					}).catch(err => {
+						this.isInOper = false;
+						uni.hideLoading();
+					})
+				});
 			},
-			submitForm() {
+			async uploadInsertImgs() {
+				try {
+					let res = await this.$refs.editoRef.uploadImageFiles();
+					console.log(res);
+					if (res && res.length) {
+						this.insertImgs = this.insertImgs.concat(res)
+						let imgs = res.filter(x => this.formData.content.indexOf(x.filePath) !== -1);
+						if (imgs.length) {
+							let tempContent = this.formData.content;
+							imgs.forEach(t => {
+								tempContent = tempContent.replace(t.filePath, t.url);
+							})
+							this.formData.content = tempContent;
+						}
+					}					
+					console.log('this.formData.content', this.formData.content);
+				} catch(e) {
+					throw new Error('上传图片发生错误');
+				}
+			},
+			async startUploadInsertImages() {
+				try {
+					await this.uploadInsertImgs();
+					this.$nextTick(() => {
+						this.$refs.editoRef.getContents().then(res => {
+							this.formData.content = res.html;
+							this.formData.deltaOps = res.delta && res.delta.ops ? res.delta.ops : [];
+							this.textContent = res.text;
+							let deltaImgs = this.formData.deltaOps.filter(x => x.insert && x.insert.image).map(y => y.insert.image);
+							this.formData.insert_imgs = this.insertImgs.filter(x => deltaImgs.includes(x.url));
+							console.log('deltaImgs:', deltaImgs);
+							console.log(this.insertImgs);
+							console.log(this.formData);
+							this.submitForm();
+						})
+					})
+				} catch(e) {
+					this.isInOper = false;
+					uni.hideLoading();
+				}
+			},
+			async submitForm() {
 				let addData = {...this.formData};
+				console.log('addData: ', addData);
 				if (this.formData.avatarObj) {
 					addData.avatar = this.formData.avatarObj.url;
 					addData.avatarFile = {
@@ -187,9 +246,6 @@
 				}
 				this.checkDataSec(addData).then(res => {
 					delete addData.avatarObj;
-					uni.showLoading({
-						title: '保存中'
-					})
 					if (this.id) {
 						this.procEdit(addData);
 					} else {
@@ -202,6 +258,7 @@
 						duration: 3000
 					});
 					this.isInOper = false;
+					uni.hideLoading();
 				})
 			},
 			procEdit(addData) {
@@ -248,13 +305,14 @@
 				})
 			},
 			goBack() {
+				if (this.isInOper) return;
 				uni.navigateBack();			
 			},
 			async checkDataSec(addData) {
 				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
 				  customUI: true
 				});
-				console.log(addData);
+				// console.log(addData);
 				const parallel = [];
 				if (!this.id || addData.title !== this.oldData.title) {
 					parallel.push(cmsSecCheckCo.checkContentSec(addData.title, '标题存在敏感词'));
@@ -270,11 +328,23 @@
 						parallel.push(cmsSecCheckCo.checkImageSec(addData.avatar, '封面图片存在违规'));	
 					}
 				}
+				if (addData.insert_imgs.length) {
+					if (!this.id) {
+						addData.insert_imgs.forEach(x => {
+							parallel.push(cmsSecCheckCo.checkImageSec(x.url, '文章内容里的图片存在违规'));
+						})
+					} else {
+						let newImgs = addData.insert_imgs.filter(x => !this.oldData.insert_imgs.find(y => y.url == x.url));
+						newImgs.forEach(x => {
+							parallel.push(cmsSecCheckCo.checkImageSec(x.url, '文章内容里的图片存在违规'));
+						})
+					}
+	
+				}
 				
-				let textCont = this.$refs.editoRef.getTextContent();
-				if (textCont) {
-					console.log(textCont);
-					parallel.push(cmsSecCheckCo.checkContentSec(textCont, '文章内容存在敏感词'));
+				if (this.textContent) {
+					console.log(this.textContent);
+					parallel.push(cmsSecCheckCo.checkContentSec(this.textContent, '文章内容存在敏感词'));
 				}
 				
 				if (!parallel.length) {
