@@ -271,6 +271,7 @@
 					  });
 					  this.refreshData();
 					  this.getArticleCount();
+					  this.delCloudFiles(item);
 					} else {
 						uni.showToast({
 							title: res.msg,
@@ -278,6 +279,25 @@
 						});
 					}
 				});
+			},
+			delCloudFiles(item) {
+				let cmsWorksDB = uniCloud.importObject('cms-works-co', {
+					customUI: true
+				});
+				let delFiles = [];
+				if (item.avatar) {
+					delFiles.push(item.avatar)
+				}
+				if (item.insert_imgs && item.insert_imgs.length) {
+					item.insert_imgs.forEach(x => {
+						delFiles.push(x.cloudPath || x.url);
+					})
+				}
+				if (delFiles.length) {
+					cmsWorksDB.delCloudFile({
+						fileList: delFiles
+					}).then(res => {});
+				}
 			},
 			closeReview(item) {
 				uni.showModal({

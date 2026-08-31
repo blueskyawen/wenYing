@@ -38,7 +38,7 @@
 					"user_id": '',
 					"article_status": 0,
 					"avatarObj": null,
-					"avatarFile": null,
+					"avatarFile": {},
 					"avatar": '',
 					"create_date": "",
 					"last_modify_date": "",
@@ -95,7 +95,6 @@
 						this.formData.user_id = tmp.user_id;
 						this.formData.create_date = tmp.create_date;
 						this.formData.last_modify_date = tmp.last_modify_date;
-						this.formData.deltaOps = tmp.deltaOps || [];
 						if (tmp.avatarFile && tmp.avatarFile.name) {
 							this.formData.avatarObj = {...tmp.avatarFile}
 						} else {
@@ -112,7 +111,27 @@
 								}
 							}
 						}
-						this.oldData = JSON.parse(JSON.stringify(this.formData));
+						setTimeout(() => {
+							if (tmp.deltaOps) {
+								this.formData.deltaOps = tmp.deltaOps || [];
+								this.formData.insert_imgs = tmp.insert_imgs || [];
+								this.insertImgs = JSON.parse(JSON.stringify(tmp.insert_imgs));
+								this.oldData = JSON.parse(JSON.stringify(this.formData));
+							} else {
+								this.$refs.editoRef.getContents().then(res => {
+									this.formData.content = res.html;
+									this.formData.deltaOps = res.delta && res.delta.ops ? res.delta.ops : [];
+									let deltaImgs = this.formData.deltaOps.filter(x => x.insert && x.insert.image).map(y => y.insert.image);
+									deltaImgs.forEach(x => {
+										this.insertImgs.push({
+											url: x
+										})
+									});
+									this.formData.insert_imgs = JSON.parse(JSON.stringify(this.insertImgs));
+									this.oldData = JSON.parse(JSON.stringify(this.formData));
+								})
+							}
+						}, 500);
 					}
 				})
 			},
@@ -196,11 +215,11 @@
 				let addData = {...this.formData};
 				console.log('addData: ', addData);
 				if (this.formData.avatarObj) {
-					addData.avatar = this.formData.avatarObj.url;
+					addData.avatar = this.formData.avatarObj.fileID || this.formData.avatarObj.url;
 					addData.avatarFile = {
 						name: this.formData.avatarObj.name,
 						extname: this.formData.avatarObj.extname,
-						url: this.formData.avatarObj.url
+						url: addData.avatar
 					}
 					this.doSubmitForm(addData);
 				} else {
@@ -218,7 +237,11 @@
 							this.doSubmitForm(addData);
 						})
 					} else {
-						addData.avatarFile = {};
+						addData.avatarFile = {
+							name: '',
+							extname: '',
+							url: ''
+						};
 						this.doSubmitForm(addData);
 					}
 				}
@@ -272,16 +295,23 @@
 							icon: "none"
 						});
 						uni.$emit('add-doc-sucess',{});
-						setTimeout(() => {
-							uni.navigateBack();
-						}, 1000);
+						this.checkDelCloudFile(addData).then(res => {
+							console.log('checkDelCloudFile', res)
+							uni.hideLoading();
+							this.isInOper = false;
+							setTimeout(() => {
+								uni.navigateBack();
+							}, 1000);
+						})
 					} else {
 						uni.showToast({
 							title: res.msg,
 							icon: "error"
 						});
+						uni.hideLoading();
+						this.isInOper = false;
 					}
-				}).finally(() => {
+				}).catch((e) => {
 					uni.hideLoading();
 					this.isInOper = false;
 				})
@@ -308,11 +338,38 @@
 				if (this.isInOper) return;
 				uni.navigateBack();			
 			},
+			async checkDelCloudFile(addData) {
+				let cmsWorksDB = uniCloud.importObject('cms-works-co', {
+					customUI: true
+				});
+				let delFiles = [];
+				if (this.oldData.avatar && (this.oldData.avatar !== addData.avatar)) {
+					delFiles.push(this.oldData.avatar);
+				}
+				
+				let tmpImgs = this.oldData.insert_imgs.filter(x => !addData.insert_imgs.find(y => y.url == x.url));
+				tmpImgs.forEach(t => {
+					delFiles.push(t.cloudPath || t.url);
+				});
+				
+				if (delFiles.length) {
+					console.log('delCloudFile', delFiles)
+					let res = await cmsWorksDB.delCloudFile({
+						fileList: delFiles
+					})
+					return res;
+				} else {
+					return { status: 0 };
+				}
+			},
 			async checkDataSec(addData) {
 				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
 				  customUI: true
 				});
-				// console.log(addData);
+				console.log('checkDataSec');
+				console.log(addData);
+				console.log(this.formData)
+				console.log(this.oldData)
 				const parallel = [];
 				if (!this.id || addData.title !== this.oldData.title) {
 					parallel.push(cmsSecCheckCo.checkContentSec(addData.title, '标题存在敏感词'));

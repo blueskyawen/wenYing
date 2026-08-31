@@ -67,6 +67,14 @@ module.exports = {
 				msg: '删除数据失败'
 			}
 		}
+	},
+	delCloudFile: async function(event) {
+		await uniCloud.deleteFile({
+			fileList: event.fileList
+		})
+		return {
+			status: 0
+		}
 	}
 	/**
 	 * method1方法描述
