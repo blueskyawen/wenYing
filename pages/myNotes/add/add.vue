@@ -24,8 +24,8 @@
 			<uni-easyinput type="textarea" autoHeight v-model="formData.content" placeholder="输入文字" :maxlength="300"></uni-easyinput>
 		</view>
 		<view class="uni-button-group">
-			<button type="primary" class="uni-button" @click="submit">发表</button>
-			<button class="uni-button" @click="goBack">返回</button>
+			<button :disabled="isInOper" type="primary" class="uni-button" @click="submit">发表</button>
+			<button :disabled="isInOper" class="uni-button" @click="goBack">返回</button>
 		</view>
 	</view>
 </template>
@@ -107,6 +107,11 @@
 					this.formData.user_id = this.loginUserId;
 					this.imageUrls = await parseImageUrl([temp.cover]);
 					this.imageList = this.imageUrls.map(x => x.src);
+					this.oldData = {
+						cover: temp.cover,
+						content: temp.content,
+						image: this.imageList[0] || ''
+					}
 				}
 			},
 			async getEditNote() {
@@ -147,6 +152,9 @@
 					return;
 				}
 				this.isInOper = true;
+				uni.showLoading({
+					title: '发表中'
+				});
 				let filePath, tempFile;
 				if ((this.id || this.relateId) && this.imageUrls[0].src === this.imageList[0]) {
 					// 编辑时没有更改图片
@@ -159,6 +167,7 @@
 							duration: 3000
 						});
 						this.isInOper = false;
+						uni.hideLoading();
 					})
 					return;
 				} else {
@@ -193,16 +202,32 @@
 								duration: 3000
 							});
 							that.isInOper = false;
+							uni.hideLoading();
 						})
 					},
 					fail() {
 						that.isInOper = false;
+						uni.hideLoading();
 					},
 					complete() {}
 				});
 			},
 			isModify() {
-				return this.formData.content !== this.oldData.content || this.formData.cover !== this.oldData.cover;
+				return this.formData.content !== this.oldData.content || this.imageList[0] !== this.oldData.image;
+			},
+			async checkDelCloudFile(addData) {
+				let delFiles = [];
+				if (this.oldData.cover && (this.oldData.cover !== addData.cover)) {
+					delFiles.push(this.oldData.cover);
+				}
+				if (delFiles.length) {
+					let res = await cmsNotesDB.delCoverFile({
+						cover: delFiles[0]
+					})
+					return res;
+				} else {
+					return { status: 0 };
+				}
 			},
 			async checkDataSec() {
 				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {
@@ -229,9 +254,6 @@
 				if (!this.id) {
 					addData['publish_date'] = addData['last_modify_date'];
 				}				
-				uni.showLoading({
-					title: '发表中'
-				})
 				if (this.id) {
 					this.procEdit(addData);
 				} else {
@@ -246,16 +268,22 @@
 							icon: "none"
 						});
 						uni.$emit('add-note-sucess',{});
-						setTimeout(() => {
-							uni.navigateBack();
-						}, 1000);
+						this.checkDelCloudFile(addData).then(res2 => {
+						  setTimeout(() => {
+						  	uni.navigateBack();
+						  }, 1000);	
+						  uni.hideLoading();
+						  this.isInOper = false;
+						})
 					} else {
 						uni.showToast({
 							title: res.msg,
 							icon: "error"
 						});
+						uni.hideLoading();
+						this.isInOper = false;
 					}
-				}).finally(() => {
+				}).catch(() => {
 					uni.hideLoading();
 					this.isInOper = false;
 				})
