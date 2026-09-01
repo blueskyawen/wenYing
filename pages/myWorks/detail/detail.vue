@@ -19,7 +19,9 @@
 					</view>
 				</view>
 			</view>
-			<u-parse class="article-content" :content="articleContent"></u-parse>
+			<view class="ar-content">
+				<u-parse class="article-content" :content="articleContent"></u-parse>
+			</view>
 		</view>
 		<u-loading-page v-if="loading"></u-loading-page>
 		<u-empty class="ui-empty" v-if="!loading && !title" mode="data"></u-empty>
@@ -140,10 +142,12 @@
 	    }
 	  }
 	}
+	.ar-content {
+		padding-top: 40rpx;
+	}
 	.article-content {
 		line-height: 1.75;
 		font-size: 32rpx;
-		margin-top: 40rpx;
 		padding-bottom: 80rpx;
 		word-break: break-word;
 		color: #333;

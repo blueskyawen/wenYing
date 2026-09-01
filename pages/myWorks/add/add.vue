@@ -124,8 +124,8 @@
 										})
 									});
 								}
-								console.log('deltaImg2222', this.insertImgs);
-								this.formData.insert_imgs = JSON.parse(JSON.stringify(this.insertImgs));
+								console.log('deltaImg333', this.insertImgs);
+								this.formData.insert_imgs = this.insertImgs.length ? JSON.parse(JSON.stringify(this.insertImgs)) : [];
 								this.oldData = JSON.parse(JSON.stringify(this.formData));
 							} else {
 								this.$refs.editoRef.getContents().then(res => {
@@ -138,11 +138,11 @@
 										})
 									});
 									console.log('deltaImg2222', deltaImgs);
-									this.formData.insert_imgs = JSON.parse(JSON.stringify(this.insertImgs));
+									this.formData.insert_imgs = this.insertImgs.length ? JSON.parse(JSON.stringify(this.insertImgs)) : [];
 									this.oldData = JSON.parse(JSON.stringify(this.formData));
 								})
 							}
-						}, 500);
+						}, 1000);
 					}
 				})
 			},
@@ -217,8 +217,19 @@
 							this.formData.deltaOps = res.delta && res.delta.ops ? res.delta.ops : [];
 							this.textContent = res.text;
 							let deltaImgs = this.formData.deltaOps.filter(x => x.insert && x.insert.image).map(y => y.insert.image);
-							this.formData.insert_imgs = this.insertImgs.filter(x => deltaImgs.includes(x.url));
+							if (deltaImgs.length && !this.insertImgs.length) {
+								deltaImgs.forEach(x => {
+									this.insertImgs.push({
+										url: x
+									})
+								});
+							}
+							this.formData.insert_imgs = this.insertImgs.filter(x => {
+								let x_url = x.url.includes('?') ? x.url.split('?')[0] : x;
+								return deltaImgs.find(y => y.startsWith(x_url))
+							});
 							console.log('deltaImgs:', deltaImgs);
+							console.log('this.formData.insert_imgs:', this.formData.insert_imgs);
 							console.log(this.insertImgs);
 							console.log(this.formData);
 							this.submitForm();
@@ -321,6 +332,12 @@
 							setTimeout(() => {
 								uni.navigateBack();
 							}, 1000);
+						}).catch(e => {
+							uni.hideLoading();
+							this.isInOper = false;
+							setTimeout(() => {
+								uni.navigateBack();
+							}, 1000);	
 						})
 					} else {
 						uni.showToast({
@@ -371,7 +388,11 @@
 					}
 				}
 				
-				let tmpImgs = this.oldData.insert_imgs.filter(x => !addData.insert_imgs.find(y => y.url == x.url));
+				let tmpImgs = [];
+				if (this.oldData.insert_imgs) {
+					tmpImgs = this.oldData.insert_imgs.filter(x => !addData.insert_imgs.find(y => y.url == x.url));
+				}
+				
 				tmpImgs.forEach(t => {
 					let tmpUrl = t.cloudPath || t.url;
 					if (tmpUrl.startsWith('cloud://')) {
