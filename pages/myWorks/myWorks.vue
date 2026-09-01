@@ -242,7 +242,7 @@
 			},
 			clickDelete(item) {
 				let isDelPublish = this.curTab == 1 && item.article_status == 1;
-				let texttitle = isDelPublish ? '已发布的文章要进行删除审核, 删除后不可恢复, 确定要删除吗?' : '执行删除后数据将不可恢复, 确定要删除吗?'
+				let texttitle = isDelPublish ? '已发布的文章要删除后将不公开并返回草稿箱, 确定要删除吗?' : '执行删除后数据将不可恢复, 确定要删除吗?'
 				uni.showModal({
 					title: '确认删除',
 					content: texttitle,
@@ -251,11 +251,42 @@
 					success: (res) => {
 						if (res.confirm) {
 							if (isDelPublish) {
-								this.procReview(item, true);
+								this.procDelPublishDoc(item);
 							} else {
 								this.procDel(item);
 							}
 						}
+					}
+				});
+			},
+			delCmsArcitle(id) {
+				if (id) {
+					const cmsArticleDB = uniCloud.importObject('cms-article-co', {
+						customUI: true
+					});
+					cmsArticleDB.delete({
+						id: id
+					}).then(res => {});
+				}
+			},
+			procDelPublishDoc(item) {				
+				cmsWorksDB.updateStatus({
+					id: item._id,
+					article_status: 0,
+					relate_cms_id: ''
+				}).then(res => {
+					if (res.status == 0) {
+					  uni.showToast({
+						title: '操作成功',
+						icon: "none"
+					  });
+					  this.delCmsArcitle(item.relate_cms_id);
+					  this.refreshData();
+					} else {
+						uni.showToast({
+							title: res.msg,
+							icon: "error"
+						});
 					}
 				});
 			},
@@ -363,7 +394,7 @@
 			clickReview(item) {
 				uni.showModal({
 					title: '发布审核',
-					content: '执行后数据将发布审核, 审核通过后发布至公开数据库',
+					content: '执行后数据将发布审核, 审核通过后将公开可见',
 					showCancel: true,
 					success: (res) => {
 						if (res.confirm) {
@@ -372,11 +403,11 @@
 					}
 				});
 			},
-			procReview(item, isDelPublish) {
+			procReview(item) {
 				// let cmsWorksDB = uniCloud.importObject('cms-works-co');
 				cmsWorksDB.updateStatus({
 					id: item._id,
-					article_status: isDelPublish ? 3 : 2,
+					article_status: 2,
 					review_date: Date.now(),
 					reviewRejectReason: ''
 				}).then(res => {

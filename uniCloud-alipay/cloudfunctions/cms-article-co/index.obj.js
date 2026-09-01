@@ -43,6 +43,10 @@ module.exports = {
 					})
 		return res;
 	},
+	delete: async function(event) {
+		let res = cmsDocCollection.doc(event.id).remove();
+		return res;
+	}
 	/**
 	 * method1方法描述
 	 * @param {string} param1 参数1描述
