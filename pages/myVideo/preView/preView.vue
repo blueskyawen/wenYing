@@ -40,8 +40,8 @@
 					</uni-forms>
 				</view>
 				<view class="bottom-actions">
-					<button class="uni-button" @click="closeEditPlane">取消</button>
-					<button type="primary" class="uni-button" @click="confirmEdit">确认</button>
+					<button :disabled="isloading" class="uni-button" @click="closeEditPlane">取消</button>
+					<button :disabled="isloading" type="primary" class="uni-button" @click="confirmEdit">确认</button>
 				</view>
 			</view>
 		</u-popup>
@@ -299,6 +299,7 @@
 				}
 			},
 			closeEditPlane() {
+				if (this.isloading) return;
 				this.showEditPlane = false;
 			},
 			procEdit() {
@@ -348,7 +349,7 @@
 									icon: "none"
 								  });
 								  this.modCurData();
-								  this.closeEditPlane();
+								  this.showEditPlane = false;
 								} else {
 									uni.showToast({
 										title: res.msg,

@@ -37,9 +37,9 @@
 			<button  type="primary" class="uni-button" @click="nextStep">下一步</button>
 		</view>
 		<view v-else class="bottom-actions bottom-actions2">
-			<button class="uni-button" @click="goBack">取消</button>
-			<button type="primary" class="uni-button" @click="preStep">上一步</button>
-			<button type="primary" class="uni-button" @click="confirm">发布</button>
+			<button :disabled="uploading" class="uni-button" @click="goBack">取消</button>
+			<button type="primary" :disabled="uploading" class="uni-button" @click="preStep">上一步</button>
+			<button type="primary" :disabled="uploading" class="uni-button" @click="confirm">发布</button>
 		</view>
 	</view>
 </template>
@@ -216,11 +216,16 @@
 				if (this.uploading) return;
 				try {
 					await this.$refs.videoForm.validate();
+					this.uploading = true;
+					uni.showLoading({
+						title: '新增中...'
+					})
 					await this.checkDataSec();
 					await this.startUpload();
 					this.addVideo();
 				} catch (e) {
 					this.uploading = false;
+					uni.hideLoading();
 					console.error(JSON.stringify(e))
 					if (e.detail && e.detail.action && e.detail.action == 'secCheck') {
 						uni.showToast({
@@ -383,10 +388,6 @@
 			},
 			async startUpload() {
 				console.log('startUpload')
-				this.uploading = true;
-				uni.showLoading({
-					title: '新增中...'
-				})
 				try {
 					let result = await uniCloud.uploadFile({
 						filePath: this.videoFile.path,
@@ -403,7 +404,7 @@
 					});
 					this.videoFile.url = result.fileID;
 					await this.setVideoCover(this.videoFile);
-					this.uploading = false;
+					// this.uploading = false;
 				} catch (e) {
 					uni.showToast({
 						title: '上传失败',
@@ -420,7 +421,8 @@
 					if (!cover) return;
 					file.cover = cover;
 				} catch(e) {
-					console.error('Failed to crop video cover', e)
+					// console.error('Failed to crop video cover', e)
+					throw new Error('Failed to crop video cover')
 				} 
 			},
 			async cropVideoCover(url, cover) {
@@ -455,20 +457,26 @@
 			    })
 			
 			    return uploadRes.fileID
+			  } catch(e) {
+				  throw new Error('Failed to crop video cover')
 			  } finally {
 			    URL.revokeObjectURL(imageBlobUrl)
 			  }
 			  // #endif
 			  // #ifdef MP
 			  if (cover) {
-				  let ext = cover.split('.').pop().toLowerCase();
-				  const uploadRes = await uniCloud.uploadFile({
-				    filePath: cover,
-				    cloudPath: `cms-videos/cover-${Date.now()}.${ext}`,
-				    fileType: 'image'
-				  })
-				  			
-				  return uploadRes.fileID
+				  try {
+					  let ext = cover.split('.').pop().toLowerCase();
+					  const uploadRes = await uniCloud.uploadFile({
+					    filePath: cover,
+					    cloudPath: `cms-videos/cover-${Date.now()}.${ext}`,
+					    fileType: 'image'
+					  })
+					  			
+					  return uploadRes.fileID
+				  } catch(e) {
+					  throw new Error('Failed to crop video cover')
+				  }
 			  }
 			  // #endif
 			  return ''
