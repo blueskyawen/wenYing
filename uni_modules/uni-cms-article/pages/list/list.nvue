@@ -67,9 +67,16 @@
 		categaryList: [],
 		curTab: 0,
 		heighth: 400,
+		isReload: false
       }
     },
 	onLoad() {
+		// this.init();
+	},
+	onHide() {
+		this.isReload = true;
+	},
+	onShow() {
 		this.init();
 	},
     async onReady() {
@@ -93,9 +100,24 @@
 		init() {
 			const uniCaptchaDemo = uniCloud.importObject('cms-categary-co')
 			uniCaptchaDemo.getList().then(res => {
-				this.categaryList = res.data || []
+				this.categaryList = res.data || [];
+				if (this.curTab >= res.data.length) {
+					this.curTab = 0;
+				}
+				if (this.isReload) {
+					this.doTabsReload();
+				}
 			});
-			this.heighth = uni.getWindowInfo().windowHeight;
+			// this.heighth = uni.getWindowInfo().windowHeight;
+		},
+		doTabsReload() {
+			let curRef = this.$refs['listRef-' + this.curTab];
+			if (Array.isArray(curRef)) {
+				curRef[0].refresh && curRef[0].refresh();
+			} else {
+				curRef.refresh && curRef.refresh();
+			}
+			this.isReload = false;
 		},
 		clickTab(index) {
 			this.curTab = index.index;
