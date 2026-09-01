@@ -8,6 +8,10 @@ const config = createConfig({
 	pluginId: 'uni-cms'
 }).config()
 
+const seckConfig = {
+	contentSecurity: true
+}
+
 const errmsgMap = {
 	'uni-sec-check-invoke-out-of-limit': '接口调用频率/次数超出限制',
 	'uni-sec-check-system-error': '系统错误',
@@ -29,7 +33,7 @@ module.exports = {
 	_before: function () { // 通用预处理器
 		console.warn('unicheck_before: ' + JSON.stringify(config.contentSecurity))
 		// 如果内容安全配置存在
-		if (config.contentSecurity && !this.uniSecCheck) {
+		if (seckConfig.contentSecurity && !this.uniSecCheck) {
 			// 引入内容安全检测模块
 			const UniSecCheck = safeRequire('uni-sec-check')
 			 // 实例化内容安全检测模块
@@ -43,7 +47,7 @@ module.exports = {
 	async checkImageSec (image, errorMsg) {
 		// 检查内容安全是否开启
 		// 如果内容安全未开启，则直接返回一个对象，包含错误码为0。表示检测跳过
-		if (!config.contentSecurity) {
+		if (!seckConfig.contentSecurity) {
 			return {
 				errCode: 0
 			}
@@ -102,7 +106,7 @@ module.exports = {
 	async checkContentSec (content, errorMsg) {
 		// 检查内容安全是否开启
 		// 如果内容安全未开启，则直接返回一个对象，包含错误码为0。表示检测跳过
-		if (!config.contentSecurity) {
+		if (!seckConfig.contentSecurity) {
 			return {
 				errCode: 0
 			}
