@@ -99,7 +99,8 @@
 							this.formData.avatarObj = {...tmp.avatarFile}
 						} else {
 							if (tmp.avatar && tmp.avatar.indexOf('.') !== -1) {
-								let tmpList = tmp.avatar.split('.');
+								let urlTrl = tmp.avatar.split('?')[0];
+								let tmpList = urlTrl.split('.');
 								let len = tmpList.length;
 								let extname = tmpList[len - 1];
 								let paths = tmpList[len - 2].split('/');
@@ -114,8 +115,17 @@
 						setTimeout(() => {
 							if (tmp.deltaOps) {
 								this.formData.deltaOps = tmp.deltaOps || [];
-								this.formData.insert_imgs = tmp.insert_imgs || [];
-								this.insertImgs = JSON.parse(JSON.stringify(tmp.insert_imgs));
+								let deltaImgs = this.formData.deltaOps.filter(x => x.insert && x.insert.image).map(y => y.insert.image);
+								this.insertImgs = tmp.insert_imgs || [];
+								if (deltaImgs.length && !this.insertImgs.length) {
+									deltaImgs.forEach(x => {
+										this.insertImgs.push({
+											url: x
+										})
+									});
+								}
+								console.log('deltaImg2222', this.insertImgs);
+								this.formData.insert_imgs = JSON.parse(JSON.stringify(this.insertImgs));
 								this.oldData = JSON.parse(JSON.stringify(this.formData));
 							} else {
 								this.$refs.editoRef.getContents().then(res => {
@@ -272,6 +282,7 @@
 				}
 				if (!this.isModify((addData))) {
 					this.isInOper = false;
+					uni.hideLoading();
 					uni.navigateBack();	
 					return;
 				}
@@ -352,14 +363,22 @@
 				});
 				let delFiles = [];
 				if (this.oldData.avatar && (this.oldData.avatar !== addData.avatar)) {
-					delFiles.push(this.oldData.avatar);
+					if (this.oldData.avatar.startsWith('cloud://')) {
+						delFiles.push(this.oldData.avatar);
+					} else if (this.oldData.avatar.includes('cloudstatic') && this.oldData.avatar.includes('cms-article')) {
+						let delCloudpath = this.getCloudpathByLoadUrl(this.oldData.avatar);
+						delFiles.push(delCloudpath);
+					}
 				}
 				
 				let tmpImgs = this.oldData.insert_imgs.filter(x => !addData.insert_imgs.find(y => y.url == x.url));
 				tmpImgs.forEach(t => {
 					let tmpUrl = t.cloudPath || t.url;
-					if (tmpUrl.includes('cloud://') || (tmpUrl.includes('cloudstatic') && tmpUrl.includes('cms-article'))) {
+					if (tmpUrl.startsWith('cloud://')) {
 						delFiles.push(tmpUrl);
+					} else if (tmpUrl.includes('cloudstatic') && tmpUrl.includes('cms-article')) {
+						let delCloudpath = this.getCloudpathByLoadUrl(tmpUrl);
+						delFiles.push(delCloudpath);
 					}
 				});
 				
@@ -376,6 +395,21 @@
 				} else {
 					return { status: 0 };
 				}
+			},
+			getCloudpathByLoadUrl(url) {
+				let httpStr = url.split('?')[0];
+				let splitStrs = httpStr.split('/');
+				let fname = splitStrs[splitStrs.length - 1];
+				let filtstrs = splitStrs.filter(x => x == 'cms-article' || x.startsWith('env-'));
+				let tmpstrs = filtstrs.map(y => {
+										if (y.startsWith('env-')) {
+											let tmpStr = y.split('.')[0];
+											return tmpStr;
+										}
+										return y;
+									});
+
+				return `cloud://${tmpstrs.join('/')}/${fname}`;
 			},
 			async checkDataSec(addData) {
 				const cmsSecCheckCo = uniCloud.importObject('cms-sec-check-co', {

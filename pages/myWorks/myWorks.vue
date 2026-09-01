@@ -286,11 +286,18 @@
 				});
 				let delFiles = [];
 				if (item.avatar) {
-					delFiles.push(item.avatar)
+					let delUrl = this.getCloudpathByLoadUrl(item.avatar);
+					if (delUrl) {
+						delFiles.push(delUrl)
+					}
 				}
 				if (item.insert_imgs && item.insert_imgs.length) {
 					item.insert_imgs.forEach(x => {
-						delFiles.push(x.cloudPath || x.url);
+						let tmpPath = x.cloudPath || x.url;
+						let delUrl = this.getCloudpathByLoadUrl(tmpPath);
+						if (delUrl) {
+							delFiles.push(delUrl)
+						}
 					})
 				}
 				if (delFiles.length) {
@@ -298,6 +305,28 @@
 						fileList: delFiles
 					}).then(res => {});
 				}
+			},
+			getCloudpathByLoadUrl(url) {
+				if (url.startsWith('cloud://')) {
+					return url;
+				}
+				
+				if (url.includes('cloudstatic') && url.includes('cms-article')) {
+					let httpStr = url.split('?')[0];
+					let splitStrs = httpStr.split('/');
+					let fname = splitStrs[splitStrs.length - 1];
+					let filtstrs = splitStrs.filter(x => x == 'cms-article' || x.startsWith('env-'));
+					let tmpstrs = filtstrs.map(y => {
+											if (y.startsWith('env-')) {
+												let tmpStr = y.split('.')[0];
+												return tmpStr;
+											}
+											return y;
+										});
+								
+					return `cloud://${tmpstrs.join('/')}/${fname}`;
+				}
+				return '';
 			},
 			closeReview(item) {
 				uni.showModal({
