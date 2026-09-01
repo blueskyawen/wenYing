@@ -127,6 +127,7 @@
 											url: x
 										})
 									});
+									console.log('deltaImg2222', deltaImgs);
 									this.formData.insert_imgs = JSON.parse(JSON.stringify(this.insertImgs));
 									this.oldData = JSON.parse(JSON.stringify(this.formData));
 								})
@@ -134,6 +135,13 @@
 						}, 500);
 					}
 				})
+			},
+			getImgSrcFromContent(htmlStr) {
+				if (!htmlStr) return [];
+				let tmps = [];
+				const reg = /<img[^>]+src\s*=\s*['"]([^'"]+)['"][^>]*>/g;
+				tmps = htmlStr.match(reg);
+				return tmps;
 			},
 			init() {
 				const uniCaptchaDemo = uniCloud.importObject('cms-categary-co', {
@@ -349,15 +357,22 @@
 				
 				let tmpImgs = this.oldData.insert_imgs.filter(x => !addData.insert_imgs.find(y => y.url == x.url));
 				tmpImgs.forEach(t => {
-					delFiles.push(t.cloudPath || t.url);
+					let tmpUrl = t.cloudPath || t.url;
+					if (tmpUrl.includes('cloud://') || (tmpUrl.includes('cloudstatic') && tmpUrl.includes('cms-article'))) {
+						delFiles.push(tmpUrl);
+					}
 				});
 				
 				if (delFiles.length) {
 					console.log('delCloudFile', delFiles)
-					let res = await cmsWorksDB.delCloudFile({
-						fileList: delFiles
-					})
-					return res;
+					try {
+						let res = await cmsWorksDB.delCloudFile({
+							fileList: delFiles
+						})
+						return res;
+					} catch(e) {
+						return { status: 0 };
+					}
 				} else {
 					return { status: 0 };
 				}
@@ -400,8 +415,9 @@
 				}
 				
 				if (this.textContent) {
-					console.log(this.textContent);
-					parallel.push(cmsSecCheckCo.checkContentSec(this.textContent, '文章内容存在敏感词'));
+					if (!this.id || addData.content !== this.oldData.content) {
+						parallel.push(cmsSecCheckCo.checkContentSec(this.textContent, '文章内容存在敏感词'));	
+					}
 				}
 				
 				if (!parallel.length) {

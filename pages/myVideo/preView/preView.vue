@@ -422,10 +422,15 @@
 						title: res.msg,
 						icon: "none"
 					  });
-					  this.checkDelFiles();
-					  setTimeout(() => {
-						  uni.navigateBack();
-					  }, 1000);
+					  this.checkDelFiles().then(res => {
+						  setTimeout(() => {
+							  uni.navigateBack();
+						  }, 1000);
+					  }).catch(e => {
+						  setTimeout(() => {
+							  uni.navigateBack();
+						  }, 1000);
+					  });
 					} else {
 						uni.showToast({
 							title: res.msg,
@@ -434,7 +439,7 @@
 					}
 				});
 			},
-			checkDelFiles() {
+			async checkDelFiles() {
 				const cmsVideoCo = uniCloud.importObject('cms-video-co', {
 					customUI: true
 				});
@@ -443,9 +448,10 @@
 				if (this.operItem.cover) {
 					delUrls.push(this.operItem.cover)
 				}
-				cmsVideoCo.delCloudFile({
+				let res = await cmsVideoCo.delCloudFile({
 					fileList: delUrls
-				}).then(res => {})
+				})
+				return res;
 			},
 			procModReadType(v) {
 				let title = v == 'topublic' ? '视频转为公开' : '视频转为私有';

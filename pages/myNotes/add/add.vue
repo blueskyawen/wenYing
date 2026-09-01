@@ -221,10 +221,14 @@
 					delFiles.push(this.oldData.cover);
 				}
 				if (delFiles.length) {
-					let res = await cmsNotesDB.delCoverFile({
-						cover: delFiles[0]
-					})
-					return res;
+					try {
+						let res = await cmsNotesDB.delCoverFile({
+							cover: delFiles[0]
+						})
+						return res;
+					} catch(e) {
+						return { status: 0 };
+					}
 				} else {
 					return { status: 0 };
 				}
