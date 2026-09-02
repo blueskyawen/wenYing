@@ -366,6 +366,7 @@ page {
 }
 .search-content {
 	width: 100%;
+	background-color: #f1f1f1;
 	.video-item-box {
 		background-color: #fff;
 		margin-bottom: 3px;
