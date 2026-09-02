@@ -307,7 +307,7 @@
 				}).catch(e => {
 					uni.showToast({
 						title: e.errMsg || '图片或文字存在违规, 请修改',
-						icon: 'error',
+						icon: 'none',
 						duration: 3000
 					});
 					this.isInOper = false;
@@ -322,7 +322,7 @@
 					if (res.status == 0) {
 						uni.showToast({
 							title: res.msg,
-							icon: "none"
+							icon: "success"
 						});
 						uni.$emit('add-doc-sucess',{});
 						this.checkDelCloudFile(addData).then(res => {
@@ -342,7 +342,7 @@
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 						uni.hideLoading();
 						this.isInOper = false;
@@ -359,7 +359,7 @@
 				cmsWorksDB.add(addData).then(res => {
 					uni.showToast({
 						title: '保存成功',
-						icon: "none"
+						icon: "success"
 					});
 					uni.$emit('add-doc-sucess',{usescore: this.usescore});
 					setTimeout(() => {

@@ -244,7 +244,7 @@
 						}).catch(err => {
 							uni.showToast({
 								title: err.errMsg,
-								icon: 'error'
+								icon: 'none'
 							})
 						})
 			},

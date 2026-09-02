@@ -285,7 +285,7 @@
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 					}
 				});
@@ -306,7 +306,7 @@
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 					}
 				});
@@ -386,7 +386,7 @@
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 					}
 				});
@@ -421,7 +421,7 @@
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 					}
 				});

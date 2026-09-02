@@ -346,14 +346,14 @@
 								if (res.status == 0) {
 								  uni.showToast({
 									title: res.msg,
-									icon: "none"
+									icon: "success"
 								  });
 								  this.modCurData();
 								  this.showEditPlane = false;
 								} else {
 									uni.showToast({
 										title: res.msg,
-										icon: "error"
+										icon: "none"
 									});
 								}
 								this.isloading = false;
@@ -366,7 +366,7 @@
 							if (e.detail && e.detail.action && e.detail.action == 'secCheck') {
 								uni.showToast({
 									title: e.errMsg || '文字内容存在违规, 请修改',
-									icon: 'error',
+									icon: 'none',
 									duration: 3000
 								})
 							}
@@ -421,7 +421,7 @@
 					if (res.status == 0) {
 					  uni.showToast({
 						title: res.msg,
-						icon: "none"
+						icon: "success"
 					  });
 					  this.checkDelFiles().then(res => {
 						  setTimeout(() => {
@@ -435,7 +435,7 @@
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 					}
 				});
@@ -477,14 +477,14 @@
 					if (res.status == 0) {
 					  uni.showToast({
 						title: res.msg,
-						icon: "none"
+						icon: "success"
 					  });
 					  this.operItem.read_type = v;
 					  this.list[0].read_type = v;
 					} else {
 						uni.showToast({
 							title: res.msg,
-							icon: "error"
+							icon: "none"
 						});
 					}
 				});

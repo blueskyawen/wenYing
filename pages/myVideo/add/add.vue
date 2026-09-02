@@ -169,7 +169,7 @@
 				console.log(this.videoFile);
 				if (!this.src) {
 					uni.showToast({
-						title: '请先选择视频文件',
+						title: '请先选择视频',
 						icon: 'error'
 					})
 					return;
@@ -230,7 +230,7 @@
 					if (e.detail && e.detail.action && e.detail.action == 'secCheck') {
 						uni.showToast({
 							title: e.errMsg || '文字内容存在违规, 请修改',
-							icon: 'error',
+							icon: 'none',
 							duration: 3000
 						})
 					}
@@ -283,14 +283,14 @@
 						if (!this.isAllowedFile(this.videoFile)) {
 							uni.showToast({
 								title: '选择的文件类型不符合要求',
-								icon: 'error'
+								icon: 'none'
 							})
 							return;
 						}
 						if (res.size > 10485760) {
 							uni.showToast({
 								title: '选择的文件大小不超过10M',
-								icon: 'error'
+								icon: 'none'
 							})
 							return;
 						}
@@ -508,7 +508,7 @@
 				cmsVideoCo.add(addTmpData).then(res => {
 					uni.showToast({
 						title: '保存成功',
-						icon: "none"
+						icon: "success"
 					});
 					uni.$emit('add-video-sucess',{usescore: this.usescore});
 					setTimeout(() => {
