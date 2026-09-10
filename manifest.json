@@ -83,6 +83,11 @@
         },
         "devServer" : {
             "https" : true
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
         }
     }
 }

@@ -410,7 +410,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "文影",
+		"navigationBarTitleText": "轻拾刻",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"enablePullDownRefresh": false
