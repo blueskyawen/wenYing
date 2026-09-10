@@ -1,6 +1,10 @@
 <template>
 	<view class="ucenter">
 		<uni-sign-in ref="signIn"></uni-sign-in>
+		<view class="placeholder-bar">
+		    <statusBar></statusBar>
+		    <view class="nav-bar" :style="{ height: `${navBarHeight}px` }"></view>
+		</view>
 		<view class="userInfo" @click.capture="toUserInfo"  :style="{ height: heighth + 'px' }">
 			<view class="user">
 				<u-avatar v-if="hasLogin && (userInfo.username || userInfo.nickname || (userInfo.avatar_file && userInfo.avatar_file.url))" 
@@ -45,6 +49,7 @@
 </template>
 
 <script>
+	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 	import {
 		store,
 		mutations
@@ -60,6 +65,9 @@
 	});
 	
 	export default {
+		components: {
+			statusBar
+		},
 		data() {
 			return {
 				gridList: [
@@ -154,6 +162,7 @@
 				],
 				avatorImg: '',
 				heighth: 160,
+				navBarHeight: 44, // 导航栏高度
 				avatorUrl: ''
 			}
 		},
@@ -198,6 +207,14 @@
 		},
 		onShow() {
 			this.getAvatorImg()
+		},
+		onReady() {
+			// #ifdef H5
+			this.navBarHeight = 20;
+			// #endif
+			// #ifndef H5
+			this.navBarHeight = uni.getSystemInfoSync().system.toLowerCase().includes('ios') ? 44 : 48;
+			// #endif
 		},
 		methods: {
 			isGetAvator() {
@@ -341,6 +358,9 @@ page {
 	// flex: 1;
 	// flex-direction: column;
 	background-color: #f2f2f2;
+	.nav-bar {
+		background-color: #c4c6c9;
+	}
 	.userInfo {
 		height: 40%;
 		flex-direction: column;
