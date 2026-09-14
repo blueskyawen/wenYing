@@ -79,21 +79,21 @@
 	}
 .note-item {
 	border: solid 1px #dcdcdc;
-	border-radius: 6px;
+	border-radius: 14rpx;
 	display: flex;
 	flex-direction: column;
-	margin: 3px;
+	margin: 7rpx;
 	image {
 		width: 100%;
 		display: block;
 		object-fit: cover;
 		aspect-ratio: 1;
 		height: auto;
-		border-radius: 6px 6px 0 0;
+		border-radius: 14rpx 14rpx 0 0;
 	}
 	.descript {
-		font-size: 14px;
-		margin: 12px 8px;
+		font-size: 33rpx;
+		margin: 28rpx 19rpx;
 		box-sizing: border-box;
 		line-height: 1.5em;
 		display: -webkit-box;
@@ -104,9 +104,9 @@
 	.publish-date {
 		display: flex;
 		justify-content: flex-end;
-		font-size: 12px;
-		margin-bottom: 8px;
-		margin-right: 8px;
+		font-size: 28rpx;
+		margin-bottom: 19rpx;
+		margin-right: 19rpx;
 	}
 	.oper-row {
 		display: flex;
@@ -115,14 +115,14 @@
 		margin: 12rpx;
 		align-items: center;
 		.oper-i {
-			font-size: 10px;
+			font-size: 24rpx;
 			display: inline-flex;
 			border: solid 1px #d4e4ff;
-			padding: 1px 2px;
-			border-radius: 8px;
+			padding: 2rpx 5rpx;
+			border-radius: 19rpx;
 			background-color: #d4e4ff;
 			&.ml-2 {
-				margin-left: 6px;
+				margin-left: 14rpx;
 			}
 		}
 		.oper-r {

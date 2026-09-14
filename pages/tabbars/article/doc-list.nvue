@@ -45,6 +45,6 @@
 
 <style scoped>
 .data-empty {
-	margin-top: 30px;
+	margin-top: 72rpx;
 }
 </style>

@@ -432,7 +432,7 @@
 
 <style lang="scss" scoped>
 .my-works {
-	padding-bottom: 30px;
+	padding-bottom: 70rpx;
 	height: 100%;
 	.item{
 		display: flex;
@@ -444,7 +444,7 @@
 		flex-direction: column;
 		margin-top: 24rpx;
 		.time-l {
-			font-size: 13px;
+			font-size: 31rpx;
 		}
 		.r-text {
 			color: #767a82;
@@ -457,14 +457,14 @@
 		margin-top: 18rpx;
 		align-items: center;
 		.oper-i {
-			font-size: 12px;
+			font-size: 24rpx;
 			display: inline-flex;
 			border: solid 1px #d4e4ff;
-			padding: 2px 4px;
-			border-radius: 8px;
+			padding: 5rpx 10rpx;
+			border-radius: 19rpx;
 			background-color: #d4e4ff;
 			&.ml-2 {
-				margin-left: 10px;
+				margin-left: 24rpx;
 			}
 		}
 		.oper-r {
@@ -481,9 +481,9 @@
 	}
 	.article-date {
 		color: #C8C7CC;
-		font-size: 14px;
-		margin-left: 5px;
-		margin-top: 4px;
+		font-size: 33rpx;
+		margin-left: 12rpx;
+		margin-top: 10rpx;
 	}
 	.action-tabbar {
 		background-color: #fff;
@@ -503,15 +503,15 @@
 				display: inline-flex;
 				align-items: center;
 				border: solid 1px #dcdcdc;
-				padding: 3px 6px;
-				border-radius: 12px;
-			    font-size: 14px;
+				padding: 7rpx 14px;
+				border-radius: 28rpx;
+			    font-size: 33rpx;
 				text {
-					margin-left: 3px;
+					margin-left: 7rpx;
 				}
 			}
 			.action-r {
-				margin-left: 24px;
+				margin-left: 56rpx;
 			}
 		}
 	}

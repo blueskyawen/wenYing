@@ -89,7 +89,7 @@
 	}
 .content-d {
 	background-color: #fff;
-	padding-bottom: 60px;
+	padding-bottom: 140rpx;
 	padding: 20rpx 30rpx;
 	.meta {
 	  position: relative;
@@ -120,13 +120,13 @@
 	    flex-direction: row;
 	    margin-top: 20rpx;
 		.like-1 {
-			font-size: 12px;
+			font-size: 28rpx;
 		}
 		.likes {
 			display: inline-flex;
 			align-items: center;
 			.like-2 {
-				margin-left: 10px;
+				margin-left: 24rpx;
 			}
 		}
 	
@@ -154,7 +154,7 @@
 	}
 	.ui-empty {
 		position: relative;
-		top: 50px;
+		top: 120rpx;
 	}
 }
 </style>

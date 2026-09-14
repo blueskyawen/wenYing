@@ -658,7 +658,7 @@
 <style lang="scss">
 .video-preview {
 	::v-deep .u-popup__content {
-		border-radius: 10px 10px 0 0;
+		border-radius: 24rpx 24rpx 0 0;
 		background-color: #f0f0f0;
 	}
 	.share-content {
@@ -666,14 +666,14 @@
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
-		padding: 10px 0 20px;
-		border-radius: 10px 10px 0 0;
+		padding: 24rpx 0 48rpx;
+		border-radius: 24rpx 24rpx 0 0;
 		background-color: #f0f0f0;
 		&.edit-c {
 			background-color: #fff;
 			.form-content {
 				box-sizing: border-box;
-				padding: 0 10px;
+				padding: 0 24rpx;
 			}
 			.bottom-actions {
 				border-top: solid 1px #ededed;
@@ -694,11 +694,11 @@
 			align-items: center;
 			justify-content: space-between;
 			box-sizing: border-box;
-			padding: 2px 10px;
+			padding: 5rpx 24rpx;
 			color: #909399;
-			margin-bottom: 20px;
+			margin-bottom: 48rpx;
 			text {
-				font-size: 14px;
+				font-size: 33rpx;
 			}
 		}
 		.content {
@@ -715,13 +715,13 @@
 			width: 25%;
 			text {
 				color: #909399;
-				font-size: 12px;
-				margin-top: 5px;
+				font-size: 28rpx;
+				margin-top: 12rpx;
 			}
 			.icon-box {
 				box-shadow: 0 0 5px rgba($color: #d8d8d8, $alpha: 0.5);
 				border-radius: 100%;
-				padding: 14px;
+				padding: 33rpx;
 				background-color: #fff;
 			}
 		}

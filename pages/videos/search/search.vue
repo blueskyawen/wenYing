@@ -318,7 +318,7 @@ page {
 }
 
 .search-header {
-	padding: 15px 12px;
+	padding: 35rpx 28rpx;
 	background-color: #d4e4ff;
 	display: flex;
 	flex-direction: column;
@@ -332,35 +332,35 @@ page {
 				position: absolute;
 				color: #fff;
 				font-weight: bold;
-				font-size: 14px;
-				top: 6px;
-				left: 11px;
+				font-size: 33rpx;
+				top: 14rpx;
+				left: 26rpx;
 			}
 		}
 		.name-t {
 			font-weight: bold;
 			color: #000;
-			font-size: 16px;
-			margin-left: 3px;
-			margin-bottom: 3px;
+			font-size: 38rpx;
+			margin-left: 7rpx;
+			margin-bottom: 7rpx;
 		}
 	}
 	.title {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		font-size: 12px;
+		font-size: 28rpx;
 		color: #6a6a6a;
 		.title-1 {
-			padding: 0 10px 0 5px;
+			padding: 0 24rpx 0 12rpx;
 		}
 		.fge {
-			width: 1px;
+			width: 3rpx;
 			background-color: #6a6a6a;
-			height: 8px;
+			height: 19rpx;
 		}
 		.title-2 {
-			padding: 0 5px 0 10px;
+			padding: 0 12rpx 0 24rpx;
 		}
 	}
 }
@@ -369,45 +369,45 @@ page {
 	background-color: #f1f1f1;
 	.video-item-box {
 		background-color: #fff;
-		margin-bottom: 3px;
+		margin-bottom: 7rpx;
 		box-sizing: border-box;
-		padding: 15px;
+		padding: 35rpx;
 		.header {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			.name {
-				margin-left: 6px;
+				margin-left: 14rpx;
 				display: flex;
 				flex-direction: column;
 				line-height: 1.3;
 				.first {
-					font-size: 18px;
+					font-size: 42rpx;
 					//font-weight: bold;
 				}
 				.second {
-					font-size: 12px;
+					font-size: 28rpx;
 					color: #909399;
 				}
 			}
 			image {
-				width: 42px;
-				height: 42px;
+				width: 98rpx;
+				height: 98rpx;
 				border-radius: 50%;
 			}
 		}
 		.desc {
 			display: flex;
 			flex-direction: column;
-			padding: 8px 0;
+			padding: 19rpx 0;
 			.title {
-				font-size: 14px;
+				font-size: 33rpx;
 			}
 			.tags {
-				font-size: 12px;
+				font-size: 28rpx;
 				color: #3782ff;
 				.tag {
-					margin-right: 5px;
+					margin-right: 12rpx;
 				}
 			}
 		}
@@ -416,14 +416,14 @@ page {
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-between;
-			padding: 8px 0 0;
+			padding: 19rpx 0 0;
 			.oper {
 				display: inline-flex;
 				flex-direction: row;
 				align-items: center;
 				.num {
-					margin-left: 2px;
-					font-size: 14px;
+					margin-left: 5rpx;
+					font-size: 33rpx;
 				}
 			}
 		}
@@ -431,7 +431,7 @@ page {
 			width: 100%;
 			image {
 				width: 100%;
-				border-radius: 8px;
+				border-radius: 18rpx;
 			}
 		}
 	}

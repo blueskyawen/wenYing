@@ -448,7 +448,7 @@
 	.uni-uploader__files {
 		width: 100%;
 		//border: solid 1px;
-		min-height: 240px;
+		min-height: 560rpx;
 		box-sizing: border-box;
 		position: relative;
 		.uni-uploader__file {
@@ -471,7 +471,7 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			min-height: 240px;
+			min-height: 560rpx;
 		}
 		.replace-uploader {
 			position: absolute;
@@ -485,15 +485,15 @@
 				display: inline-flex;
 				justify-content: center;
 				align-items: center;
-				width: 50px;
-				height: 50px;
+				width: 120rpx;
+				height: 120rpx;
 				border-radius: 50%;
 				background-color: #909399;
 				opacity: 0.5;
 			}
 			.replace-title {
-				font-size: 14px;
-				margin-top: 8px;
+				font-size: 33rpx;
+				margin-top: 19rpx;
 				color: #fff;
 			}
 		}
@@ -501,7 +501,7 @@
 	.uni-button-group {
 		display: flex;
 		justify-content: space-between;
-		padding: 15px;
+		padding: 35rpx;
 		box-sizing: border-box;
 		.uni-button {
 			width: 45%;

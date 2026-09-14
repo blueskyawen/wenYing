@@ -170,7 +170,7 @@
 
 <style lang="scss" scoped>
 .my-video {
-	padding-bottom: 50px;
+	padding-bottom: 12rpx;
 	height: 100%;
 	.action-tabbar {
 		background-color: #fff;
@@ -190,15 +190,15 @@
 				display: inline-flex;
 				align-items: center;
 				border: solid 1px #dcdcdc;
-				padding: 3px 6px;
-				border-radius: 12px;
-			    font-size: 14px;
+				padding: 7rpx 14rpx;
+				border-radius: 28rpx;
+			    font-size: 33rpx;
 				text {
-					margin-left: 3px;
+					margin-left: 7rpx;
 				}
 			}
 			.action-r {
-				margin-left: 24px;
+				margin-left: 56rpx;
 			}
 		}
 	}

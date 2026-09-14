@@ -257,15 +257,15 @@
 	flex: 1;
 	background-color: #F9F9F9;
 	.mt10 {
-		margin-top: 10px;
+		margin-top: 24rpx;
 	}
 	.bottom-back {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		margin-top: 10px;
+		margin-top: 24rpx;
 		width: 750rpx;
-		height: 44px;
+		height: 103rpx;
 		/* #ifndef APP-NVUE */
 		display: flex;
 		width: 100%;
@@ -284,7 +284,7 @@
 	background-color: #F9F9F9;
 }
 .settings ::v-deep .uni-list-item--disabled,.list-item {
-	height: 50px;
+	height: 120rpx;
 	margin-bottom: 1px;
 }
 /* #endif */

@@ -239,16 +239,16 @@ page {
 	width: 100%;
 	.user-info {
 		background-color: #fff;
-		margin-bottom: 6px;
+		margin-bottom: 14rpx;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		width: 100%;
 		box-sizing: border-box;
-		padding: 18px 12px;
+		padding: 42rpx 28rpx;
 		.user-avtor {
-			height: 60px;
-			width: 60px;
+			height: 141rpx;
+			width: 141rpx;
 			border: solid 2px #ededed;
 			border-radius: 100%;
 			image {
@@ -262,9 +262,9 @@ page {
 			display: flex;
 			flex-direction: column;
 			box-sizing: border-box;
-			padding-left: 15px;
+			padding-left: 35rpx;
 			.name {
-				font-size: 20px;
+				font-size: 47rpx;
 				word-break: break-all;
 			}
 			.opers {
@@ -272,15 +272,15 @@ page {
 				flex-direction: row;
 				align-items: center;
 				justify-content: space-between;
-				margin-top: 8px;
+				margin-top: 19rpx;
 				text {
-					font-size: 12px;
-					padding: 5px;
+					font-size: 28rpx;
+					padding: 12rpx;
 					background-color: #f2f2f2;
 				}
 				.mini-btn {
 					margin: 0;
-					padding: 0 10px;
+					padding: 0 24rpx;
 					line-height: 1.8;
 				}
 			}
@@ -288,7 +288,7 @@ page {
 	}
 	.ge-line {
 		background-color: #f2f2f2;
-		height: 6px;
+		height: 14rpx;
 		width: 100%;
 	}
 	.content {

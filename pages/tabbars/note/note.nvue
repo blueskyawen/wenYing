@@ -644,19 +644,19 @@ page {
 	background-color: #dcdcdc;
 	.note-list {
 		.note-item-box {
-			margin-bottom: 6px;
+			margin-bottom: 14rpx;
 			background: #fff;
-			padding: 14px;
+			padding: 33rpx;
 			box-sizing: border-box;
 			.note-item {
-			 	border-radius: 8px;
+			 	border-radius: 19rpx;
 				box-shadow: 0 0 5px rgba($color: #8f939c, $alpha: 0.5);
 				.note-img {
 					.img-show {
 						width: 100%;
 						min-height: 240px;
 						height: inherit;
-						border-radius: 8px 8px 0 0;
+						border-radius: 19rpx 19rpx 0 0;
 						// ::v-deep img {
 						// 	position: relative;
 						// 	opacity: initial;
@@ -664,7 +664,7 @@ page {
 					}
 				}
 				.note-title {
-					padding: 25px;
+					padding: 59rpx;
 					box-sizing: border-box;
 					line-height: 1.6em;
 					white-space: pre-wrap;
@@ -674,15 +674,15 @@ page {
 					flex-direction: row;
 					justify-content: space-between;
 					align-items: center;
-					padding: 12px 10px;
+					padding: 28rpx 24rpx;
 					box-sizing: border-box;
-					font-size: 14px;
+					font-size: 33rpx;
 					.note-autor {
 						display: inline-flex;
 						flex-direction: row;
 						align-items: center;
 						.right {
-							margin-left: 5px;
+							margin-left: 12rpx;
 							color: #8f939c;
 						}
 					}
@@ -698,13 +698,13 @@ page {
 				align-items: center;
 				box-sizing: border-box;
 				width: 100%;
-				padding: 16px 0 5px 0;
+				padding: 38rpx 0 12rpx 0;
 				.action-left {
 					display: inline-flex;
 					align-items: center;
 					flex-direction: row;
 					text {
-						font-size: 12px;
+						font-size: 28rpx;
 						color: #909399;
 					}
 				}
@@ -717,7 +717,7 @@ page {
 						align-items: center;
 						flex-direction: row;
 						::v-deep .u-icon {
-							margin-left: 16px;
+							margin-left: 38rpx;
 						}
 					}
 				}
@@ -741,7 +741,7 @@ page {
 		}
 	}
 	.header {
-		padding: 10px 15px;
+		padding: 24rpx 35rpx;
 		box-sizing: border-box;
 		// position: sticky;
 		z-index: 970;
@@ -762,16 +762,16 @@ page {
 			box-sizing: border-box;
 			align-items: center;
 			.select-date {
-				font-size: 14px;
+				font-size: 33rpx;
 				display: inline-flex;
 				flex-direction: row;
 				align-items: center;
 				.u-icon {
-					margin-left: 3px;
+					margin-left: 7rpx;
 				}
 			}
 			.text {
-				font-size: 14px;
+				font-size: 33rpx;
 			}
 		}
 	}
@@ -781,12 +781,12 @@ page {
 		.share-item {
 			display: flex;
 			flex-direction: row;
-			height: 48px;
+			height: 112rpx;
 			align-items: center;
 			box-sizing: border-box;
 			padding-left: 20%;
 			text {
-				margin-left: 6px;
+				margin-left: 14rpx;
 			}
 		}
 	}

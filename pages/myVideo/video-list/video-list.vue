@@ -46,10 +46,10 @@
 	overflow-y: auto;
 	.note-item {
 		border: solid 1px #dcdcdc;
-		border-radius: 2px;
+		border-radius: 5rpx;
 		display: flex;
 		flex-direction: column;
-		margin: 3px;
+		margin: 7rpx;
 		position: relative;
 		.img-item {
 			position: relative;
@@ -60,11 +60,11 @@
 			object-fit: cover;
 			aspect-ratio: 1;
 			height: auto;
-			border-radius: 6px 6px 0 0;
+			border-radius: 14rpx 14rpx 0 0;
 		}
 		.title {
-			font-size: 10px;
-			padding: 0 5px;
+			font-size: 24rpx;
+			padding: 0 12rpx;
 			box-sizing: border-box;
 			white-space: nowrap;
 			overflow: hidden;
@@ -72,7 +72,7 @@
 			position: absolute;
 			left: 0;
 			color: #fcfcfc;
-			bottom: 12px;
+			bottom: 28rpx;
 		}
 		.like-c {
 			position: absolute;
@@ -82,8 +82,8 @@
 			flex-direction: row;
 			align-items: center;
 			.text1 {
-				margin-left: 6px;
-				font-size: 12px;
+				margin-left: 14rpx;
+				font-size: 28rpx;
 				color: #fcfcfc;
 			}
 		}
@@ -94,14 +94,14 @@
 			margin: 12rpx;
 			align-items: center;
 			.oper-i {
-				font-size: 10px;
+				font-size: 24rpx;
 				display: inline-flex;
 				border: solid 1px #d4e4ff;
-				padding: 1px 2px;
-				border-radius: 8px;
+				padding: 3rpx 5rpx;
+				border-radius: 19rpx;
 				background-color: #d4e4ff;
 				&.ml-2 {
-					margin-left: 6px;
+					margin-left: 14rpx;
 				}
 			}
 			.oper-r {

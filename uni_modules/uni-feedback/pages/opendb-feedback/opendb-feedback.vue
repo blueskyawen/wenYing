@@ -98,32 +98,32 @@
 
 <style>
 	.uni-container {
-		padding: 15px;
+		padding: 35rpx;
 	}
 
 	.uni-input-border,
 	.uni-textarea-border {
 		width: 100%;
-		font-size: 14px;
+		font-size: 33rpx;
 		color: #666;
 		border: 1px #e5e5e5 solid;
-		border-radius: 5px;
+		border-radius: 12rpx;
 		box-sizing: border-box;
 	}
 
 	.uni-input-border {
-		padding: 0 10px;
-		height: 35px;
+		padding: 0 24rpx;
+		height: 82rpx;
 
 	}
 
 	.uni-textarea-border {
-		padding: 10px;
-		height: 80px;
+		padding: 24rpx;
+		height: 190rpx;
 	}
 
 	.uni-button-group {
-		margin-top: 50px;
+		margin-top: 120rpx;
 		/* #ifndef APP-NVUE */
 		display: flex;
 		/* #endif */
@@ -131,10 +131,10 @@
 	}
 
 	.uni-button {
-		width: 184px;
-		padding: 12px 20px;
-		font-size: 14px;
-		border-radius: 4px;
+		width: 431rpx;
+		padding: 28rpx 48rpx;
+		font-size: 33rpx;
+		border-radius: 10rpx;
 		line-height: 1;
 		margin: 0;
 	}

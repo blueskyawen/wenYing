@@ -493,7 +493,7 @@
 	.uni-button-group {
 		display: flex;
 		justify-content: space-between;
-		padding: 15px;
+		padding: 35rpx;
 		box-sizing: border-box;
 		.uni-button {
 			width: 45%;

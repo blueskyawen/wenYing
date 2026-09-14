@@ -555,11 +555,11 @@
 	width: 100%;
 	.form-content {
 		box-sizing: border-box;
-		padding: 12px;
+		padding: 28rpx;
 	}
 	.uni-uploader__files {
 		width: 100%;
-		height: 320px;
+		height: 750rpx;
 		box-sizing: border-box;
 		position: relative;
 		.add-uploader__input-box {
@@ -594,15 +594,15 @@
 				display: inline-flex;
 				justify-content: center;
 				align-items: center;
-				width: 50px;
-				height: 50px;
+				width: 120rpx;
+				height: 120rpx;
 				border-radius: 50%;
 				background-color: #909399;
 				opacity: 0.5;
 			}
 			.replace-title {
-				font-size: 14px;
-				margin-top: 8px;
+				font-size: 33rpx;
+				margin-top: 19rpx;
 				color: #fff;
 			}
 		}
@@ -612,7 +612,7 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		padding: 10px;
+		padding: 24rpx;
 		box-sizing: border-box;
 		justify-content: space-between;
 		position: fixed;

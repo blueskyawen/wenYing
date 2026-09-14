@@ -263,12 +263,12 @@
 <style lang="scss" scoped>
 .note-view {
 	background-color: #fff;
-	padding-bottom: 20px;
+	padding-bottom: 47rpx;
 	.item {
 		.note-img {
 			.img-show {
 				width: 100%;
-				min-height: 240px;
+				min-height: 560rpx;
 				height: inherit;
 				// ::v-deep img {
 				// 	position: relative;
@@ -277,7 +277,7 @@
 			}
 		}
 		.note-title {
-			padding: 25px;
+			padding: 69rpx;
 			box-sizing: border-box;
 			line-height: 1.6em;
 			white-space: pre-wrap;
@@ -287,9 +287,9 @@
 			flex-direction: row;
 			justify-content: space-between;
 			align-items: center;
-			padding: 12px 10px;
+			padding: 28rpx 24rpx;
 			box-sizing: border-box;
-			font-size: 14px;
+			font-size: 33rpx;
 			.date-left {
 				display: inline-flex;
 				flex-direction: column;
@@ -300,7 +300,7 @@
 				}
 				.publish-date {
 					color: #8f939c;
-					margin-top: 3px;
+					margin-top: 7rpx;
 				}
 			}
 			.date-right {
@@ -312,7 +312,7 @@
 					flex-direction: row;
 					align-items: center;
 					::v-deep .u-icon {
-						margin-left: 16px;
+						margin-left: 38rpx;
 					}
 				}
 			}

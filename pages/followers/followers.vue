@@ -138,7 +138,7 @@
 	.list-item {
 		width: 100%;
 		box-sizing: border-box;
-		padding: 12px 15px;
+		padding: 28rpx 35rpx;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -150,16 +150,16 @@
 			align-items: center;
 			flex: 1;
 			text {
-				margin-left: 8px;
+				margin-left: 19rpx;
 			}
 		}
 		.item-right {
-			margin-left: 20px;
+			margin-left: 47rpx;
 		}
 		.avator-image {
 			display: block;
-			width: 45px;
-			height: 45px;
+			width: 105rpx;
+			height: 105rpx;
 			border-radius: 100%;
 			border: solid 1px #ddd;
 		}

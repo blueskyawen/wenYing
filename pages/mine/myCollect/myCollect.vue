@@ -102,12 +102,12 @@
 		display: flex;
 		align-items: center;
 		margin-top: 24rpx;
-		font-size: 14px;
+		font-size: 33rpx;
 	}
 	.article-date {
 		color: #C8C7CC;
-		font-size: 14px;
-		margin-left: 5px;
-		margin-top: 4px;
+		font-size: 33rpx;
+		margin-left: 12rpx;
+		margin-top: 10rpx;
 	}
 </style>

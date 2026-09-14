@@ -76,10 +76,10 @@
 	}
 .note-item {
 	border: solid 1px #dcdcdc;
-	border-radius: 3px;
+	border-radius: 7rpx;
 	display: flex;
 	flex-direction: column;
-	margin: 3px;
+	margin: 7rpx;
 	position: relative;
 	image {
 		width: 100%;
@@ -87,10 +87,10 @@
 		object-fit: cover;
 		aspect-ratio: 1;
 		height: auto;
-		border-radius: 6px 6px 0 0;
+		border-radius: 14rpx 14rpx 0 0;
 	}
 	.title {
-		font-size: 12px;
+		font-size: 28rpx;
 		box-sizing: border-box;
 		color: #fcfcfc;
 		white-space: nowrap;
@@ -98,10 +98,10 @@
 		text-overflow: ellipsis;
 		position: absolute;
 		left: 0;
-		bottom: 10px;
+		bottom: 24rpx;
 		box-sizing: border-box;
 		width: 100%;
-		padding: 0 6px;
+		padding: 0 14rpx;
 	}
 }
 </style>

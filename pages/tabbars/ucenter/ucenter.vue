@@ -373,7 +373,7 @@ page {
 			flex-direction: column;
 			align-items: center;
 			position: relative;
-			top: 8px;
+			top: 19rpx;
 		}
 		.defaultAvatarUrl{
 			width: 150rpx;
@@ -398,15 +398,15 @@ page {
 	}
 	.grid {
 		background-color: #FFFFFF;
-		margin-bottom: 6px;
+		margin-bottom: 14rpx;
 		//padding: 36rpx 0;
 		.item {
 			padding: 36rpx 0;
 		}
 		.text {
-			font-size: 16px;
-			height: 25px;
-			line-height: 25px;
+			font-size: 38rpx;
+			height: 59rpx;
+			line-height: 59rpx;
 			color: #817f82;
 		}
 		.item ::v-deep .uni-grid-item__box {
@@ -423,7 +423,7 @@ page {
 			background: #fff;
 			padding-top: 36rpx;
 			padding-bottom: 36rpx;
-			margin-bottom: 5px;
+			margin-bottom: 12rpx;
 			.status-item {
 				flex: 1;
 				display: flex;

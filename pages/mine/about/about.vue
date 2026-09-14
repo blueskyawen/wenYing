@@ -103,36 +103,36 @@
 	}
 
 	.box {
-		margin-top: 60px;
+		margin-top: 140rpx;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.logoImg {
-		margin-bottom: 10rpx;
+		margin-bottom: 24rrpx;
 		width: 160rpx;
 		height: 160rpx;
-		border-radius: 15px;
+		border-radius: 35rpx;
 	}
 
 	.tip {
 		text-align: center;
 		font-size: 24rpx;
-		margin-top: 10px;
+		margin-top: 24rpx;
 		padding: 10rpx;
 	}
 
 	.appName {
-		margin-top: 20px;
+		margin-top: 47rpx;
 		font-size: 42rpx;
 		font-weight: 500;
 	}
 
 	.qrcode ,.qrcode .uqrcode{
-		margin: 10px 0;
-		width: 100px;
-		height: 100px;
+		margin: 24rpx 0;
+		width: 240rpx;
+		height: 240rpx;
 		/* #ifndef APP-NVUE */
 		display: block;
 		/* #endif */
@@ -143,7 +143,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		bottom: 20px;
+		bottom: 47rpx;
 		// left: 0;
 		position: fixed;
 	}
