@@ -362,7 +362,7 @@ page {
 		background-color: #c4c6c9;
 	}
 	.userInfo {
-		height: 40%;
+		height: 30%;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
