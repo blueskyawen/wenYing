@@ -81,6 +81,7 @@
 	flex-direction: column;
 	margin: 7rpx;
 	position: relative;
+	background-color: #f2f2f2;
 	image {
 		width: 100%;
 		display: block;
