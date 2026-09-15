@@ -41,7 +41,7 @@ const validator = {
         "format": "string"
       },
       {
-        "pattern": "^\\+?[0-9-]{3,20}$"
+        "pattern": "^1\\d{10}$"
       }
     ],
     "label": "联系电话"

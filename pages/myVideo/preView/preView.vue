@@ -266,10 +266,41 @@
 						uni.setNavigationBarTitle({
 						  title: this.list[0].title
 						})
+					} else {
+						uni.showModal({
+							content: `视频已被作者删除, 确认将返回, 并将数据从你的${this.from == 'likes' ? '喜欢' : '收藏'}列表中移除`,
+							showCancel: false,
+							success: (res) => {
+								if (res.confirm) {
+									this.removeDelVideoLikes();
+								}
+							}
+						})
 					}
 				} catch(e) {
 					
 				}
+			},
+			removeDelVideoLikes() {
+			  if (this.from == 'likes') {
+				  cmsVideoLikeDB.delVideoLikeByUserArcticle({
+					  "user_id": this.userInfo._id,
+					  "video_id": this.id
+				  }).then(res => {}).finally(e => {
+					  uni.$emit('refresh-like-list',{});
+					  uni.navigateBack();
+				  })
+			  }
+			  if (this.from == 'collects') {
+				  cmsVideoCollectDB.delVideoCollectByUserArcticle({
+					  "user_id": this.userInfo._id,
+					  "video_id": this.id
+				  }).then(res => {})
+					  .finally(e => {
+						  uni.$emit('refresh-collect-list',{});
+						  uni.navigateBack();
+					  })
+			  }
 			},
 			autoPlay() {
 				this.$nextTick(() => {

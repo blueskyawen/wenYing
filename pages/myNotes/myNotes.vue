@@ -265,7 +265,7 @@
 				border: solid 1px #dcdcdc;
 				padding: 7rpx 14rpx;
 				border-radius: 28rpx;
-			    font-size: 33px;
+			    font-size: 33rpx;
 				text {
 					margin-left: 7rpx;
 				}

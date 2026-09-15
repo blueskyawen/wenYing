@@ -19,6 +19,13 @@ module.exports = {
 		const res = await cmsVideoLikeCollection.add(addData)
 		return res;
 	},
+	delVideoLikeByUserArcticle: async function(event) {
+		let res = await cmsVideoLikeCollection.where({
+			'user_id': event.user_id,
+			'video_id': event.video_id
+		}).remove()
+		return res
+	},
 	delete: async function(event) {
 		let res = await cmsVideoLikeCollection.doc(event.id).remove()
 		if (res.deleted === 1) {

@@ -26,6 +26,13 @@ module.exports = {
 		const res = await cmsVideoCollectCollection.add(addData)
 		return res;
 	},
+	delVideoCollectByUserArcticle: async function(event) {
+		let res = await cmsVideoCollectCollection.where({
+			'user_id': event.user_id,
+			'video_id': event.video_id
+		}).remove()
+		return res
+	},
 	delete: async function(event) {
 		let res = await cmsVideoCollectCollection.doc(event.id).remove()
 		if (res.deleted === 1) {

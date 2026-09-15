@@ -274,13 +274,52 @@ export default {
 					if (res.result && res.result.data) {
 						this.docData = res.result.data[0] || {}
 					}
-					this.loadData(this.docData);
-					this.updateViewCount();
+					if (this.docData._id) {
+						this.loadData(this.docData);
+						this.updateViewCount();
+					} else {
+						uni.showModal({
+							content: `文章已被作者删除, 确认将返回, 并将数据从你的${this.from == 'likes' ? '喜欢' : '收藏'}列表中移除`,
+							showCancel: false,
+							success: (res) => {
+								if (res.confirm) {
+									this.removeDelDocLikes();
+								}
+							}
+						})
+					}
 				}).catch(err => {
 			      console.error(err)
 			    }).finally(() => {
 					this.isLoading = false;
 				})
+		  }
+	  },
+	  removeDelDocLikes() {
+		  if (this.from == 'likes') {
+			  const cmsLikesCo = uniCloud.importObject('cms-likes-co', {
+				 customUI: true
+			  });
+			  cmsLikesCo.delDocLikeByUserArcticle({
+				  "user_id": this.loginUserId,
+				  "article_id": this.id
+			  }).then(res => {}).finally(e => {
+				  uni.$emit('refresh-like-list',{});
+				  uni.navigateBack();
+			  })
+		  }
+		  if (this.from == 'collects') {
+			  const cmsFavoriteCo = uniCloud.importObject('cms-favorite-co', {
+				customUI: true
+			  });
+			  cmsFavoriteCo.delDocCollectByUserArcticle({
+			  				  "user_id": this.loginUserId,
+			  				  "article_id": this.id
+			  }).then(res => {})
+				  .finally(e => {
+					  uni.$emit('refresh-collect-list',{});
+					  uni.navigateBack();
+				  })
 		  }
 	  },
 	  getDocFavorite() {

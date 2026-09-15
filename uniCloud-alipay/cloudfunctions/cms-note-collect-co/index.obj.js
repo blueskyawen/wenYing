@@ -26,6 +26,13 @@ module.exports = {
 		const res = await cmsNoteCollectCollection.add(addData)
 		return res;
 	},
+	delNoteCollectByUserArcticle: async function(event) {
+		let res = await cmsNoteCollectCollection.where({
+			'user_id': event.user_id,
+			'note_id': event.note_id
+		}).remove()
+		return res
+	},
 	delete: async function(event) {
 		let res = await cmsNoteCollectCollection.doc(event.id).remove()
 		if (res.deleted === 1) {

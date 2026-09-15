@@ -143,7 +143,39 @@
 					}
 					this.isLoading = false;
 					//uni.hideLoading();
+				} else {
+					this.isLoading = false;
+					uni.showModal({
+						content: `小记已被作者删除, 确认将返回, 并将数据从你的${this.from == 'likes' ? '喜欢' : '收藏'}列表中移除`,
+						showCancel: false,
+						success: (res) => {
+							if (res.confirm) {
+								this.removeDelNoteLikes();
+							}
+						}
+					})
 				}
+			},
+			removeDelNoteLikes() {
+			  if (this.from == 'likes') {
+				  cmsNoteLikeDB.delNoteLikeByUserArcticle({
+					  "user_id": this.userInfo._id,
+					  "note_id": this.id
+				  }).then(res => {}).finally(e => {
+					  uni.$emit('refresh-like-list',{});
+					  uni.navigateBack();
+				  })
+			  }
+			  if (this.from == 'collects') {
+				  cmsNoteCollectDB.delNoteCollectByUserArcticle({
+					  "user_id": this.userInfo._id,
+					  "note_id": this.id
+				  }).then(res => {})
+					  .finally(e => {
+						  uni.$emit('refresh-collect-list',{});
+						  uni.navigateBack();
+					  })
+			  }
 			},
 			doCollect() {
 				if (this.isInOper) return;

@@ -6,7 +6,9 @@
 			<uni-grid :column="3" :square="false" :showBorder="false">
 				<uni-grid-item v-for="(item,index) in list" :index="index" :key="index">
 					<view class="note-item" @tap="goDetail(item)">
-						<image :src="item.cover_src"></image>
+						<view class="img-box">
+							<image :src="item.cover_src"></image>
+						</view>
 						<view class="descript">{{ item.note_content }}</view>
 						<view class="publish-date">
 							<uni-dateformat  :date="item.publish_date" format="yyyy-MM-dd"></uni-dateformat>
@@ -83,6 +85,9 @@
 	display: flex;
 	flex-direction: column;
 	margin: 7rpx;
+	.img-box {
+		background-color: #f2f2f2;
+	}
 	image {
 		width: 100%;
 		display: block;

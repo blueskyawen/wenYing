@@ -26,6 +26,13 @@ module.exports = {
 		const res = await favoriteCollection.add(addData)
 		return res;
 	},
+	delDocCollectByUserArcticle: async function(event) {
+		let res = await favoriteCollection.where({
+			'user_id': event.user_id,
+			'article_id': event.article_id,
+		}).remove()
+		return res
+	},
 	delete: async function(event) {
 		let res = await favoriteCollection.doc(event.id).remove()
 		if (res.deleted === 1) {
