@@ -72,7 +72,7 @@
 								<!-- #endif -->
 							</view>
 							<!-- #ifdef MP -->
-							<button style="border: none" type="default" size="mini" hover-class="none" plain open-type="share">
+							<button style="border: none" type="default" size="mini" hover-class="none" plain open-type="share" :data-id="item._id">
 								<u-icon name="share" color="#909399" size="20"></u-icon>
 							</button>
 							<!-- #endif -->
@@ -186,6 +186,28 @@
 			hasLogin(){
 				return store.hasLogin
 			},
+		},
+		onShareAppMessage(e) {
+			if (e.from === 'button') {
+			  console.log(e.target)
+			}
+			let itemId = e.target && e.target.dataset && e.target.dataset.id ? e.target.dataset.id : '';
+			let fdItem = this.list.find(x => x._id == itemId);
+			if (fdItem) {
+				return {
+					title: fdItem.content,
+					path: `/pages/notes/noteView/noteView?id=${fdItem._id}`,
+					desc: "轻拾刻-小记",
+					imageUrl: fdItem.cover_src || 'https://web-assets.dcloud.net.cn/unidoc/zh/share-logo@3.png'
+				}
+			} else {
+				return {
+					title: '轻拾刻-小记',
+					path: 'pages/tabbars/note/note',
+					desc: "轻拾刻-小记",
+					imageUrl: fdItem.cover_src || 'https://web-assets.dcloud.net.cn/unidoc/zh/share-logo@3.png'
+				}
+			}
 		},
 		methods: {
 			initNavBarSize() {
@@ -551,7 +573,7 @@
 					case 0:
 						shareOPtions.summary = this.shareNoteItem.content;
 						shareOPtions.imageUrl = this.shareNoteItem.cover_src;
-						shareOPtions.title = '文影-小记';
+						shareOPtions.title = '轻拾刻-小记';
 						shareOPtions.href = 'https://uniapp.dcloud.io';
 						break;
 					case 1:
@@ -562,7 +584,7 @@
 						break;
 					case 5:
 						shareOPtions.imageUrl = this.shareNoteItem.cover_src
-						shareOPtions.title = '欢迎来到文影-小记';
+						shareOPtions.title = '欢迎来到轻拾刻-小记';
 						shareOPtions.miniProgram = {
 							id:'gh_33446d7f7a26',
 							path:`/pages/notes/noteView/noteView?id=${this.shareNoteItem._id}`,
@@ -579,7 +601,7 @@
 				}
 				if(shareOPtions.type === 1 && shareOPtions.provider === 'qq'){//如果是分享文字到qq，则必须加上href和title
 					shareOPtions.href = 'https://uniapp.dcloud.io';
-					shareOPtions.title = '欢迎来到文影-小记';
+					shareOPtions.title = '欢迎来到轻拾刻-小记';
 				}
 				uni.share(shareOPtions);
 			},

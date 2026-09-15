@@ -91,7 +91,7 @@
 			return {
 				title: this.item.content,
 				path: `/pages/notes/noteView/noteView?id=${this.id}`,
-				desc: "文影-小记",
+				desc: "轻拾刻-小记",
 				imageUrl: this.item.cover_src || 'https://web-assets.dcloud.net.cn/unidoc/zh/share-logo@3.png'
 			}
 		},
